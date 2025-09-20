@@ -25,6 +25,9 @@ A comprehensive real-time monitoring dashboard for F5 BIG-IP load balancers feat
 
 ## Overview
 
+<img width="1643" height="1046" alt="Image" src="https://github.com/user-attachments/assets/b89ba23e-4a4d-42da-bfd9-ed7ac7d3c9de" />
+
+
 ### The Problem This Solves
 
 You're troubleshooting an application issue. Your monitoring tools show trends and alerts, but you need to know **right now**: Are the pool members actually up? Which ones changed state? What's the real status behind that load balancer?
