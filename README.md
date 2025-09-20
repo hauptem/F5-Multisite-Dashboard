@@ -1,0 +1,698 @@
+### What This Actually Is
+
+This isn't another monitoring dashboard. **It's the F5 serving a sophisticated application interface directly from the BIG-IP itself.**
+
+A 170KB modular JavaScript application runs entirely in your browser, served directly from the F5's high-speed operational dataplane. One or more sites operate as Dashboard Front-Ends serving the dashboard interface (HTML, JavaScript, CSS) via iFiles, while other sites operate as API Hosts providing pool data through optimized JSON-based dashboard API calls. This provides unified visibility across multiple sites from a single interface without requiring even a read-only account on any of the BIG-IPs, allowing you to switch between locations and see consistent pool, member, and health status data with almost no latency and very little overhead. All dashboard sites inherit the high-availability capabilities of their host BIG-IP cluster.
+
+Think of it as an extension of the F5 GUI but with intelligence: near real-time state tracking, DNS hostname resolution, advanced search/filtering, and the ability to see exactly what changed and when. It gives application teams and operations teams direct visibility into application state without needing to wait for answers from F5 engineers, eliminating the organizational bottleneck that slows down troubleshooting when every minute counts.
+
+### Revolutionary Approach to Infrastructure Monitoring
+
+Dashboard v1.7 represents a fundamental departure from conventional monitoring paradigms, addressing a massive blind spot in enterprise infrastructure thinking.
+
+Traditional monitoring platforms like Grafana, SolarWinds, and Dynatrace require separate servers, databases, and complex infrastructure. They're designed for historical analysis and trending across multiple systems.
+
+Dashboard v1.7 creates something entirely different: an ultra-performant, near real-time looking glass directly into application state. It doesn't replace Network Management Systems - it complements them by providing instant visibility that NMS platforms can't match.
+
+### Key Technical Innovations
+
+**Zero Infrastructure Overhead**
+Dashboard v1.7 runs entirely on the F5 itself with a 170KB JavaScript application in the browser. No monitoring servers, no databases, no network dependencies between components other than HTTPS/TCP443.
+
+**Instant Application State Visibility**
+While NMS platforms excel at historical trends and enterprise-wide correlation, Dashboard v1.7 provides immediate, zero-latency insight into what's happening right now with pool members, DNS resolution, and application health.
+
+**Self-Contained Intelligence**
+The JavaScript application includes real-time state tracking, DNS hostname resolution with caching, advanced Boolean search and filtering, and session persistence.
+
+**Advanced Client-Side Architecture**
+- Modular JavaScript Design: Core, Data, UI, and Logger modules with proper separation of concerns
+- Intelligent State Management: Real-time member state tracking with baseline comparison and auto-acknowledgment
+- DNS Optimization: Client-side hostname caching with intelligent backend request optimization
+- Performance Optimization: Pool filtering headers to reduce backend processing load
+
+**Sophisticated User Experience**
+- Dual View Modes: MACRO mode for detailed troubleshooting, MICRO mode for high-level monitoring
+- Advanced Search: Boolean operators (AND, OR, NOT) with special keywords and real-time filtering
+- Contextual Awareness: Per-site persistence of preferences, search filters, and custom pool ordering
+- Accessibility Features: Comprehensive keyboard shortcuts and responsive design
+
+**Enterprise-Grade Reliability**
+- Graceful Degradation: Continues operation when DNS services are unavailable
+- Error Resilience: Standardized error handling with detailed diagnostic information
+- Session Management: Seamless integration with F5 APM for enterprise authentication
+- Security Controls: Client IP validation, API key authentication, and comprehensive input validation
+
+### Why This Approach Wasn't Considered Before
+
+**Organizational Boundaries:** Network teams manage F5s while monitoring teams buy enterprise platforms. The idea of the F5 serving sophisticated applications never crosses organizational boundaries.
+
+**Conceptual Limitations:** F5s are seen as network devices, not application platforms. The enterprise software industry has institutionalized the belief that monitoring must be external and centralized, even when the device being monitored is perfectly capable of providing its own real-time interface.
+
+**Technical Assumptions:** Most don't realize that modern browsers can handle sophisticated applications, or that iRules can serve as full application backends. The pattern of using F5s to inject third-party monitoring JavaScript exists, but always for sending data out to external systems, never for serving applications that query the F5 itself.
+
+### The Elegance Factor
+
+Dashboard v1.7 demonstrates the power of questioning fundamental assumptions. Instead of building infrastructure to monitor infrastructure, it turns the infrastructure into its own monitoring platform.
+
+It's a perfect example of how the most innovative solutions often come from asking "what if we didn't do it the way everyone else does?"# F5 BIG-IP Multi-Site Dashboard v1.7
+
+A comprehensive real-time monitoring dashboard for F5 BIG-IP load balancers featuring multi-site support, DNS hostname resolution, member state tracking, and advanced filtering capabilities.
+
+![Dashboard Version](https://img.shields.io/badge/version-1.7-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
+![F5 Compatible](https://img.shields.io/badge/F5%20BIG--IP-compatible-orange)
+![TMOS Version](https://img.shields.io/badge/TMOS-15.0%2B-red)
+![Partition Support](https://img.shields.io/badge/multi--partition-not%20supported-yellow)
+
+## Overview
+
+### The Problem This Solves
+
+You're troubleshooting an application issue. Your monitoring tools show trends and alerts, but you need to know **right now**: Are the pool members actually up? Which ones changed state? What's the real status behind that load balancer?
+
+Traditionally, this means logging into the F5 GUI, navigating through Local Traffic > Pools, clicking through individual pool pages, and refreshing to see current state. When your application spans multiple sites, you're logging into multiple F5s, checking the same pools across different locations, trying to piece together a complete picture of application health. Meanwhile, application teams are asking operations teams for status updates, who then have to reach out to F5 engineers, creating a chain of dependencies just to answer basic "is it working?" questions.
+
+Your enterprise monitoring tools excel at historical trends and alerting, but when you need current state of specific pool members - not 5 minutes ago when the last poll happened - there's a gap that forces manual investigation.
+
+### What This Actually Is
+
+This isn't another monitoring dashboard. **It's the F5 serving a sophisticated application interface directly from the BIG-IP itself.**
+
+A 220KB modular JavaScript application runs entirely in your browser, served directly from the F5's high-speed operational dataplane. One or more sites operate as Dashboard Front-Ends serving the dashboard interface (HTML, JavaScript, CSS) via iFiles, while other sites operate as API Hosts providing pool data through optimized JSON-based dashboard API calls. This provides unified visibility across multiple sites from a single interface without requiring even a read-only account on any of the BIG-IPs, allowing you to switch between locations and see consistent pool, member, and health status data with almost no latency and very little overhead. All dashboard sites inherit the high-availability capabilities of their host BIG-IP cluster.
+
+Think of it as an extension of the F5 GUI but with intelligence: near real-time state tracking, DNS hostname resolution, advanced search/filtering, and the ability to see exactly what changed and when. It gives application teams and operations teams direct visibility into application state without needing to wait for answers from F5 engineers, eliminating the organizational bottleneck that slows down troubleshooting when every minute counts.
+
+**Bottom Line:** When you need to know what's really happening with your applications behind the F5, Dashboard v1.7 gives you that answer immediately, with zero additional infrastructure complexity.
+
+## Features
+
+### Core Functionality
+- **Real-time Pool Monitoring** - Live status updates for pool members across multiple sites
+- **Multi-Site Architecture** - Frontend/backend separation supporting distributed F5 deployments
+- **DNS Hostname Resolution** - Automatic PTR lookups with intelligent caching
+- **Member State Tracking** - Persistent monitoring of status changes with acknowledgment system
+- **Advanced Search & Filtering** - Boolean search with saved search functionality
+- **Responsive Grid Layout** - Dynamic column adjustment based on content and viewport
+
+### User Interface
+- **Three Visual Themes** - AGLight, Monochrome Grey, and Amber Terminal
+- **MACRO/MICRO View Modes** - Toggle between detailed member view and compact pool overview
+- **Drag & Drop Pool Reordering** - Custom pool arrangement with persistence
+- **Keyboard Shortcuts** - Full keyboard navigation and control
+- **Session Persistence** - Settings and state preserved across browser sessions
+
+### Advanced Features
+- **Wake Lock Integration** - Prevents tab sleep during active monitoring
+- **Instance Isolation** - Multiple dashboard instances with independent state
+- **Pool Filtering Optimization** - Backend optimization for large deployments
+- **Event Logger** - Comprehensive logging with copy/export functionality
+- **Auto-refresh with Pause** - Intelligent refresh management based on visibility
+
+## Architecture
+
+The dashboard consists of two main components:
+
+### Frontend (Dashboard Host)
+- Serves the web interface and static assets
+- Handles user authentication via APM
+- Provides local pool monitoring for the frontend site
+- Proxies requests to remote backend API hosts
+
+### Backend API (API Host)
+- Exposes JSON API endpoints for pool data
+- Performs DNS resolution and member status checks
+- Supports pool filtering optimization headers
+- Provides health monitoring endpoints
+
+## Installation
+
+### Prerequisites
+- F5 BIG-IP with LTM module
+- **TMOS Version:** 15.0 or higher (tested on 15.x, 16.x, 17.x)
+- APM module (for frontend authentication)
+- DNS resolver configured for PTR lookups (optional)
+- iFiles capability for static asset hosting
+- **Note:** This version (1.7) is **not multi-partition compatible** - all objects must be in `/Common` partition
+
+### Frontend Setup
+
+### Frontend Setup
+
+#### Dashboard Front-End Critical Dependencies:
+
+**1. `datagroup-dashboard-clients` (Address)**
+- Used to restrict dashboard access
+
+**2. `datagroup-dashboard-debug` (Address)**  
+- Used to limit dashboard debug
+
+**3. `datagroup-dashboard-sites` (String)**
+- Used to define dashboard site list
+
+**4. `datagroup-dashboard-api-host` (String)**
+- Used to map remote Site name to IP address
+
+**5. `datagroup-dashboard-pools` (String)**
+- Used to provide a list of pools to display
+
+**6. `datagroup-dashboard-pool-alias` (String)**
+- Used to create alias names for actual pool names
+
+**7. `datagroup-dashboard-api-keys` (String)**
+- Used to authenticate Front-end to API host
+
+**8. `dashboard-api-hosts_https_pool` (LTM Pool)**
+- This pool contains the API Host IPs for monitoring
+
+**9. `dashboard-dns_udp53_pool` (LTM Pool)**
+- This pool contains the DNS listener for monitoring
+
+**10. `/Common/dashboard-DNS` (LTM dns-resolver)**
+- This resolver should map to a GTM listener dedicated for dashboard and scoped for in-addr.arpa
+
+**11. `session.custom.dashboard.auth` (Front-end LTM APM session variable)**
+- This variable must be equal to 1 for this irule to trigger
+
+**12. iFiles:**
+- `dashboard_js-core.js` - Javascript Core Module
+- `dashboard_js-client.js` - Javascript Client Module
+- `dashboard_js-data.js` - Javascript Data Module
+- `dashboard_js-ui.js` - Javascript UI Module
+- `dashboard_js-logger.js` - Javascript Logs Module
+- `dashboard_logo.png` - logo image file
+- `dashboard_themes.css` - Dashboard CSS with themes
+
+1. **Create Required Data Groups:**
+```bash
+# Client access control
+tmsh create ltm data-group internal datagroup-dashboard-clients type ip
+tmsh modify ltm data-group internal datagroup-dashboard-clients records add { 10.0.0.0/8 { } }
+
+# Debug access control  
+tmsh create ltm data-group internal datagroup-dashboard-debug type ip
+tmsh modify ltm data-group internal datagroup-dashboard-debug records add { 10.0.0.0/8 { } }
+
+# Available sites with sort order
+tmsh create ltm data-group internal datagroup-dashboard-sites type string
+tmsh modify ltm data-group internal datagroup-dashboard-sites records add { 
+    "CHICAGO" { data "1" } 
+    "NEW_YORK" { data "2" } 
+}
+
+# API host mappings
+tmsh create ltm data-group internal datagroup-dashboard-api-host type string
+tmsh modify ltm data-group internal datagroup-dashboard-api-host records add { 
+    "NEW_YORK" { data "192.168.2.100" } 
+}
+
+# Pool configuration with sort order
+tmsh create ltm data-group internal datagroup-dashboard-pools type string
+tmsh modify ltm data-group internal datagroup-dashboard-pools records add { 
+    "web_pool" { data "1" } 
+    "app_pool" { data "2" } 
+}
+
+# Pool aliases (optional)
+tmsh create ltm data-group internal datagroup-dashboard-pool-alias type string
+tmsh modify ltm data-group internal datagroup-dashboard-pool-alias records add { 
+    "web_pool" { data "Web Servers" } 
+}
+
+# API authentication keys
+tmsh create ltm data-group internal datagroup-dashboard-api-keys type string
+tmsh modify ltm data-group internal datagroup-dashboard-api-keys records add { 
+    "your-secure-api-key-here" { data "1" } 
+}
+```
+
+### Automated Pool Discovery
+
+If you already have many pools configured, use this script to automatically populate the pool data groups:
+
+```bash
+#!/bin/bash
+# Automated Pool Discovery Script
+# This script discovers all existing pools and populates the dashboard data groups
+
+# Get all pool names from /Common partition (removing /Common/ prefix)
+POOLS=$(tmsh list ltm pool one-line | grep -o "ltm pool [^{]*" | awk '{print $3}' | sed 's|^/Common/||' | tr '\n' ' ')
+
+echo "Discovered pools: $POOLS"
+
+# Populate dashboard-pools data group with auto-incrementing sort order
+POOL_RECORDS=""
+SORT_ORDER=1
+for POOL in $POOLS; do
+    POOL_RECORDS="$POOL_RECORDS \"$POOL\" { data \"$SORT_ORDER\" }"
+    ((SORT_ORDER++))
+done
+
+# Apply to data groups
+tmsh modify ltm data-group internal datagroup-dashboard-pools records replace-all-with { $POOL_RECORDS }
+
+# Initialize empty aliases (can be customized later)
+ALIAS_RECORDS=""
+for POOL in $POOLS; do
+    ALIAS_RECORDS="$ALIAS_RECORDS \"$POOL\" { data \"\" }"
+done
+
+tmsh modify ltm data-group internal datagroup-dashboard-pool-alias records replace-all-with { $ALIAS_RECORDS }
+
+echo "Pool data groups populated successfully!"
+echo "Total pools configured: $(echo $POOLS | wc -w)"
+```
+
+**Note:** After running this script, you can manually customize aliases by modifying the `datagroup-dashboard-pool-alias` data group to provide user-friendly display names.
+
+2. **Create Pools:**
+```bash
+# API hosts pool
+tmsh create ltm pool dashboard-api-hosts_https_pool members add { 192.168.2.100:443 }
+
+# DNS pool (if using DNS resolution)
+tmsh create ltm pool dashboard-dns_udp53_pool members add { 192.168.1.53:53 }
+```
+
+3. **Upload Static Assets as iFiles:**
+```bash
+tmsh create sys file ifile dashboard_js-core.js source-path file:///path/to/dashboard_js-core.js
+tmsh create sys file ifile dashboard_js-client.js source-path file:///path/to/dashboard_js-client.js
+tmsh create sys file ifile dashboard_js-data.js source-path file:///path/to/dashboard_js-data.js
+tmsh create sys file ifile dashboard_js-ui.js source-path file:///path/to/dashboard_js-ui.js
+tmsh create sys file ifile dashboard_js-logger.js source-path file:///path/to/dashboard_js-logger.js
+tmsh create sys file ifile dashboard_themes.css source-path file:///path/to/dashboard_themes.css
+tmsh create sys file ifile dashboard_logo.png source-path file:///path/to/dashboard_logo.png
+```
+
+4. **Create Virtual Server:**
+```bash
+tmsh create ltm virtual dashboard-frontend_https_vs {
+    destination 192.168.1.100:443
+    ip-protocol tcp
+    pool none
+    profiles add {
+        tcp { }
+        http { }
+        clientssl { 
+            context clientside 
+        }
+    }
+    rules { LTM_Dashboard-Frontend_v1.7_irule }
+}
+```
+
+5. **Configure APM Policy:**
+   - Create APM policy with session variable `session.custom.dashboard.auth = 1`
+   - Apply policy to the virtual server
+
+### Backend API Setup
+
+### Backend API Setup
+
+#### Dashboard API Hosts Critical Dependencies:
+
+**1. `datagroup-dashboard-trusted-frontends` (Address)**
+- Used to restrict access to authorized dashboard front-ends Self-IPs
+
+**2. `datagroup-dashboard-api-keys` (String)**
+- Type: String, Used to authenticate Front-end to API host
+
+**3. `datagroup-dashboard-pools` (String)**
+- Type: String, Used to provide a list of pools to display
+
+**4. `datagroup-dashboard-pool-alias` (String)**
+- Type: String, Used to create alias names for actual pool names
+
+**5. `dashboard-dns_udp53_pool` (API Host LTM Pool)**
+- This pool contains the DNS listener for monitoring
+
+**6. `/Common/dashboard-DNS` (API Host LTM dns-resolver)**
+- This resolver should map to a GTM listener dedicated for dashboard and scoped for in-addr.arpa
+
+1. **Create Required Data Groups:**
+```bash
+# Trusted frontend IPs
+tmsh create ltm data-group internal datagroup-dashboard-trusted-frontends type ip
+tmsh modify ltm data-group internal datagroup-dashboard-trusted-frontends records add { 192.168.1.100 { } }
+
+# API authentication (same key as frontend)
+tmsh create ltm data-group internal datagroup-dashboard-api-keys type string
+tmsh modify ltm data-group internal datagroup-dashboard-api-keys records add { 
+    "your-secure-api-key-here" { data "1" } 
+}
+
+# Pool configuration (backend-specific pools)
+tmsh create ltm data-group internal datagroup-dashboard-pools type string
+tmsh modify ltm data-group internal datagroup-dashboard-pools records add { 
+    "backend_web_pool" { data "1" } 
+    "backend_app_pool" { data "2" } 
+}
+
+# DNS pool (if using DNS resolution)
+tmsh create ltm pool dashboard-dns_udp53_pool members add { 192.168.2.53:53 }
+```
+
+2. **Create API Virtual Server:**
+```bash
+tmsh create ltm virtual dashboard-api_https_vs {
+    destination 192.168.2.100:443
+    ip-protocol tcp
+    pool none
+    profiles add {
+        tcp { }
+        http { }
+        clientssl { 
+            context clientside 
+        }
+    }
+    rules { LTM_Dashboard-API-Host_v1.7_irule }
+}
+```
+
+### DNS Resolver Setup (Optional)
+
+**Create DNS Resolver:**
+```bash
+tmsh create net dns-resolver dashboard-DNS {
+    forward-zones add { 
+        in-addr.arpa { 
+            nameservers add { 192.168.1.53:53 }
+        }
+    }
+    route-domain none
+}
+```
+
+**GTM/DNS Listener Configuration:**
+If using GTM for DNS resolution, create a dedicated listener with access restrictions:
+
+```bash
+# Create GTM listener for dashboard DNS
+tmsh create gtm listener dashboard-dns-listener {
+    address 192.168.1.53
+    port 53
+    ip-protocol udp
+    profiles add { dns }
+    rules { DNS_Dashboard-DNS-Restrict_v1.0_irule }
+}
+
+# Create data group for authorized DNS clients (LTM Self-IPs)
+tmsh create ltm data-group internal dashboard-dns-clients type ip
+tmsh modify ltm data-group internal dashboard-dns-clients records add { 
+    10.1.1.100/32 { }    # Frontend BIG-IP Self-IP
+    10.1.2.100/32 { }    # Backend BIG-IP Self-IP
+}
+```
+
+**DNS Restriction iRule (DNS_Dashboard-DNS-Restrict_v1.0_irule):**
+This iRule should be applied to the GTM listener to restrict DNS queries:
+- Allows PTR queries from authorized clients (for hostname resolution)
+- Restricts A record queries to specific dashboard hostnames
+- Refuses all other query types and unauthorized clients
+
+## Configuration
+
+### Debug Settings
+Enable debug logging by modifying the iRule variables:
+```tcl
+# In CLIENT_ACCEPTED event
+set debug_enabled 1    # Set to 1 to enable debug
+set dns_enabled 1      # Set to 1 to enable DNS resolution
+```
+
+### Pool Configuration
+Pools are configured via data groups:
+- `datagroup-dashboard-pools`: Pool names with sort order
+- `datagroup-dashboard-pool-alias`: Optional display aliases
+- Sort order determines display sequence (lower numbers first)
+
+### Site Configuration
+Multi-site setup via data groups:
+- `datagroup-dashboard-sites`: Available sites with sort order
+- `datagroup-dashboard-api-host`: Site-to-IP mappings for API backends
+
+## API Reference
+
+### Health Endpoint
+```
+GET /api/health
+```
+Returns API health status (no authentication required).
+
+**Response:**
+```json
+{
+  "status": "healthy",
+  "hostname": "bigip-01.example.com",
+  "timestamp": "2025-01-15 14:30:45",
+  "uptime_seconds": 1234567,
+  "version": "1.7",
+  "pools_configured": 5,
+  "message": "API endpoint is operational with 5 pools configured"
+}
+```
+
+### Pool Data Endpoint
+```
+GET /api/proxy/pools
+Headers:
+  X-API-Key: your-secure-api-key-here
+  X-Selected-Site: CHICAGO
+  X-Instance-ID: inst_abc123
+```
+Returns detailed pool and member status information.
+
+**Response:**
+```json
+{
+  "hostname": "bigip-01.example.com",
+  "timestamp": "2025-01-15 14:30:45",
+  "debug_enabled": "disabled",
+  "instanceId": "inst_abc123",
+  "pools": [
+    {
+      "name": "web_pool",
+      "alias": "Web Servers",
+      "sort_order": 1,
+      "status": "UP",
+      "up_members": 2,
+      "down_members": 0,
+      "disabled_members": 0,
+      "total_members": 2,
+      "members": [
+        {
+          "ip": "192.168.1.10",
+          "port": "80",
+          "status": "up",
+          "hostname": "web01.example.com"
+        }
+      ]
+    }
+  ]
+}
+```
+
+### Performance Optimization Headers
+
+For large deployments, the dashboard supports request optimization:
+
+**Pool Filtering:**
+```
+X-Need-Pools-Count: 2
+X-Need-Pools-1: web_pool,app_pool
+X-Need-Pools-2: db_pool
+```
+
+**DNS Optimization:**
+```
+X-Need-DNS-Count: 1
+X-Need-DNS-IPs-1: 192.168.1.10,192.168.1.11
+```
+
+## Usage
+
+### Basic Operation
+1. Access dashboard URL in web browser
+2. Authenticate via APM policy
+3. Select site from dropdown
+4. Monitor pool status in real-time
+
+### Search and Filtering
+- **Search Syntax:** Boolean operators (AND, OR, NOT)
+- **Special Keywords:** `changed` (shows pools with unacknowledged member changes)
+- **Examples:**
+  - `web AND up` - Pools containing "web" with "up" status
+  - `NOT disabled` - All pools except disabled ones
+  - `changed` - Pools with member state changes
+
+### Keyboard Shortcuts
+- `Ctrl+F` / `Cmd+F` - Focus search filter
+- `Alt+C` - Filter for changed members
+- `Alt+M` - Toggle MACRO/MICRO view mode
+- `Alt+T` - Cycle themes
+- `Alt+L` - Toggle event logger
+- `Alt+R` - Resolve DNS hostnames
+- `Alt+F` - Flush DNS cache
+- `Alt+1-5` - Load saved searches
+- `Alt+Shift+1-5` - Save current search
+
+### View Modes
+- **MACRO Mode:** Full member details with status and actions
+- **MICRO Mode:** Compact pool-only view with change indicators
+
+## Troubleshooting
+
+### Common Issues
+
+**Dashboard shows "No pools configured"**
+- Verify `datagroup-dashboard-pools` contains pool names
+- Check pool names match actual BIG-IP pool configuration in `/Common` partition
+- Ensure all dashboard components are deployed in `/Common` partition (v1.7 limitation)
+- Enable debug logging to see backend responses
+
+**API authentication failures**
+- Verify API keys match between frontend and backend
+- Check `datagroup-dashboard-api-keys` configuration in `/Common` partition
+- Ensure frontend IP is in `datagroup-dashboard-trusted-frontends`
+
+**DNS resolution not working**
+- Verify DNS resolver configuration in `/Common` partition
+- Check `dashboard-dns_udp53_pool` has active members
+- Set `dns_enabled = 1` in iRule configuration
+- Ensure TMOS version supports advanced DNS features (13.0+ recommended)
+
+**Site selection shows no sites**
+- Check `datagroup-dashboard-sites` configuration in `/Common` partition
+- Verify `datagroup-dashboard-api-host` mappings
+- Ensure backend API hosts are accessible
+
+**TMOS compatibility issues**
+- Verify TMOS version is 15.0 or higher
+- For optimal performance and full feature support, use TMOS 15.1.0 or higher
+
+### Debug Mode
+Enable comprehensive logging:
+1. Set `debug_enabled = 1` in iRule
+2. Add client IP to `datagroup-dashboard-debug`
+3. Monitor logs: `tail -f /var/log/ltm`
+
+### Performance Tuning
+For deployments with many pools/members:
+- Enable pool filtering optimization
+- Implement DNS caching strategy
+- Consider using MICRO view mode as default
+- Adjust refresh intervals based on requirements
+
+## Known Limitations
+
+### Multi-Partition Support
+**Dashboard v1.7 is not multi-partition compatible.** All BIG-IP objects (pools, data groups, virtual servers, iRules, etc.) must reside in the `/Common` partition. 
+
+**Planned for Future Release:**
+- Multi-partition object discovery
+- Cross-partition pool monitoring
+- Partition-aware authentication
+
+### TMOS Version Compatibility
+**Minimum Required:** TMOS 15.0
+**Tested Versions:**
+- TMOS 15.x series (15.1.0 and higher recommended)
+- TMOS 16.x series (all versions)
+- TMOS 17.x series (all versions)
+
+**Version-Specific Notes:**
+- TMOS 11.x-14.x: Not supported (missing required iRule features and JSON capabilities)
+- TMOS 15.0+: Full feature support
+
+### Other Limitations
+- DNS resolution only supports IPv4 PTR lookups
+- Maximum recommended 100 pools per site for optimal performance
+- Wake Lock API requires HTTPS and modern browsers
+
+**Supported Browsers:**
+- Chrome 80+
+- Firefox 75+
+- Safari 13+
+- Edge 80+
+
+**Required Features:**
+- ES6 JavaScript support
+- CSS Grid and Flexbox
+- Fetch API
+- Session Storage
+- Wake Lock API (optional)
+
+## Security Considerations
+
+- Dashboard requires APM authentication
+- API endpoints use key-based authentication
+- Client access controlled via IP data groups
+- No sensitive data stored in browser localStorage
+- HTTPS required for all communications
+- Wake Lock API requires secure context
+
+## Performance
+
+**Scalability:**
+- Tested with 100+ pools per site
+- Supports 1000+ pool members total
+- DNS cache improves hostname resolution performance
+- Pool filtering reduces backend processing load
+
+**Resource Usage:**
+- ~2MB memory per dashboard instance
+- ~1KB/pool in session storage
+- Minimal CPU impact on F5 device
+- Network traffic scales with refresh frequency
+
+## Contributing
+
+This project uses:
+- **iRules (Tcl)** for F5 BIG-IP integration
+- **Vanilla JavaScript** for frontend (no frameworks)
+- **CSS Grid/Flexbox** for responsive layout
+- **Session Storage** for state persistence
+
+When contributing:
+1. Maintain compatibility with F5 BIG-IP TMOS 15.0+ (test on multiple versions)
+2. All development must target `/Common` partition (v1.7 limitation)
+3. Test with multiple themes and view modes
+4. Verify browser compatibility across supported platforms
+5. Update version numbers consistently across all files
+6. Add debug logging for new features
+7. Consider TMOS version compatibility for new iRule features
+
+## License
+
+MIT License - see [LICENSE](LICENSE) file for details.
+
+## Changelog
+
+### Version 1.7 (September 2025)
+- Enhanced DNS hostname resolution with caching
+- Pool filtering optimization for large deployments
+- Instance isolation for multiple dashboard sessions
+- Improved wake lock integration
+- Advanced search with saved search functionality
+- Session-based logger with export capabilities
+
+### Version 1.6
+- Multi-site architecture implementation
+- MACRO/MICRO view mode support
+- Member state tracking and acknowledgment
+
+### Version 1.5
+- Initial drag & drop pool reordering
+- Theme system implementation
+- Basic search and filtering
+
+## Support
+
+For issues and questions:
+1. Check the troubleshooting section
+2. Enable debug mode for detailed logging
+3. Review F5 BIG-IP logs for backend issues
+4. Verify data group configurations
+
+**Note:** This dashboard is designed for F5 BIG-IP environments and requires appropriate licensing and configuration.
