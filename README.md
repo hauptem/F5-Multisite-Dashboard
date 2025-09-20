@@ -100,12 +100,10 @@ The dashboard consists of two main components:
 - DNS resolver configured for PTR lookups (optional)
 - **Note:** This version (1.7) is **not multi-partition compatible** - all objects must be in `/Common` partition. Partition compatibility is planned for version 2.0.
 
-
 ### Frontend Setup
-
 #### Dashboard Front-End Critical Dependencies:
 
-All datagroups, pools and DNS resolver **must exist in LTM** and match the item names in the iRule. If you wish to use custom names for pools, make sure to edit the iRule references.
+All datagroups, pools and DNS resolver **must exist in LTM** and match the item names in the iRule. If you wish to use custom names for pools, make sure to edit the relevant iRule references.
 
 **1. `datagroup-dashboard-clients` (Address)**
 - Used to restrict dashboard access via Client IP or Client Subnet
@@ -141,13 +139,25 @@ All datagroups, pools and DNS resolver **must exist in LTM** and match the item 
 - This variable must be equal to 1 for the Front-end irule to trigger and needs to be set by the APM Policy that is placed on the Front-End virtualserver. Use any authentications methods appropriate for your organization or use no authentication, but APM must set this variable for the Front-End iRule to trigger. This is primarily done to ensure APM completes before the iRule starts processing client HTTP requests. It's an APM / LTM interoperability control. If you do not desire APM controls, simply set the variable in the LTM iRule or remove the variable check.
 
 **12. iFiles:**
-- `dashboard_js-core.js`   - Javascript Core Module
-- `dashboard_js-client.js` - Javascript Client Module
-- `dashboard_js-data.js`   - Javascript Data Module
-- `dashboard_js-ui.js`     - Javascript UI Module
-- `dashboard_js-logger.js` - Javascript Logs Module
+- `dashboard_js-core.js`   - **Javascript Core Module**
+                           - Core coordination functionality including initialization, themes switching, timers, MACRO/micro view modes, wake lock management, and alias switching
+ 
+- `dashboard_js-client.js` - **Javascript Client Module**
+                           - HTTP communication layer for JSON fetch API calls, settings persistence, DNS operations, and fetch request lifecycle management
+ 
+- `dashboard_js-data.js`   - **Javascript Data Module**
+                           - Data management, instance tracking, state tracking, pool reordering functionality, and DNS hostname caching
+
+- `dashboard_js-ui.js`     - **Javascript UI Module**
+                           - UI rendering, search filtering, visual state management, MACRO/micro view mode support, search recall and save, and integrated pool grid management 
+ 
+- `dashboard_js-logger.js` - **Javascript Logger Module**
+                           - Dedicated logger with resizable UI, state persistence, memory management, wake lock integration, session storage and copy
+
+- `dashboard_themes.css`   - **Dashboard CSS with 3 themes**
+                           - AGLight (theme1) which is reminiscint of AdminGUI, Monochrome Grey (theme2), and Amber (theme3)
+ 
 - `dashboard_logo.png`     - logo image file
-- `dashboard_themes.css`   - Dashboard CSS with 3 themes
 
 #### Front-end Configuration
 
