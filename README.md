@@ -39,27 +39,27 @@ Your enterprise monitoring tools excel at historical trends and alerting, but wh
 
 This isn't another monitoring dashboard. **It's the F5 serving a sophisticated application interface directly from the BIG-IP itself.**
 
-A 220KB modular JavaScript application runs entirely in your browser, served directly from the F5's high-speed operational dataplane. One or more sites operate as Dashboard Front-Ends serving the dashboard interface (HTML, JavaScript, CSS) via iFiles, while other sites operate as API Hosts providing pool data through optimized JSON-based dashboard API calls. This provides unified visibility across multiple sites from a single interface without requiring even a read-only account on any of the BIG-IPs, allowing you to switch between locations and see consistent pool, member, and health status data with almost no latency and very little overhead. All dashboard sites inherit the high-availability capabilities of their host BIG-IP cluster.
+A 170KB modular JavaScript application runs entirely in your browser, served directly from the F5's high-speed operational dataplane. One or more sites operate as Dashboard Front-Ends serving the dashboard interface (HTML, JavaScript, CSS) via iFiles, while other sites operate as API Hosts providing pool data through optimized JSON-based dashboard API calls. This provides unified visibility across multiple sites from a single interface without requiring even a read-only account on any of the BIG-IPs, allowing you to switch between locations and see consistent pool, member, and health status data with almost no latency and very little overhead. All dashboard sites inherit the high-availability capabilities of their host BIG-IP cluster.
 
-Think of it as an extension of the F5 GUI but with intelligence: near real-time state tracking, DNS hostname resolution, advanced search/filtering, and the ability to see exactly what changed and when. It gives application teams and operations teams direct visibility into application state without needing to wait for answers from F5 engineers, eliminating the organizational bottleneck that slows down troubleshooting when every minute counts.
+Think of it as an extension of the F5 GUI: near real-time state tracking, DNS hostname resolution (if configured), advanced search/filtering, and the ability to see exactly what changed and when. It gives application teams and operations teams direct visibility into application state without needing to wait for answers from F5 engineers, eliminating the organizational bottleneck that slows down troubleshooting when every minute counts.
 
-**Bottom Line:** When you need to know what's really happening with your applications behind the F5, Dashboard v1.7 gives you that answer immediately, with zero additional infrastructure complexity.
+**Bottom Line:** When you need to know what's really happening with your applications behind the F5, Dashboard gives you that answer immediately, with zero additional infrastructure complexity.
 
 ### Revolutionary Approach to Infrastructure Monitoring
 
-Dashboard v1.7 represents a fundamental departure from conventional monitoring paradigms, addressing a massive blind spot in enterprise infrastructure thinking.
+F5-Multisite-Dashboard represents a fundamental departure from conventional monitoring paradigms, addressing a massive blind spot in enterprise infrastructure thinking.
 
 Traditional monitoring platforms like Grafana, SolarWinds, and Dynatrace require separate servers, databases, and complex infrastructure. They're designed for historical analysis and trending across multiple systems.
 
-Dashboard v1.7 creates something entirely different: an ultra-performant, near real-time looking glass directly into application state. It doesn't replace Network Management Systems - it complements them by providing instant visibility that NMS platforms can't match.
+F5-Multisite-Dashboard creates something entirely different: an ultra-performant, near real-time looking glass directly into application state. It doesn't replace Network Management Systems - it complements them by providing instant visibility that NMS platforms can't match.
 
 ### Key Technical Innovations
 
 **Zero Infrastructure Overhead**
-Dashboard v1.7 runs entirely on the F5 itself with a 220KB JavaScript application in the browser. No monitoring servers, no databases, no network dependencies between components other than HTTPS/TCP443.
+F5-Multisite-Dashboard runs entirely on the F5 itself with a 220KB JavaScript application in the browser. No monitoring servers, no databases, no network dependencies between components other than HTTPS/TCP443.
 
 **Instant Application State Visibility**
-While NMS platforms excel at historical trends and enterprise-wide correlation, Dashboard v1.7 provides immediate, zero-latency insight into what's happening right now with pool members, DNS resolution, and application health.
+While NMS platforms excel at historical trends and enterprise-wide correlation, F5-Multisite-Dashboard provides immediate, zero-latency insight into what's happening right now with pool members, DNS resolution, and application health.
 
 **Self-Contained Intelligence**
 The JavaScript application includes real-time state tracking, DNS hostname resolution with caching, advanced Boolean search and filtering, and session persistence.
@@ -86,13 +86,13 @@ The JavaScript application includes real-time state tracking, DNS hostname resol
 
 **Organizational Boundaries:** Network teams manage F5s while monitoring teams buy enterprise platforms. The idea of the F5 serving sophisticated applications never crosses organizational boundaries.
 
-**Conceptual Limitations:** F5s are seen as network devices, not application platforms. The enterprise software industry has institutionalized the belief that monitoring must be external and centralized, even when the device being monitored is perfectly capable of providing its own real-time interface.
+**Conceptual Limitations:** F5s are still unfortunately seen as network devices, not application delivery platforms. The enterprise software industry has institutionalized the belief that monitoring must be external and centralized, even when the device being monitored is perfectly capable of providing its own real-time interface.
 
 **Technical Assumptions:** Most don't realize that modern browsers can handle sophisticated applications, or that iRules can serve as full application backends. The pattern of using F5s to inject third-party monitoring JavaScript exists, but always for sending data out to external systems, never for serving applications that query the F5 itself.
 
 ### The Elegance Factor
 
-Dashboard v1.7 demonstrates the power of questioning fundamental assumptions. Instead of building infrastructure to monitor infrastructure, it turns the infrastructure into its own monitoring platform.
+F5-Multisite-Dashboard demonstrates the power of questioning fundamental assumptions. Instead of building infrastructure to monitor infrastructure, it turns the infrastructure into its own monitoring platform.
 
 It's a perfect example of how the most innovative solutions often come from asking "what if we didn't do it the way everyone else does?"
 
@@ -170,7 +170,7 @@ The dashboard consists of two main components:
 - This pool contains the DNS listener for monitoring
 
 **10. `/Common/dashboard-DNS` (LTM dns-resolver)**
-- This resolver should map to a GTM listener dedicated for dashboard and scoped for in-addr.arpa
+- This resolver should map to a GTM listener dedicated for dashboard and scoped for in-addr.arpa.
 
 **11. `session.custom.dashboard.auth` (Front-end LTM APM session variable)**
 - This variable must be equal to 1 for this irule to trigger
@@ -311,7 +311,7 @@ tmsh create ltm virtual dashboard-frontend_https_vs {
 
 ### Backend API Setup
 
-The **Dashboard API Host** provides JSON-based pool data endpoints for remote sites. Backend hosts perform the actual pool member status checks, DNS hostname resolution, and serve optimized data to frontend dashboard instances. Multiple backend API hosts can support a single frontend for distributed monitoring.
+The **Dashboard API Host** provides JSON-based pool data endpoints for remote sites. Backend hosts perform the actual pool member status checks, DNS hostname resolution (if configured), and serve optimized data to frontend dashboard instances. Multiple backend API hosts can support a single frontend for distributed monitoring.
 
 #### Dashboard API Hosts Critical Dependencies:
 
@@ -331,7 +331,7 @@ The **Dashboard API Host** provides JSON-based pool data endpoints for remote si
 - This pool contains the DNS listener for monitoring
 
 **6. `/Common/dashboard-DNS` (API Host LTM dns-resolver)**
-- This resolver should map to a GTM listener dedicated for dashboard and scoped for in-addr.arpa
+- This resolver should map to a GTM listener dedicated for dashboard and scoped for in-addr.arpa.
 
 #### Backend API Configuration
 
@@ -543,9 +543,9 @@ Returns detailed pool and member status information.
 
 ### Basic Operation
 1. Access dashboard URL in web browser
-2. Authenticate via APM policy
-3. Select site from dropdown
-4. Monitor pool status in near-realtime
+2. Authenticate via APM policy and ensure APM sets session variable `session.custom.dashboard.auth = 1`
+3. Select desired site from dropdown
+4. Monitor pool status in near real-time
 
 ### Search and Filtering
 - **Search Syntax:** Boolean operators (AND, OR, NOT)
