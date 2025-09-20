@@ -1,7 +1,5 @@
 # F5 BIG-IP Multi-Site Dashboard v1.7
 
-A comprehensive real-time monitoring dashboard for F5 BIG-IP load balancers featuring multi-site support, DNS hostname resolution, member state tracking, and advanced filtering capabilities.
-
 ![Dashboard Version](https://img.shields.io/badge/version-1.7-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![F5 Compatible](https://img.shields.io/badge/F5%20BIG--IP-compatible-orange)
@@ -23,15 +21,9 @@ A comprehensive real-time monitoring dashboard for F5 BIG-IP load balancers feat
 ![Zero Infrastructure](https://img.shields.io/badge/Infrastructure-Zero%20Additional-brightgreen)
 ![Self Hosted](https://img.shields.io/badge/Hosting-Self%20Contained-blue)
 
+A comprehensive real-time monitoring dashboard for F5 BIG-IP load balancers featuring multi-site support, DNS hostname resolution, member state tracking, and advanced filtering capabilities.
+
 ## Overview
-
-<img width="1504" height="1021" alt="Image" src="https://github.com/user-attachments/assets/82483b0d-de24-424c-87ea-eb6c59252431" />
-
-<img width="1504" height="1021" alt="Image" src="https://github.com/user-attachments/assets/2a480ec3-c8c8-4463-a3df-acde98ed012f" />
-
-<img width="1504" height="1021" alt="Image" src="https://github.com/user-attachments/assets/dff7ae0e-5673-4048-8a4a-19eabea016a5" />
-
-### The Problem This Solves
 
 You're troubleshooting an application issue. Your monitoring tools show trends and alerts, but you need to know **right now**: Are the pool members actually up? Which ones changed state? What's the real status behind that load balancer?
 
@@ -64,6 +56,12 @@ The JavaScript application includes real-time state tracking, DNS hostname resol
 **Conceptual Limitations:** F5s are still unfortunately seen as network devices, not application delivery platforms. The enterprise software industry has institutionalized the belief that monitoring must be external and centralized, even when the device being monitored is perfectly capable of providing its own real-time interface.
 
 **Technical Assumptions:** Most don't realize that modern browsers can handle sophisticated applications, or that iRules can serve as full application backends. The pattern of using F5s to inject third-party monitoring JavaScript exists, but always for sending data out to external systems, never for serving applications that query the F5 itself.
+
+<img width="1504" height="1021" alt="Image" src="https://github.com/user-attachments/assets/82483b0d-de24-424c-87ea-eb6c59252431" />
+
+<img width="1504" height="1021" alt="Image" src="https://github.com/user-attachments/assets/2a480ec3-c8c8-4463-a3df-acde98ed012f" />
+
+<img width="1504" height="1021" alt="Image" src="https://github.com/user-attachments/assets/dff7ae0e-5673-4048-8a4a-19eabea016a5" />
 
 ## Features
 
