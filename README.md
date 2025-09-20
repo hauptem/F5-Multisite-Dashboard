@@ -407,7 +407,7 @@ tmsh create net dns-resolver dashboard-DNS {
             nameservers add { 192.168.1.53:53 }
         }
     }
-    route-domain none
+    route-domain 0
 }
 ```
 
