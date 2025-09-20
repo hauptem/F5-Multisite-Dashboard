@@ -113,13 +113,6 @@ It's a perfect example of how the most innovative solutions often come from aski
 - **Keyboard Shortcuts** - Full keyboard navigation and control
 - **Session Persistence** - Settings and state preserved across browser sessions
 
-### Advanced Features
-- **Wake Lock Integration** - Prevents tab sleep during active monitoring
-- **Instance Isolation** - Multiple dashboard instances with independent state
-- **Pool Filtering Optimization** - Backend optimization for large deployments
-- **Event Logger** - Comprehensive logging with copy/export functionality
-- **Auto-refresh with Pause** - Intelligent refresh management based on visibility
-
 ## Architecture
 
 The dashboard consists of two main components:
@@ -139,12 +132,11 @@ The dashboard consists of two main components:
 ## Installation
 
 ### Prerequisites
-- F5 BIG-IP with LTM module
+- F5 BIG-IP with LTM and APM modules provisioned
 - **TMOS Version:** 15.0 or higher (tested on 15.x, 16.x, 17.x)
-- APM module (for frontend authentication)
 - DNS resolver configured for PTR lookups (optional)
-- iFiles capability for static asset hosting
 - **Note:** This version (1.7) is **not multi-partition compatible** - all objects must be in `/Common` partition
+
 
 ### Frontend Setup
 
@@ -207,8 +199,8 @@ tmsh modify ltm data-group internal datagroup-dashboard-debug records add { 10.0
 # Available sites with sort order
 tmsh create ltm data-group internal datagroup-dashboard-sites type string
 tmsh modify ltm data-group internal datagroup-dashboard-sites records add { 
-    "CHICAGO" { data "1" } 
-    "NEW_YORK" { data "2" } 
+    "CHICAGO" { data "10" } 
+    "NEW_YORK" { data "20" } 
 }
 
 # API host mappings
@@ -220,8 +212,8 @@ tmsh modify ltm data-group internal datagroup-dashboard-api-host records add {
 # Pool configuration with sort order
 tmsh create ltm data-group internal datagroup-dashboard-pools type string
 tmsh modify ltm data-group internal datagroup-dashboard-pools records add { 
-    "web_pool" { data "1" } 
-    "app_pool" { data "2" } 
+    "web_pool" { data "10" } 
+    "app_pool" { data "20" } 
 }
 
 # Pool aliases (optional)
@@ -358,8 +350,8 @@ tmsh modify ltm data-group internal datagroup-dashboard-api-keys records add {
 # Pool configuration (backend-specific pools)
 tmsh create ltm data-group internal datagroup-dashboard-pools type string
 tmsh modify ltm data-group internal datagroup-dashboard-pools records add { 
-    "backend_web_pool" { data "1" } 
-    "backend_app_pool" { data "2" } 
+    "backend_web_pool" { data "10" } 
+    "backend_app_pool" { data "20" } 
 }
 
 # DNS pool (if using DNS resolution)
@@ -547,30 +539,13 @@ Returns detailed pool and member status information.
 }
 ```
 
-### Performance Optimization Headers
-
-For large deployments, the dashboard supports request optimization:
-
-**Pool Filtering:**
-```
-X-Need-Pools-Count: 2
-X-Need-Pools-1: web_pool,app_pool
-X-Need-Pools-2: db_pool
-```
-
-**DNS Optimization:**
-```
-X-Need-DNS-Count: 1
-X-Need-DNS-IPs-1: 192.168.1.10,192.168.1.11
-```
-
 ## Usage
 
 ### Basic Operation
 1. Access dashboard URL in web browser
 2. Authenticate via APM policy
 3. Select site from dropdown
-4. Monitor pool status in real-time
+4. Monitor pool status in near-realtime
 
 ### Search and Filtering
 - **Search Syntax:** Boolean operators (AND, OR, NOT)
@@ -619,11 +594,7 @@ X-Need-DNS-IPs-1: 192.168.1.10,192.168.1.11
 **Site selection shows no sites**
 - Check `datagroup-dashboard-sites` configuration in `/Common` partition
 - Verify `datagroup-dashboard-api-host` mappings
-- Ensure backend API hosts are accessible
-
-**TMOS compatibility issues**
-- Verify TMOS version is 15.0 or higher
-- For optimal performance and full feature support, use TMOS 15.1.0 or higher
+- Ensure backend API hosts are accessible from the Front-end
 
 ### Debug Mode
 Enable comprehensive logging:
@@ -643,11 +614,6 @@ For deployments with many pools/members:
 ### Multi-Partition Support
 **Dashboard v1.7 is not multi-partition compatible.** All BIG-IP objects (pools, data groups, virtual servers, iRules, etc.) must reside in the `/Common` partition. 
 
-**Planned for Future Release:**
-- Multi-partition object discovery
-- Cross-partition pool monitoring
-- Partition-aware authentication
-
 ### TMOS Version Compatibility
 **Minimum Required:** TMOS 15.0
 **Tested Versions:**
@@ -655,14 +621,8 @@ For deployments with many pools/members:
 - TMOS 16.x series (all versions)
 - TMOS 17.x series (all versions)
 
-**Version-Specific Notes:**
-- TMOS 11.x-14.x: Not supported (missing required iRule features and JSON capabilities)
-- TMOS 15.0+: Full feature support
-
 ### Other Limitations
 - DNS resolution only supports IPv4 PTR lookups
-- Maximum recommended 100 pools per site for optimal performance
-- Wake Lock API requires HTTPS and modern browsers
 
 **Supported Browsers:**
 - Chrome 80+
@@ -670,29 +630,11 @@ For deployments with many pools/members:
 - Safari 13+
 - Edge 80+
 
-**Required Features:**
-- ES6 JavaScript support
-- CSS Grid and Flexbox
-- Fetch API
-- Session Storage
-- Wake Lock API (optional)
-
-## Security Considerations
-
-- Dashboard requires APM authentication
-- API endpoints use key-based authentication
-- Client access controlled via IP data groups
-- No sensitive data stored in browser localStorage
-- HTTPS required for all communications
-- Wake Lock API requires secure context
-
 ## Performance
 
 **Scalability:**
-- Tested with 100+ pools per site
-- Supports 1000+ pool members total
-- DNS cache improves hostname resolution performance
-- Pool filtering reduces backend processing load
+- Tested with 500+ pools per site
+- Tested with 1000+ pool members 
 
 **Resource Usage:**
 - ~2MB memory per dashboard instance
@@ -721,32 +663,4 @@ When contributing:
 
 MIT License - see [LICENSE](LICENSE) file for details.
 
-## Changelog
-
-### Version 1.7 (September 2025)
-- Enhanced DNS hostname resolution with caching
-- Pool filtering optimization for large deployments
-- Instance isolation for multiple dashboard sessions
-- Improved wake lock integration
-- Advanced search with saved search functionality
-- Session-based logger with export capabilities
-
-### Version 1.6
-- Multi-site architecture implementation
-- MACRO/MICRO view mode support
-- Member state tracking and acknowledgment
-
-### Version 1.5
-- Initial drag & drop pool reordering
-- Theme system implementation
-- Basic search and filtering
-
-## Support
-
-For issues and questions:
-1. Check the troubleshooting section
-2. Enable debug mode for detailed logging
-3. Review F5 BIG-IP logs for backend issues
-4. Verify data group configurations
-
-**Note:** This dashboard is designed for F5 BIG-IP environments and requires appropriate licensing and configuration.
+**Note:** This dashboard is designed for F5 BIG-IP TMOS environments and requires appropriate licensing and configuration.
