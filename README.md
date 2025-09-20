@@ -25,7 +25,7 @@ A comprehensive real-time monitoring dashboard for F5 BIG-IP load balancers feat
 
 ## Overview
 
-<img width="1643" height="1046" alt="Image" src="https://github.com/user-attachments/assets/94f0c88b-21e5-484a-8626-d02c6e6bfffc" />
+<img width="1504" height="1021" alt="Image" src="https://github.com/user-attachments/assets/82483b0d-de24-424c-87ea-eb6c59252431" />
 
 
 ### The Problem This Solves
