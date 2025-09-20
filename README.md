@@ -1,10 +1,32 @@
+# F5 BIG-IP Multi-Site Dashboard v1.7
+
+A comprehensive real-time monitoring dashboard for F5 BIG-IP load balancers featuring multi-site support, DNS hostname resolution, member state tracking, and advanced filtering capabilities.
+
+![Dashboard Version](https://img.shields.io/badge/version-1.7-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
+![F5 Compatible](https://img.shields.io/badge/F5%20BIG--IP-compatible-orange)
+![TMOS Version](https://img.shields.io/badge/TMOS-15.0%2B-red)
+![Partition Support](https://img.shields.io/badge/multi--partition-not%20supported-yellow)
+
+## Overview
+
+### The Problem This Solves
+
+You're troubleshooting an application issue. Your monitoring tools show trends and alerts, but you need to know **right now**: Are the pool members actually up? Which ones changed state? What's the real status behind that load balancer?
+
+Traditionally, this means logging into the F5 GUI, navigating through Local Traffic > Pools, clicking through individual pool pages, and refreshing to see current state. When your application spans multiple sites, you're logging into multiple F5s, checking the same pools across different locations, trying to piece together a complete picture of application health. Meanwhile, application teams are asking operations teams for status updates, who then have to reach out to F5 engineers, creating a chain of dependencies just to answer basic "is it working?" questions.
+
+Your enterprise monitoring tools excel at historical trends and alerting, but when you need current state of specific pool members - not 5 minutes ago when the last poll happened - there's a gap that forces manual investigation.
+
 ### What This Actually Is
 
 This isn't another monitoring dashboard. **It's the F5 serving a sophisticated application interface directly from the BIG-IP itself.**
 
-A 170KB modular JavaScript application runs entirely in your browser, served directly from the F5's high-speed operational dataplane. One or more sites operate as Dashboard Front-Ends serving the dashboard interface (HTML, JavaScript, CSS) via iFiles, while other sites operate as API Hosts providing pool data through optimized JSON-based dashboard API calls. This provides unified visibility across multiple sites from a single interface without requiring even a read-only account on any of the BIG-IPs, allowing you to switch between locations and see consistent pool, member, and health status data with almost no latency and very little overhead. All dashboard sites inherit the high-availability capabilities of their host BIG-IP cluster.
+A 220KB modular JavaScript application runs entirely in your browser, served directly from the F5's high-speed operational dataplane. One or more sites operate as Dashboard Front-Ends serving the dashboard interface (HTML, JavaScript, CSS) via iFiles, while other sites operate as API Hosts providing pool data through optimized JSON-based dashboard API calls. This provides unified visibility across multiple sites from a single interface without requiring even a read-only account on any of the BIG-IPs, allowing you to switch between locations and see consistent pool, member, and health status data with almost no latency and very little overhead. All dashboard sites inherit the high-availability capabilities of their host BIG-IP cluster.
 
 Think of it as an extension of the F5 GUI but with intelligence: near real-time state tracking, DNS hostname resolution, advanced search/filtering, and the ability to see exactly what changed and when. It gives application teams and operations teams direct visibility into application state without needing to wait for answers from F5 engineers, eliminating the organizational bottleneck that slows down troubleshooting when every minute counts.
+
+**Bottom Line:** When you need to know what's really happening with your applications behind the F5, Dashboard v1.7 gives you that answer immediately, with zero additional infrastructure complexity.
 
 ### Revolutionary Approach to Infrastructure Monitoring
 
@@ -17,7 +39,7 @@ Dashboard v1.7 creates something entirely different: an ultra-performant, near r
 ### Key Technical Innovations
 
 **Zero Infrastructure Overhead**
-Dashboard v1.7 runs entirely on the F5 itself with a 170KB JavaScript application in the browser. No monitoring servers, no databases, no network dependencies between components other than HTTPS/TCP443.
+Dashboard v1.7 runs entirely on the F5 itself with a 220KB JavaScript application in the browser. No monitoring servers, no databases, no network dependencies between components other than HTTPS/TCP443.
 
 **Instant Application State Visibility**
 While NMS platforms excel at historical trends and enterprise-wide correlation, Dashboard v1.7 provides immediate, zero-latency insight into what's happening right now with pool members, DNS resolution, and application health.
@@ -55,35 +77,7 @@ The JavaScript application includes real-time state tracking, DNS hostname resol
 
 Dashboard v1.7 demonstrates the power of questioning fundamental assumptions. Instead of building infrastructure to monitor infrastructure, it turns the infrastructure into its own monitoring platform.
 
-It's a perfect example of how the most innovative solutions often come from asking "what if we didn't do it the way everyone else does?"# F5 BIG-IP Multi-Site Dashboard v1.7
-
-A comprehensive real-time monitoring dashboard for F5 BIG-IP load balancers featuring multi-site support, DNS hostname resolution, member state tracking, and advanced filtering capabilities.
-
-![Dashboard Version](https://img.shields.io/badge/version-1.7-blue)
-![License](https://img.shields.io/badge/license-MIT-green)
-![F5 Compatible](https://img.shields.io/badge/F5%20BIG--IP-compatible-orange)
-![TMOS Version](https://img.shields.io/badge/TMOS-15.0%2B-red)
-![Partition Support](https://img.shields.io/badge/multi--partition-not%20supported-yellow)
-
-## Overview
-
-### The Problem This Solves
-
-You're troubleshooting an application issue. Your monitoring tools show trends and alerts, but you need to know **right now**: Are the pool members actually up? Which ones changed state? What's the real status behind that load balancer?
-
-Traditionally, this means logging into the F5 GUI, navigating through Local Traffic > Pools, clicking through individual pool pages, and refreshing to see current state. When your application spans multiple sites, you're logging into multiple F5s, checking the same pools across different locations, trying to piece together a complete picture of application health. Meanwhile, application teams are asking operations teams for status updates, who then have to reach out to F5 engineers, creating a chain of dependencies just to answer basic "is it working?" questions.
-
-Your enterprise monitoring tools excel at historical trends and alerting, but when you need current state of specific pool members - not 5 minutes ago when the last poll happened - there's a gap that forces manual investigation.
-
-### What This Actually Is
-
-This isn't another monitoring dashboard. **It's the F5 serving a sophisticated application interface directly from the BIG-IP itself.**
-
-A 220KB modular JavaScript application runs entirely in your browser, served directly from the F5's high-speed operational dataplane. One or more sites operate as Dashboard Front-Ends serving the dashboard interface (HTML, JavaScript, CSS) via iFiles, while other sites operate as API Hosts providing pool data through optimized JSON-based dashboard API calls. This provides unified visibility across multiple sites from a single interface without requiring even a read-only account on any of the BIG-IPs, allowing you to switch between locations and see consistent pool, member, and health status data with almost no latency and very little overhead. All dashboard sites inherit the high-availability capabilities of their host BIG-IP cluster.
-
-Think of it as an extension of the F5 GUI but with intelligence: near real-time state tracking, DNS hostname resolution, advanced search/filtering, and the ability to see exactly what changed and when. It gives application teams and operations teams direct visibility into application state without needing to wait for answers from F5 engineers, eliminating the organizational bottleneck that slows down troubleshooting when every minute counts.
-
-**Bottom Line:** When you need to know what's really happening with your applications behind the F5, Dashboard v1.7 gives you that answer immediately, with zero additional infrastructure complexity.
+It's a perfect example of how the most innovative solutions often come from asking "what if we didn't do it the way everyone else does?"
 
 ## Features
 
@@ -137,8 +131,6 @@ The dashboard consists of two main components:
 
 ### Frontend Setup
 
-### Frontend Setup
-
 #### Dashboard Front-End Critical Dependencies:
 
 **1. `datagroup-dashboard-clients` (Address)**
@@ -183,7 +175,9 @@ The dashboard consists of two main components:
 - `dashboard_logo.png` - logo image file
 - `dashboard_themes.css` - Dashboard CSS with themes
 
-1. **Create Required Data Groups:**
+#### Front-end Configuration
+
+**1. Create Required Data Groups:**
 ```bash
 # Client access control
 tmsh create ltm data-group internal datagroup-dashboard-clients type ip
@@ -228,7 +222,7 @@ tmsh modify ltm data-group internal datagroup-dashboard-api-keys records add {
 
 ### Automated Pool Discovery
 
-If you already have many pools configured, use this script to automatically populate the pool data groups:
+Use this script to automatically discover and populate pool data groups:
 
 ```bash
 #!/bin/bash
@@ -240,12 +234,12 @@ POOLS=$(tmsh list ltm pool one-line | grep -o "ltm pool [^{]*" | awk '{print $3}
 
 echo "Discovered pools: $POOLS"
 
-# Populate dashboard-pools data group with auto-incrementing sort order
+# Populate dashboard-pools data group with auto-incrementing sort order (by 10s)
 POOL_RECORDS=""
-SORT_ORDER=1
+SORT_ORDER=10
 for POOL in $POOLS; do
     POOL_RECORDS="$POOL_RECORDS \"$POOL\" { data \"$SORT_ORDER\" }"
-    ((SORT_ORDER++))
+    ((SORT_ORDER+=10))
 done
 
 # Apply to data groups
@@ -265,7 +259,7 @@ echo "Total pools configured: $(echo $POOLS | wc -w)"
 
 **Note:** After running this script, you can manually customize aliases by modifying the `datagroup-dashboard-pool-alias` data group to provide user-friendly display names.
 
-2. **Create Pools:**
+**2. Create Pools:**
 ```bash
 # API hosts pool
 tmsh create ltm pool dashboard-api-hosts_https_pool members add { 192.168.2.100:443 }
@@ -274,7 +268,7 @@ tmsh create ltm pool dashboard-api-hosts_https_pool members add { 192.168.2.100:
 tmsh create ltm pool dashboard-dns_udp53_pool members add { 192.168.1.53:53 }
 ```
 
-3. **Upload Static Assets as iFiles:**
+**3. Upload Static Assets as iFiles:**
 ```bash
 tmsh create sys file ifile dashboard_js-core.js source-path file:///path/to/dashboard_js-core.js
 tmsh create sys file ifile dashboard_js-client.js source-path file:///path/to/dashboard_js-client.js
@@ -285,7 +279,7 @@ tmsh create sys file ifile dashboard_themes.css source-path file:///path/to/dash
 tmsh create sys file ifile dashboard_logo.png source-path file:///path/to/dashboard_logo.png
 ```
 
-4. **Create Virtual Server:**
+**4. Create Virtual Server:**
 ```bash
 tmsh create ltm virtual dashboard-frontend_https_vs {
     destination 192.168.1.100:443
@@ -302,13 +296,13 @@ tmsh create ltm virtual dashboard-frontend_https_vs {
 }
 ```
 
-5. **Configure APM Policy:**
+**5. Configure APM Policy:**
    - Create APM policy with session variable `session.custom.dashboard.auth = 1`
    - Apply policy to the virtual server
 
 ### Backend API Setup
 
-### Backend API Setup
+The **Dashboard API Host** provides JSON-based pool data endpoints for remote sites. Backend hosts perform the actual pool member status checks, DNS hostname resolution, and serve optimized data to frontend dashboard instances. Multiple backend API hosts can support a single frontend for distributed monitoring.
 
 #### Dashboard API Hosts Critical Dependencies:
 
@@ -316,13 +310,13 @@ tmsh create ltm virtual dashboard-frontend_https_vs {
 - Used to restrict access to authorized dashboard front-ends Self-IPs
 
 **2. `datagroup-dashboard-api-keys` (String)**
-- Type: String, Used to authenticate Front-end to API host
+- Used to authenticate Front-end to API host
 
 **3. `datagroup-dashboard-pools` (String)**
-- Type: String, Used to provide a list of pools to display
+- Used to provide a list of pools to display
 
 **4. `datagroup-dashboard-pool-alias` (String)**
-- Type: String, Used to create alias names for actual pool names
+- Used to create alias names for actual pool names
 
 **5. `dashboard-dns_udp53_pool` (API Host LTM Pool)**
 - This pool contains the DNS listener for monitoring
@@ -330,7 +324,9 @@ tmsh create ltm virtual dashboard-frontend_https_vs {
 **6. `/Common/dashboard-DNS` (API Host LTM dns-resolver)**
 - This resolver should map to a GTM listener dedicated for dashboard and scoped for in-addr.arpa
 
-1. **Create Required Data Groups:**
+#### Backend API Configuration
+
+**1. Create Required Data Groups:**
 ```bash
 # Trusted frontend IPs
 tmsh create ltm data-group internal datagroup-dashboard-trusted-frontends type ip
@@ -353,7 +349,46 @@ tmsh modify ltm data-group internal datagroup-dashboard-pools records add {
 tmsh create ltm pool dashboard-dns_udp53_pool members add { 192.168.2.53:53 }
 ```
 
-2. **Create API Virtual Server:**
+### Automated Pool Discovery
+
+Use the same pool discovery script on backend API hosts:
+
+```bash
+#!/bin/bash
+# Automated Pool Discovery Script
+# This script discovers all existing pools and populates the dashboard data groups
+
+# Get all pool names from /Common partition (removing /Common/ prefix)
+POOLS=$(tmsh list ltm pool one-line | grep -o "ltm pool [^{]*" | awk '{print $3}' | sed 's|^/Common/||' | tr '\n' ' ')
+
+echo "Discovered pools: $POOLS"
+
+# Populate dashboard-pools data group with auto-incrementing sort order (by 10s)
+POOL_RECORDS=""
+SORT_ORDER=10
+for POOL in $POOLS; do
+    POOL_RECORDS="$POOL_RECORDS \"$POOL\" { data \"$SORT_ORDER\" }"
+    ((SORT_ORDER+=10))
+done
+
+# Apply to data groups
+tmsh modify ltm data-group internal datagroup-dashboard-pools records replace-all-with { $POOL_RECORDS }
+
+# Initialize empty aliases (can be customized later)
+ALIAS_RECORDS=""
+for POOL in $POOLS; do
+    ALIAS_RECORDS="$ALIAS_RECORDS \"$POOL\" { data \"\" }"
+done
+
+tmsh modify ltm data-group internal datagroup-dashboard-pool-alias records replace-all-with { $ALIAS_RECORDS }
+
+echo "Pool data groups populated successfully!"
+echo "Total pools configured: $(echo $POOLS | wc -w)"
+```
+
+**Note:** After running this script, you can manually customize aliases by modifying the `datagroup-dashboard-pool-alias` data group to provide user-friendly display names.
+
+**2. Create API Virtual Server:**
 ```bash
 tmsh create ltm virtual dashboard-api_https_vs {
     destination 192.168.2.100:443
@@ -371,6 +406,8 @@ tmsh create ltm virtual dashboard-api_https_vs {
 ```
 
 ### DNS Resolver Setup (Optional)
+
+The **DNS Resolver** provides hostname resolution capabilities for both frontend and backend components. This enables the dashboard to display friendly hostnames instead of IP addresses for pool members. The resolver can be a standard LTM DNS resolver or a dedicated GTM listener with access restrictions.
 
 **Create DNS Resolver:**
 ```bash
