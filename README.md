@@ -25,10 +25,10 @@ A comprehensive real-time monitoring dashboard for F5 BIG-IP load balancers feat
 
 ## Overview
 
-**Dashboard with theme1 "AGLight" enabled and site Chicago shown in MACRO display mode** 
+Theme1 "AGLight" enabled shown in MACRO display mode 
 <img width="1504" height="1021" alt="Image" src="https://github.com/user-attachments/assets/82483b0d-de24-424c-87ea-eb6c59252431" />
 
-**Dashboard with theme2 "Monochrome Grey" enabled and site Chicago shown in micro display mode with Logger open and elements alarmed** 
+Theme2 "Monochrome Grey" shown in micro display mode with Logger and alarmed elements
 <img width="1504" height="1021" alt="Image" src="https://github.com/user-attachments/assets/2a480ec3-c8c8-4463-a3df-acde98ed012f" />
 
 
