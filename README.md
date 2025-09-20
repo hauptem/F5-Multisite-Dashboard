@@ -102,14 +102,14 @@ The dashboard consists of two main components:
 
 ### Prerequisites
 - F5 BIG-IP with LTM and APM modules provisioned
-- **TMOS Version:** 15.0 or higher (tested on 15.x, 16.x, 17.x)
+- TMOS Version: 15.0 or higher (tested on 15.x, 16.x, 17.x)
 - DNS resolver configured for PTR lookups (optional)
-- **Note:** This version (1.7) is **not multi-partition compatible** - all objects must be in `/Common` partition. Partition compatibility is planned for version 2.0.
+- **Note:** This version (1.7) is not multi-partition compatible - all objects must be in `/Common` partition. Partition compatibility is planned for version 2.0.
 
 ### Frontend Setup
 #### Dashboard Front-End Critical Dependencies:
 
-All datagroups, pools and DNS resolver **must exist in LTM** and match the item names in the iRule. If you wish to use custom names for pools, make sure to edit the relevant iRule references.
+All datagroups, pools and DNS resolver must exist in LTM and match the item names in the iRule. If you wish to use custom names for pools, make sure to edit the relevant iRule references.
 
 **1. `datagroup-dashboard-clients` (Address)**
 - Used to restrict dashboard access via Client IP or Client Subnet
@@ -190,14 +190,17 @@ tmsh modify ltm data-group internal datagroup-dashboard-api-host records add {
     "NEWYORK" { data "192.168.2.100" } 
 }
 
-# Pool configuration with sort order. The sort order is an administrative control that allows the UI Module to present the pools in a controlled order. If no sort order value is set, the iRule applies a value of 999 and the UI displays the pools in the order they exist within the pools datagroup.
+# Pool configuration with sort order. The sort order is an administrative control that allows the UI Module
+# to present the pools in a controlled order. If no sort order value is set, the iRule applies a value of
+# 999 and the UI displays the pools in the order they exist within the pools datagroup.
 tmsh create ltm data-group internal datagroup-dashboard-pools type string
 tmsh modify ltm data-group internal datagroup-dashboard-pools records add { 
     "web_pool" { data "10" } 
     "app_pool" { data "20" } 
 }
 
-# Pool aliases (optional) - If the LTM pool names are sufficiently descriptive then aliases may not be required; Note that by default the dashboard shows the alias names with the actual names in the tooltip.
+# Pool aliases (optional) - If the LTM pool names are sufficiently descriptive then aliases may not be
+# required; Note that by default the dashboard shows the alias names with the actual names in the tooltip.
 tmsh create ltm data-group internal datagroup-dashboard-pool-alias type string
 tmsh modify ltm data-group internal datagroup-dashboard-pool-alias records add { 
     "web_pool" { data "Web Servers" } 
