@@ -142,38 +142,40 @@ The dashboard consists of two main components:
 
 #### Dashboard Front-End Critical Dependencies:
 
+All datagroups, pools and DNS resolver **must exist and match the item names** in the iRule. If you wish to use custom names, make sure to edit the iRule as well.
+
 **1. `datagroup-dashboard-clients` (Address)**
-- Used to restrict dashboard access
+- Used to restrict dashboard access via Client IP or Client Subnet
 
 **2. `datagroup-dashboard-debug` (Address)**  
-- Used to limit dashboard debug
+- Used to limit dashboard debug via Client IP or Client Subnet
 
 **3. `datagroup-dashboard-sites` (String)**
-- Used to define dashboard site list
+- Used to define dashboard site list - the Front-End is typically the first site defined with the lowest sort order
 
 **4. `datagroup-dashboard-api-host` (String)**
-- Used to map remote Site name to IP address
+- Used to map remote Site names to API Host Virtualserver IP addresses. 
 
 **5. `datagroup-dashboard-pools` (String)**
-- Used to provide a list of pools to display
+- Used to provide a list of pools to display. This is an essential step. LTM does not permit an iRule to determine elements of TMOS configuration. Therefore we **must** administratively provide configuration attributes in the form of LTM pool names that the dashboard will be permitted to display.
 
 **6. `datagroup-dashboard-pool-alias` (String)**
-- Used to create alias names for actual pool names
+- Used to create alias names for actual pool names. This feature is optional, but the datagroup must exist. This is to permit Aliases or user friendly names to be displayed instead of the actual LTM pool names. This is for environments where a pool name might not provide the best indicator of what the pool actually supports.
 
 **7. `datagroup-dashboard-api-keys` (String)**
-- Used to authenticate Front-end to API host
+- Used to authenticate Front-end to API hosts. This can be the same across the entire topology but must exist or the Front-End will have no access to the api endpoint /api/proxy/pools
 
 **8. `dashboard-api-hosts_https_pool` (LTM Pool)**
-- This pool contains the API Host IPs for monitoring
+- This pool contains the API Host IPs for monitoring. The pool is not used for LB determination, it is used simply for the Front-end to monitor reachability of each API Host Virtualserver.
 
 **9. `dashboard-dns_udp53_pool` (LTM Pool)**
-- This pool contains the DNS listener for monitoring
+- This pool contains the DNS listener used for monitoring purposes only. If the listener is detected down by the monitor attached to this pool, the iRule will fail back to IP-only mode gracefully. 
 
 **10. `/Common/dashboard-DNS` (LTM dns-resolver)**
-- This resolver should map to a GTM listener dedicated for dashboard and scoped for in-addr.arpa.
+- This resolver is recommended to map to a GTM listener dedicated for dashboard with the DNS iRule and scoped for in-addr.arpa. but it could be any DNS server.
 
 **11. `session.custom.dashboard.auth` (Front-end LTM APM session variable)**
-- This variable must be equal to 1 for this irule to trigger
+- This variable must be equal to 1 for this irule to trigger and needs to be set by the APM Policy that is placed on the Front-End virtualserver. Use any authentications methods appropriate for your organization or no authentication, but APM must set this variable for the Front-End iRule to trigger. This is primarily done to ensure APM completes before the iRule starts processing client HTTP requests. It's an APM / LTM interoperability control.
 
 **12. iFiles:**
 - `dashboard_js-core.js` - Javascript Core Module
