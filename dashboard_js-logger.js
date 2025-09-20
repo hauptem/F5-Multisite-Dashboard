@@ -10,6 +10,7 @@
 //
 // Description: Dedicated logger functionality with resizable UI, state 
 // persistence, memory management, wake lock integration, session storage and copy
+
 // =============================================================================
 // MODULE INITIALIZATION
 // =============================================================================
