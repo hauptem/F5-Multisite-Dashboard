@@ -602,13 +602,6 @@ Enable comprehensive logging:
 2. Add client IP to `datagroup-dashboard-debug`
 3. Monitor logs: `tail -f /var/log/ltm`
 
-### Performance Tuning
-For deployments with many pools/members:
-- Enable pool filtering optimization
-- Implement DNS caching strategy
-- Consider using MICRO view mode as default
-- Adjust refresh intervals based on requirements
-
 ## Known Limitations
 
 ### Multi-Partition Support
@@ -624,12 +617,6 @@ For deployments with many pools/members:
 ### Other Limitations
 - DNS resolution only supports IPv4 PTR lookups
 
-**Supported Browsers:**
-- Chrome 80+
-- Firefox 75+
-- Safari 13+
-- Edge 80+
-
 ## Performance
 
 **Scalability:**
@@ -641,6 +628,7 @@ For deployments with many pools/members:
 - ~1KB/pool in session storage
 - Minimal CPU impact on F5 device
 - Network traffic scales with refresh frequency
+- 0% GPU Browser pipeline usage when in an unalarmed state
 
 ## Contributing
 
@@ -648,7 +636,7 @@ This project uses:
 - **iRules (Tcl)** for F5 BIG-IP integration
 - **Vanilla JavaScript** for frontend (no frameworks)
 - **CSS Grid/Flexbox** for responsive layout
-- **Session Storage** for state persistence
+- **Session Storage** for session state persistence
 
 When contributing:
 1. Maintain compatibility with F5 BIG-IP TMOS 15.0+ (test on multiple versions)
@@ -662,5 +650,3 @@ When contributing:
 ## License
 
 MIT License - see [LICENSE](LICENSE) file for details.
-
-**Note:** This dashboard is designed for F5 BIG-IP TMOS environments and requires appropriate licensing and configuration.
