@@ -63,6 +63,8 @@ The JavaScript application includes real-time state tracking, DNS hostname resol
 
 <img width="1504" height="1021" alt="Image" src="https://github.com/user-attachments/assets/dff7ae0e-5673-4048-8a4a-19eabea016a5" />
 
+<img width="2026" height="1130" alt="Image" src="https://github.com/user-attachments/assets/d629864e-4614-4e6b-8886-553c0b720f2c" />
+
 ## Features
 
 ### Core Functionality
