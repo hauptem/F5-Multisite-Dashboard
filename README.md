@@ -37,48 +37,19 @@ Your enterprise monitoring tools excel at historical trends and alerting, but wh
 
 This isn't another monitoring dashboard. **It's the F5 serving a sophisticated application interface directly from the BIG-IP itself.**
 
-A 170KB modular JavaScript application runs entirely in your browser, served directly from the F5's high-speed operational dataplane. One or more sites operate as Dashboard Front-Ends serving the dashboard interface (HTML, JavaScript, CSS) via iFiles, while other sites operate as API Hosts providing pool data through optimized JSON-based dashboard API calls. This provides unified visibility across multiple sites from a single interface without requiring even a read-only account on any of the BIG-IPs, allowing you to switch between locations and see consistent pool, member, and health status data with almost no latency and very little overhead. All dashboard sites inherit the high-availability capabilities of their host BIG-IP cluster.
+A 170KB modular JavaScript application runs entirely in your browser, served directly from the F5's high-speed operational dataplane. One or more sites operate as Dashboard Front-Ends serving the dashboard interface (HTML, JavaScript, CSS) via iFiles, while other sites operate as API Hosts providing pool data through optimized JSON-based dashboard API calls. This provides unified visibility across multiple sites from a single interface without requiring even a read-only account on any of the BIG-IPs, allowing you to switch between locations and see consistent pool, member, and health status data with almost no latency and very little overhead. All dashboard sites inherit the high-availability capabilities of their host BIG-IP cluster. Think of it as an extension of the F5 GUI: near real-time state tracking, DNS hostname resolution (if configured), advanced search/filtering, and the ability to see exactly what changed and when. It gives application teams and operations teams direct visibility into application state without needing to wait for answers from F5 engineers, eliminating the organizational bottleneck that slows down troubleshooting when every minute counts.
 
-Think of it as an extension of the F5 GUI: near real-time state tracking, DNS hostname resolution (if configured), advanced search/filtering, and the ability to see exactly what changed and when. It gives application teams and operations teams direct visibility into application state without needing to wait for answers from F5 engineers, eliminating the organizational bottleneck that slows down troubleshooting when every minute counts.
+**Bottom Line:** When you need to know what's really happening with your applications behind the F5, Dashboard gives you that answer immediately, with zero additional infrastructure cost.
 
-**Bottom Line:** When you need to know what's really happening with your applications behind the F5, Dashboard gives you that answer immediately, with zero additional infrastructure complexity.
-
-### Revolutionary Approach to Infrastructure Monitoring
-
-F5-Multisite-Dashboard represents a fundamental departure from conventional monitoring paradigms, addressing a massive blind spot in enterprise infrastructure thinking.
-
-Traditional monitoring platforms like Grafana, SolarWinds, and Dynatrace require separate servers, databases, and complex infrastructure. They're designed for historical analysis and trending across multiple systems.
-
-F5-Multisite-Dashboard creates something entirely different: an ultra-performant, near real-time looking glass directly into application state. It doesn't replace Network Management Systems - it complements them by providing instant visibility that NMS platforms can't match.
+F5-Multisite-Dashboard is an ultra-performant, near real-time looking glass directly into application pool state. It doesn't replace Network Management Systems - it complements them by providing instant visibility that NMS platforms can't match.
 
 ### Key Technical Innovations
 
 **Zero Infrastructure Overhead**
-F5-Multisite-Dashboard runs entirely on the F5 itself with a 220KB JavaScript application in the browser. No monitoring servers, no databases, no network dependencies between components other than HTTPS/TCP443.
-
-**Instant Application State Visibility**
-While NMS platforms excel at historical trends and enterprise-wide correlation, F5-Multisite-Dashboard provides immediate, zero-latency insight into what's happening right now with pool members, DNS resolution, and application health.
+F5-Multisite-Dashboard runs entirely on the F5 itself via an iFile-served 170KB Modular JavaScript application in the browser. No monitoring servers, no databases, no network dependencies between components (other than HTTPS/TCP443).
 
 **Self-Contained Intelligence**
 The JavaScript application includes real-time state tracking, DNS hostname resolution with caching, advanced Boolean search and filtering, and session persistence.
-
-**Advanced Client-Side Architecture**
-- Modular JavaScript Design: Core, Data, UI, and Logger modules with proper separation of concerns
-- Intelligent State Management: Real-time member state tracking with baseline comparison and auto-acknowledgment
-- DNS Optimization: Client-side hostname caching with intelligent backend request optimization
-- Performance Optimization: Pool filtering headers to reduce backend processing load
-
-**Sophisticated User Experience**
-- Dual View Modes: MACRO mode for detailed troubleshooting, MICRO mode for high-level monitoring
-- Advanced Search: Boolean operators (AND, OR, NOT) with special keywords and real-time filtering
-- Contextual Awareness: Per-site persistence of preferences, search filters, and custom pool ordering
-- Accessibility Features: Comprehensive keyboard shortcuts and responsive design
-
-**Enterprise-Grade Reliability**
-- Graceful Degradation: Continues operation when DNS services are unavailable
-- Error Resilience: Standardized error handling with detailed diagnostic information
-- Session Management: Seamless integration with F5 APM for enterprise authentication
-- Security Controls: Client IP validation, API key authentication, and comprehensive input validation
 
 ### Why This Approach Wasn't Considered Before
 
@@ -87,12 +58,6 @@ The JavaScript application includes real-time state tracking, DNS hostname resol
 **Conceptual Limitations:** F5s are still unfortunately seen as network devices, not application delivery platforms. The enterprise software industry has institutionalized the belief that monitoring must be external and centralized, even when the device being monitored is perfectly capable of providing its own real-time interface.
 
 **Technical Assumptions:** Most don't realize that modern browsers can handle sophisticated applications, or that iRules can serve as full application backends. The pattern of using F5s to inject third-party monitoring JavaScript exists, but always for sending data out to external systems, never for serving applications that query the F5 itself.
-
-### The Elegance Factor
-
-F5-Multisite-Dashboard demonstrates the power of questioning fundamental assumptions. Instead of building infrastructure to monitor infrastructure, it turns the infrastructure into its own monitoring platform.
-
-It's a perfect example of how the most innovative solutions often come from asking "what if we didn't do it the way everyone else does?"
 
 ## Features
 
@@ -133,14 +98,14 @@ The dashboard consists of two main components:
 - F5 BIG-IP with LTM and APM modules provisioned
 - **TMOS Version:** 15.0 or higher (tested on 15.x, 16.x, 17.x)
 - DNS resolver configured for PTR lookups (optional)
-- **Note:** This version (1.7) is **not multi-partition compatible** - all objects must be in `/Common` partition
+- **Note:** This version (1.7) is **not multi-partition compatible** - all objects must be in `/Common` partition. Partition compatibility is planned for version 2.0.
 
 
 ### Frontend Setup
 
 #### Dashboard Front-End Critical Dependencies:
 
-All datagroups, pools and DNS resolver **must exist and match the item names** in the iRule. If you wish to use custom names, make sure to edit the iRule as well.
+All datagroups, pools and DNS resolver **must exist in LTM** and match the item names in the iRule. If you wish to use custom names for pools, make sure to edit the iRule references.
 
 **1. `datagroup-dashboard-clients` (Address)**
 - Used to restrict dashboard access via Client IP or Client Subnet
@@ -149,40 +114,40 @@ All datagroups, pools and DNS resolver **must exist and match the item names** i
 - Used to limit dashboard debug via Client IP or Client Subnet
 
 **3. `datagroup-dashboard-sites` (String)**
-- Used to define dashboard site list - the Front-End is typically the first site defined with the lowest sort order
+- Used to define dashboard site list in the dropdown control - the Front-End is typically the first site defined with the lowest sort order e.g. "CHICAGO = 10".
 
 **4. `datagroup-dashboard-api-host` (String)**
-- Used to map remote Site names to API Host Virtualserver IP addresses. 
+- Used to map remote Site names to API Host Virtualserver IP addresses. e.g. "NEW YORK = 192.168.4.33". It is this mapping that the Front-end uses to proxy pool requests to the API hosts/
 
 **5. `datagroup-dashboard-pools` (String)**
-- Used to provide a list of pools to display. This is an essential step. LTM does not permit an iRule to determine elements of TMOS configuration. Therefore we **must** administratively provide configuration attributes in the form of LTM pool names that the dashboard will be permitted to display.
+- Used to provide a list of pools to display. **This is an essential step.** LTM does not permit an iRule to determine general elements of TMOS configuration. Therefore we **must** administratively provide configuration attributes in the form of a list of LTM pool names that the dashboard will be permitted to process via LB::status events and subsequently display. A script has been provided to assist with the initial population of this datagroup.
 
 **6. `datagroup-dashboard-pool-alias` (String)**
-- Used to create alias names for actual pool names. This feature is optional, but the datagroup must exist. This is to permit Aliases or user friendly names to be displayed instead of the actual LTM pool names. This is for environments where a pool name might not provide the best indicator of what the pool actually supports.
+- Used to create alias names for actual pool names. This feature is optional, but the datagroup itself must exist. This is to permit 'Aliases' or user friendly names to be displayed instead of the actual LTM pool names. This is for environments where a pool name might not provide the best indicator of what the pool actually supports.
 
 **7. `datagroup-dashboard-api-keys` (String)**
-- Used to authenticate Front-end to API hosts. This can be the same across the entire topology but must exist or the Front-End will have no access to the api endpoint /api/proxy/pools
+- Used to authenticate Front-end to API hosts. This key can be the same across the entire topology but must exist or the Front-End will have no access to the api endpoint /api/proxy/pools. This is an application-level control for security.
 
 **8. `dashboard-api-hosts_https_pool` (LTM Pool)**
-- This pool contains the API Host IPs for monitoring. The pool is not used for LB determination, it is used simply for the Front-end to monitor reachability of each API Host Virtualserver.
+- This pool contains the API Host IPs for monitoring. The pool is not used for front-end proxy LB determination, it is used simply to make the Front-end aware of API host operation via LTM pool monitor status.
 
 **9. `dashboard-dns_udp53_pool` (LTM Pool)**
-- This pool contains the DNS listener used for monitoring purposes only. If the listener is detected down by the monitor attached to this pool, the iRule will fail back to IP-only mode gracefully. 
+- This pool contains the DNS listener used for monitoring purposes only. If the listener is detected down by the monitor attached to this pool, the iRule will fail back to IP-only mode gracefully.
 
 **10. `/Common/dashboard-DNS` (LTM dns-resolver)**
-- This resolver is recommended to map to a GTM listener dedicated for dashboard with the DNS iRule and scoped for in-addr.arpa. but it could be any DNS server.
+- This LTM resolver is recommended to map to a GTM listener dedicated for dashboard use with the provided DNS iRule applied and scoped for in-addr.arpa. In current deployments, each API host uses a local GTM listener, but any reachable DNS server that can provide responses to PTR queries will work.
 
 **11. `session.custom.dashboard.auth` (Front-end LTM APM session variable)**
-- This variable must be equal to 1 for this irule to trigger and needs to be set by the APM Policy that is placed on the Front-End virtualserver. Use any authentications methods appropriate for your organization or no authentication, but APM must set this variable for the Front-End iRule to trigger. This is primarily done to ensure APM completes before the iRule starts processing client HTTP requests. It's an APM / LTM interoperability control.
+- This variable must be equal to 1 for the Front-end irule to trigger and needs to be set by the APM Policy that is placed on the Front-End virtualserver. Use any authentications methods appropriate for your organization or use no authentication, but APM must set this variable for the Front-End iRule to trigger. This is primarily done to ensure APM completes before the iRule starts processing client HTTP requests. It's an APM / LTM interoperability control. If you do not desire APM controls, simply set the variable in the LTM iRule or remove the variable check.
 
 **12. iFiles:**
-- `dashboard_js-core.js` - Javascript Core Module
+- `dashboard_js-core.js`   - Javascript Core Module
 - `dashboard_js-client.js` - Javascript Client Module
-- `dashboard_js-data.js` - Javascript Data Module
-- `dashboard_js-ui.js` - Javascript UI Module
+- `dashboard_js-data.js`   - Javascript Data Module
+- `dashboard_js-ui.js`     - Javascript UI Module
 - `dashboard_js-logger.js` - Javascript Logs Module
-- `dashboard_logo.png` - logo image file
-- `dashboard_themes.css` - Dashboard CSS with themes
+- `dashboard_logo.png`     - logo image file
+- `dashboard_themes.css`   - Dashboard CSS with 3 themes
 
 #### Front-end Configuration
 
@@ -196,36 +161,36 @@ tmsh modify ltm data-group internal datagroup-dashboard-clients records add { 10
 tmsh create ltm data-group internal datagroup-dashboard-debug type ip
 tmsh modify ltm data-group internal datagroup-dashboard-debug records add { 10.0.0.0/8 { } }
 
-# Available sites with sort order
+# Available sites with sort order. Sites are listed top-down in the site dropdown from lowest to highest. The Front-end typically is assigned the lowest value.
 tmsh create ltm data-group internal datagroup-dashboard-sites type string
 tmsh modify ltm data-group internal datagroup-dashboard-sites records add { 
     "CHICAGO" { data "10" } 
-    "NEW_YORK" { data "20" } 
+    "NEWYORK" { data "20" } 
 }
 
-# API host mappings
+# API host mappings. This maps a site name to an API host virtualserver IP
 tmsh create ltm data-group internal datagroup-dashboard-api-host type string
 tmsh modify ltm data-group internal datagroup-dashboard-api-host records add { 
-    "NEW_YORK" { data "192.168.2.100" } 
+    "NEWYORK" { data "192.168.2.100" } 
 }
 
-# Pool configuration with sort order
+# Pool configuration with sort order. The sort order is an administrative control that allows the UI Module to present the pools in a controlled order. If no sort order value is set, the iRule applies a value of 999 and the UI displays the pools in the order they exist within the pools datagroup.
 tmsh create ltm data-group internal datagroup-dashboard-pools type string
 tmsh modify ltm data-group internal datagroup-dashboard-pools records add { 
     "web_pool" { data "10" } 
     "app_pool" { data "20" } 
 }
 
-# Pool aliases (optional)
+# Pool aliases (optional) - If the LTM pool names are sufficiently descriptive then aliases may not be required; Note that by default the dashboard shows the alias names with the actual names in the tooltip.
 tmsh create ltm data-group internal datagroup-dashboard-pool-alias type string
 tmsh modify ltm data-group internal datagroup-dashboard-pool-alias records add { 
     "web_pool" { data "Web Servers" } 
 }
 
-# API authentication keys
+# API authentication keys - this can be any value but must match from Front-End to API Hosts
 tmsh create ltm data-group internal datagroup-dashboard-api-keys type string
 tmsh modify ltm data-group internal datagroup-dashboard-api-keys records add { 
-    "your-secure-api-key-here" { data "1" } 
+    "dashboard-secure-api-key8192025" { data "Installed 8 19 2025" } 
 }
 ```
 
