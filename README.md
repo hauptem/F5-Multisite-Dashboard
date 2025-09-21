@@ -271,6 +271,36 @@ The dashboard requires several data groups for configuration and access control.
 
 **Note**: This same key must be configured on all backend BIG-IP systems.
 
+### Automated Pool Discovery
+Use this script to automatically discover and populate existing pools into both pool data groups:
+
+```bash
+#!/bin/bash
+# Automated Pool Discovery Script
+# This script discovers all existing pools and populates the dashboard data groups
+# Get all pool names from /Common partition (removing /Common/ prefix)
+POOLS=$(tmsh list ltm pool one-line | grep -o "ltm pool [^{]*" | awk '{print $3}' | sed 's|^/Common/||' | tr '\n' ' ')
+echo "Discovered pools: $POOLS"
+# Populate dashboard-pools data group with auto-incrementing sort order (by 10s)
+POOL_RECORDS=""
+SORT_ORDER=10
+for POOL in $POOLS; do
+    POOL_RECORDS="$POOL_RECORDS \"$POOL\" { data \"$SORT_ORDER\" }"
+    ((SORT_ORDER+=10))
+done
+# Apply to data groups
+tmsh modify ltm data-group internal datagroup-dashboard-pools records replace-all-with { $POOL_RECORDS }
+# Initialize empty aliases (can be customized later)
+ALIAS_RECORDS=""
+for POOL in $POOLS; do
+    ALIAS_RECORDS="$ALIAS_RECORDS \"$POOL\" { data \"\" }"
+done
+tmsh modify ltm data-group internal datagroup-dashboard-pool-alias records replace-all-with { $ALIAS_RECORDS }
+echo "Pool data groups populated successfully!"
+echo "Total pools configured: $(echo $POOLS | wc -w)"
+```
+**Note:** After running this script, you can manually customize aliases by modifying the `datagroup-dashboard-pool-alias` data group to provide user-friendly display names.
+
 ## Create Required Pools
 The frontend requires specific pools for health monitoring and backend communication.
 
@@ -373,36 +403,7 @@ quit
 ```
 
 
-### Automated Pool Discovery
 
-Use this script to automatically discover and populate pool data groups:
-
-```bash
-#!/bin/bash
-# Automated Pool Discovery Script
-# This script discovers all existing pools and populates the dashboard data groups
-# Get all pool names from /Common partition (removing /Common/ prefix)
-POOLS=$(tmsh list ltm pool one-line | grep -o "ltm pool [^{]*" | awk '{print $3}' | sed 's|^/Common/||' | tr '\n' ' ')
-echo "Discovered pools: $POOLS"
-# Populate dashboard-pools data group with auto-incrementing sort order (by 10s)
-POOL_RECORDS=""
-SORT_ORDER=10
-for POOL in $POOLS; do
-    POOL_RECORDS="$POOL_RECORDS \"$POOL\" { data \"$SORT_ORDER\" }"
-    ((SORT_ORDER+=10))
-done
-# Apply to data groups
-tmsh modify ltm data-group internal datagroup-dashboard-pools records replace-all-with { $POOL_RECORDS }
-# Initialize empty aliases (can be customized later)
-ALIAS_RECORDS=""
-for POOL in $POOLS; do
-    ALIAS_RECORDS="$ALIAS_RECORDS \"$POOL\" { data \"\" }"
-done
-tmsh modify ltm data-group internal datagroup-dashboard-pool-alias records replace-all-with { $ALIAS_RECORDS }
-echo "Pool data groups populated successfully!"
-echo "Total pools configured: $(echo $POOLS | wc -w)"
-```
-**Note:** After running this script, you can manually customize aliases by modifying the `datagroup-dashboard-pool-alias` data group to provide user-friendly display names.
 
 **2. Create Pools:**
 ```bash
