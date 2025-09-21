@@ -557,13 +557,11 @@ set dns_enabled 1
 ### Access Policy Assignment
 
 - **Access Profile**: Select your configured APM access policy
-- **Per-Request Policy**: `None` (unless specifically required)
 
 ### iRule Assignment
 
 1. In **Resources** section, find **iRules**
 2. Move `LTM_Dashboard-Frontend_v1.7_irule` from Available to Enabled
-3. Ensure it's the only iRule assigned
 
 ### Default Pool Assignment
 
@@ -575,6 +573,64 @@ set dns_enabled 1
 2. Verify virtual server shows as **Available (Enabled)**
 
 ---
+
+## Configure APM Access Policy
+
+### Access APM Configuration
+
+1. Navigate to **Access → Profiles/Policies → Access Profiles (Per-Session Policies)**
+
+### Required Session Variables
+
+The dashboard requires a specific session variable to function. Your access policy must set:
+
+**Variable Name**: `session.custom.dashboard.auth`  
+**Required Value**: `1`
+
+### Implementation Options
+
+**Option 1: Modify Existing Policy**
+
+If you have an existing access policy:
+
+1. Click **Edit** on your access policy
+2. Add a **Variable Assign** action after successful authentication
+3. Configure variable assignment:
+   - **Variable Type**: `Session Variable`
+   - **Variable Name**: `session.custom.dashboard.auth`
+   - **Variable Value**: `1`
+4. Save and apply the access policy
+
+**Option 2: Create New Policy**
+
+If creating a new access policy:
+
+1. Click **Create**
+2. Configure basic policy settings:
+   - **Name**: `dashboard_access_policy`
+   - **Profile Type**: `All`
+   - **Language Settings**: Configure as needed
+3. Click **Finished**
+4. Click **Edit** to modify the policy flow
+5. Add authentication steps as required by your organization
+6. Before the final **Allow** ending, add **Variable Assign**:
+   - **Variable Type**: `Session Variable`
+   - **Variable Name**: `session.custom.dashboard.auth`
+   - **Variable Value**: `1`
+7. Save and apply the policy
+
+### Authentication Methods
+
+The dashboard works with any APM authentication method:
+- Local User Authentication
+- Active Directory/LDAP
+- RADIUS
+- Certificate-based Authentication
+- Multi-factor Authentication
+- SAML Federation
+
+---
+
 
 ### Backend API Setup
 
@@ -680,6 +736,9 @@ tmsh create ltm virtual dashboard-api_https_vs {
     rules { LTM_Dashboard-API-Host_v1.7_irule }
 }
 ```
+
+
+
 
 ### DNS Resolver Setup (Optional)
 
