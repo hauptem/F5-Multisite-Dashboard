@@ -536,17 +536,8 @@ set dns_enabled 1
 ### Protocol Configuration
 
 - **HTTP Profile (Client)**: `http`
-- **HTTP Profile (Server)**: `http`
 - **SSL Profile (Client)**: Select appropriate SSL profile for HTTPS
-- **SSL Profile (Server)**: `serverssl` (for backend communication)
-
-### SSL Configuration Requirements
-
-**Client SSL Profile must include:**
-- Valid SSL certificate (can be self-signed for internal use)
-- TLS 1.2 or higher support
-- Strong cipher suites
-- Certificate chain if using intermediate CAs
+- **SSL Profile (Server)**: `serverssl` 
 
 ### Advanced Configuration
 
@@ -574,15 +565,13 @@ set dns_enabled 1
 
 ---
 
-## Configure APM Access Policy
-
 ### Access APM Configuration
 
 1. Navigate to **Access → Profiles/Policies → Access Profiles (Per-Session Policies)**
 
 ### Required Session Variables
 
-The dashboard requires a specific session variable to function. Your access policy must set:
+The dashboard requires a specific session variable to function. Your access policy **must** set:
 
 **Variable Name**: `session.custom.dashboard.auth`  
 **Required Value**: `1`
@@ -590,7 +579,6 @@ The dashboard requires a specific session variable to function. Your access poli
 ### Implementation Options
 
 **Option 1: Modify Existing Policy**
-
 If you have an existing access policy:
 
 1. Click **Edit** on your access policy
@@ -602,7 +590,6 @@ If you have an existing access policy:
 4. Save and apply the access policy
 
 **Option 2: Create New Policy**
-
 If creating a new access policy:
 
 1. Click **Create**
@@ -618,16 +605,6 @@ If creating a new access policy:
    - **Variable Name**: `session.custom.dashboard.auth`
    - **Variable Value**: `1`
 7. Save and apply the policy
-
-### Authentication Methods
-
-The dashboard works with any APM authentication method:
-- Local User Authentication
-- Active Directory/LDAP
-- RADIUS
-- Certificate-based Authentication
-- Multi-factor Authentication
-- SAML Federation
 
 ---
 
