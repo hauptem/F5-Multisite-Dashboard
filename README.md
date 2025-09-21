@@ -338,6 +338,7 @@ For health checking of backend APIs:
      GET /api/health HTTP/1.1\r\nConnection: Close\r\n\r\n
      ```
    - **Receive String**: `(healthy|unhealthy)`
+   - note that any JSON response from the API host is a valid check of the API host operation. "unhealthy" is used by an endpoint to inform the client about a problem on the API host, but is valid for a health check.
 
 4. Click **Finished**
 5. Return to backend pool and assign this monitor to the dashboard-api-hosts_https_pool
