@@ -169,46 +169,27 @@ All datagroups, pools and DNS resolver must exist in LTM and match the item name
 ```bash
 # Client access control
 tmsh create ltm data-group internal datagroup-dashboard-clients type ip
-tmsh modify ltm data-group internal datagroup-dashboard-clients records add { 10.0.0.0/8 { } }
 
 # Debug access control  
 tmsh create ltm data-group internal datagroup-dashboard-debug type ip
-tmsh modify ltm data-group internal datagroup-dashboard-debug records add { 10.0.0.0/8 { } }
 
 # Available sites with sort order. Sites are listed top-down in the site dropdown from lowest to highest. The Front-end typically is assigned the lowest value.
 tmsh create ltm data-group internal datagroup-dashboard-sites type string
-tmsh modify ltm data-group internal datagroup-dashboard-sites records add { 
-    "CHICAGO" { data "10" } 
-    "NEWYORK" { data "20" } 
-}
 
 # API host mappings. This maps a site name to an API host virtualserver IP
 tmsh create ltm data-group internal datagroup-dashboard-api-host type string
-tmsh modify ltm data-group internal datagroup-dashboard-api-host records add { 
-    "NEWYORK" { data "192.168.2.100" } 
-}
 
 # Pool configuration with sort order. The sort order is an administrative control that allows the UI Module
 # to present the pools in a controlled order. If no sort order value is set, the iRule applies a value of
 # 999 and the UI displays the pools in the order they exist within the pools datagroup.
 tmsh create ltm data-group internal datagroup-dashboard-pools type string
-tmsh modify ltm data-group internal datagroup-dashboard-pools records add { 
-    "web_pool" { data "10" } 
-    "app_pool" { data "20" } 
-}
 
 # Pool aliases (optional) - If the LTM pool names are sufficiently descriptive then aliases may not be
 # required; Note that by default the dashboard shows the alias names with the actual names in the tooltip.
 tmsh create ltm data-group internal datagroup-dashboard-pool-alias type string
-tmsh modify ltm data-group internal datagroup-dashboard-pool-alias records add { 
-    "web_pool" { data "Web Servers" } 
-}
 
 # API authentication keys - this can be any value but must match from Front-End to API Hosts
 tmsh create ltm data-group internal datagroup-dashboard-api-keys type string
-tmsh modify ltm data-group internal datagroup-dashboard-api-keys records add { 
-    "dashboard-secure-api-key8192025" { data "Installed 8 19 2025" } 
-}
 ```
 
 ### Automated Pool Discovery
@@ -219,12 +200,9 @@ Use this script to automatically discover and populate pool data groups:
 #!/bin/bash
 # Automated Pool Discovery Script
 # This script discovers all existing pools and populates the dashboard data groups
-
 # Get all pool names from /Common partition (removing /Common/ prefix)
 POOLS=$(tmsh list ltm pool one-line | grep -o "ltm pool [^{]*" | awk '{print $3}' | sed 's|^/Common/||' | tr '\n' ' ')
-
 echo "Discovered pools: $POOLS"
-
 # Populate dashboard-pools data group with auto-incrementing sort order (by 10s)
 POOL_RECORDS=""
 SORT_ORDER=10
@@ -232,31 +210,26 @@ for POOL in $POOLS; do
     POOL_RECORDS="$POOL_RECORDS \"$POOL\" { data \"$SORT_ORDER\" }"
     ((SORT_ORDER+=10))
 done
-
 # Apply to data groups
 tmsh modify ltm data-group internal datagroup-dashboard-pools records replace-all-with { $POOL_RECORDS }
-
 # Initialize empty aliases (can be customized later)
 ALIAS_RECORDS=""
 for POOL in $POOLS; do
     ALIAS_RECORDS="$ALIAS_RECORDS \"$POOL\" { data \"\" }"
 done
-
 tmsh modify ltm data-group internal datagroup-dashboard-pool-alias records replace-all-with { $ALIAS_RECORDS }
-
 echo "Pool data groups populated successfully!"
 echo "Total pools configured: $(echo $POOLS | wc -w)"
 ```
-
 **Note:** After running this script, you can manually customize aliases by modifying the `datagroup-dashboard-pool-alias` data group to provide user-friendly display names.
 
 **2. Create Pools:**
 ```bash
 # API hosts pool
-tmsh create ltm pool dashboard-api-hosts_https_pool members add { 192.168.2.100:443 }
+tmsh create ltm pool dashboard-api-hosts_https_pool 
 
 # DNS pool (if using DNS resolution)
-tmsh create ltm pool dashboard-dns_udp53_pool members add { 192.168.1.53:53 }
+tmsh create ltm pool dashboard-dns_udp53_pool members 
 ```
 
 **3. Upload Static Assets as iFiles:**
@@ -272,19 +245,7 @@ tmsh create sys file ifile dashboard_logo.png source-path file:///path/to/dashbo
 
 **4. Create Virtual Server:**
 ```bash
-tmsh create ltm virtual dashboard-frontend_https_vs {
-    destination 192.168.1.100:443
-    ip-protocol tcp
-    pool none
-    profiles add {
-        tcp { }
-        http { }
-        clientssl { 
-            context clientside 
-        }
-    }
-    rules { LTM_Dashboard-Frontend_v1.7_irule }
-}
+tmsh create ltm virtual dashboard-frontend_https_vs 
 ```
 
 **5. Configure APM Policy:**
