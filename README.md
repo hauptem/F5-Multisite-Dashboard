@@ -641,10 +641,12 @@ The dashboard requires several data groups for configuration and access control.
 3. Configure data group:
    - **Name**: `datagroup-dashboard-trusted-frontends`
    - **Type**: `Address`
-   - **Description**: `Front-end Self-IPs `
+   - **Description**: `Authorized frontend BIG-IP self-IPs for API access`
 
-4. Add Front-end Self-IPs:
-   - **Address**: `192.168.1.0/24` (front-end self network)
+4. Add frontend IPs:
+   - **Address**: `192.168.1.50` (Primary Frontend BIG-IP self-IP)
+   - **Address**: `192.168.1.51` (Secondary Frontend BIG-IP self-IP)
+   - **Address**: `10.0.1.100` (Development Frontend)
 
 5. Click **Finished**
 
@@ -662,6 +664,12 @@ The dashboard requires several data groups for configuration and access control.
    - **String**: `api2_pool`, **Value**: `40`
 
 4. Click **Finished**
+
+**Important Notes**:
+- Pool names must match exactly (case-sensitive)
+- Sort order determines display sequence in dashboard
+- Use increments of 10 to allow for future insertions
+- Only pools in this data group will be available via API Calls
 
 ### Data Group  - datagroup-dashboard-pool-alias
 1. Click **Create** (new data group)
