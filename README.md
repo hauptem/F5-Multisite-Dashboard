@@ -288,6 +288,8 @@ The dashboard requires several data groups for configuration and access control.
 
 **Note**: This same key must be configured on all backend BIG-IP systems.
 
+---
+
 ### Automated Pool Discovery
 Use this script to automatically discover and populate existing pools into both pool data groups:
 
@@ -317,6 +319,8 @@ echo "Pool data groups populated successfully!"
 echo "Total pools configured: $(echo $POOLS | wc -w)"
 ```
 **Note:** After running this script, you can manually customize aliases by modifying the `datagroup-dashboard-pool-alias` data group to provide user-friendly display names.
+
+---
 
 ## Create Required Pools
 The frontend requires specific pools for health monitoring and backend communication.
@@ -540,7 +544,9 @@ set dns_enabled 1
 2. Verify iRule appears in iRule list without syntax errors
 3. If errors exist, review and correct the iRule code
 
-## Create Virtual Server
+---
+
+## Front-end Virtual Server
 
 ### Create Virtual Server
 
@@ -632,7 +638,7 @@ If creating a new access policy:
 ---
 
 ### Backend API Host Setup
-The **Dashboard API Host** provides JSON-based endpoints for remote sites. 
+The **Dashboard API Host** provides JSON-based endpoints for remote sites accessible by one or more Front-ends. 
 
 #### Dashboard API Hosts Critical Dependencies:
 
