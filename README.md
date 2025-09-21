@@ -1098,7 +1098,7 @@ Enable comprehensive logging:
 
 **Resource Usage:**
 - ~2MB memory per dashboard instance
-- 5000 entry FIFO for logger
+- 5000 entry FIFO buffer for logger
 - ~1KB/pool in session storage
 - 0% GPU Browser pipeline usage when in an unalarmed state
 
@@ -1108,7 +1108,6 @@ This project uses:
 - **iRules (Tcl)** for F5 BIG-IP integration
 - **Vanilla JavaScript** for frontend (no frameworks)
 - **CSS Grid/Flexbox** for responsive layout
-- **Session Storage** for session state persistence
 
 When contributing:
 1. Maintain compatibility with F5 BIG-IP TMOS 15.0+ (test on multiple versions)
