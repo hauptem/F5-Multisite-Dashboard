@@ -304,8 +304,8 @@ echo "Total pools configured: $(echo $POOLS | wc -w)"
 ## Create Required Pools
 The frontend requires specific pools for health monitoring and backend communication.
 
-### Pool - dashboard-api-hosts_https_pool
-This pool manages is used only for monitoring and detection of API host reachability and operation
+### Pool 1 - dashboard-api-hosts_https_pool
+This pool is used only for monitoring and detection of API host reachability and operation. The Front-end uses the datagroup 'datagroup-dashboard-api-host' to actually map client requests for specific sites to back-end virtualserver IPs. This pool enables dashboard to present intelligence about the state of the API host instead of failing silently.
 
 1. Navigate to **Local Traffic → Pools → Pool List**
 2. Click **Create**
@@ -323,7 +323,26 @@ This pool manages is used only for monitoring and detection of API host reachabi
 
 5. Click **Finished**
 
-### Create Custom HTTPS Monitor
+### Pool 2 - dashboard-dns_udp53_pool
+This pool monitors DNS resolver availability. The Front-end iRule will check member state for this pool and fail back gracefully to IP-only mode if all members in this pool are down.
+
+1. Navigate to **Local Traffic → Pools → Pool List**
+2. Click **Create**
+3. Configure pool settings:
+   - **Name**: `dashboard-dns_udp53_pool`
+   - **Description**: `DNS servers for dashboard hostname resolution`
+   - **Health Monitors**: `dns` (recommended to create a custom monitor)
+   - **Load Balancing Method**: `Round Robin`
+
+4. Add DNS server member:
+   - Click **New Member**
+   - **Address**: Enter your DNS server IP (same as used in the resolver dashboard-DNS)
+   - **Service Port**: `53`
+   - **Click** **Add**
+
+5. Click **Finished**
+
+### Create a Custom HTTPS Monitor
 For health checking of backend APIs:
 
 1. Navigate to **Local Traffic → Monitors → Monitor List**
@@ -345,26 +364,7 @@ For health checking of backend APIs:
 
 ---
 
-### Pool - dashboard-dns_udp53_pool
-This pool monitors DNS resolver availability. The Front-end iRule will check member state for this pool and fail back gracefully to IP-only mode if all members in this pool are down.
-
-1. Navigate to **Local Traffic → Pools → Pool List**
-2. Click **Create**
-3. Configure pool settings:
-   - **Name**: `dashboard-dns_udp53_pool`
-   - **Description**: `DNS servers for dashboard hostname resolution`
-   - **Health Monitors**: `dns` (recommended to create a custom monitor)
-   - **Load Balancing Method**: `Round Robin`
-
-4. Add DNS server member:
-   - Click **New Member**
-   - **Address**: Enter your DNS server IP (same as used in the resolver dashboard-DNS)
-   - **Service Port**: `53`
-   - **Click** **Add**
-
-5. Click **Finished**
-
-## DNS Resolver Configuration (Optional but the iRule will require unless edited)
+## DNS Resolver Configuration (Optional to use but the iRule will require it to exist unless edited)
 The DNS resolver enables hostname display for pool members in dashboard responses.
 
 ### Access BIG-IP via SSH
