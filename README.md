@@ -517,6 +517,66 @@ set dns_enabled 1
 2. Verify iRule appears in iRule list without syntax errors
 3. If errors exist, review and correct the iRule code
 
+## Create Virtual Server
+
+### Create Virtual Server
+
+1. Navigate to **Local Traffic → Virtual Servers → Virtual Server List**
+2. Click **Create**
+
+### Basic Configuration
+
+- **Name**: `dashboard_frontend_vs`
+- **Description**: `F5 Multi-Site Dashboard Frontend v1.7`
+- **Type**: `Standard`
+- **Source Address**: `0.0.0.0/0`
+- **Destination Address**: Choose appropriate IP for dashboard access
+- **Service Port**: `443` (HTTPS recommended)
+
+### Protocol Configuration
+
+- **HTTP Profile (Client)**: `http`
+- **HTTP Profile (Server)**: `http`
+- **SSL Profile (Client)**: Select appropriate SSL profile for HTTPS
+- **SSL Profile (Server)**: `serverssl` (for backend communication)
+
+### SSL Configuration Requirements
+
+**Client SSL Profile must include:**
+- Valid SSL certificate (can be self-signed for internal use)
+- TLS 1.2 or higher support
+- Strong cipher suites
+- Certificate chain if using intermediate CAs
+
+### Advanced Configuration
+
+- **Source Address Translation**: `Auto Map`
+- **Address Translation**: `Enabled`
+- **Port Translation**: `Enabled`
+
+### Access Policy Assignment
+
+- **Access Profile**: Select your configured APM access policy
+- **Per-Request Policy**: `None` (unless specifically required)
+
+### iRule Assignment
+
+1. In **Resources** section, find **iRules**
+2. Move `LTM_Dashboard-Frontend_v1.7_irule` from Available to Enabled
+3. Ensure it's the only iRule assigned
+
+### Default Pool Assignment
+
+- **Default Pool**: Leave blank (iRule handles all routing)
+
+### Finish Virtual Server Creation
+
+1. Click **Finished**
+2. Verify virtual server shows as **Available (Enabled)**
+
+---
+
+
 ---
 
 ### Backend API Setup
