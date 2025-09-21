@@ -225,7 +225,7 @@ The dashboard requires several data groups for configuration and access control.
 
 4. Click **Finished**
 
-**Note**: Do not include your frontend site (CHICAGO) in this data group.
+**Note**: Do not include the frontend site (CHICAGO) in this data group.
 
 ### Data Group - datagroup-dashboard-pools
 1. Click **Create** (new data group)
@@ -304,39 +304,39 @@ echo "Total pools configured: $(echo $POOLS | wc -w)"
 ## Create Required Pools
 The frontend requires specific pools for health monitoring and backend communication.
 
-### Pool 1: DNS Health Check Pool
-This pool monitors DNS server availability for hostname resolution.
+### Pool - dashboard-dns_udp53_pool
+This pool monitors DNS resolver availability. The Front-end iRule will check member state for this pool and fail back gracefully to IP-only mode if all members in this pool are down.
 
 1. Navigate to **Local Traffic → Pools → Pool List**
 2. Click **Create**
 3. Configure pool settings:
    - **Name**: `dashboard-dns_udp53_pool`
    - **Description**: `DNS servers for dashboard hostname resolution`
-   - **Health Monitors**: `udp` (or create custom monitor)
+   - **Health Monitors**: `dns` (recommended to create a custom monitor)
    - **Load Balancing Method**: `Round Robin`
 
 4. Add DNS server member:
    - Click **New Member**
-   - **Address**: Enter your DNS server IP (same as used in resolver)
+   - **Address**: Enter your DNS server IP (same as used in the resolver dashboard-DNS)
    - **Service Port**: `53`
    - **Click** **Add**
 
 5. Click **Finished**
 
-### Pool 2: Backend API Hosts Pool
-This pool manages connections to backend BIG-IP API endpoints.
+### Pool - dashboard-api-hosts_https_pool
+This pool manages is used only for monitoring and detection of API host reachability and operation
 
 1. Navigate to **Local Traffic → Pools → Pool List**
 2. Click **Create**
 3. Configure pool settings:
    - **Name**: `dashboard-api-hosts_https_pool`
    - **Description**: `Backend BIG-IP API endpoints for dashboard`
-   - **Health Monitors**: `https` (or create custom HTTPS monitor)
+   - **Health Monitors**: `https` (recommended to create a custom HTTPS monitor)
    - **Load Balancing Method**: `Round Robin`
 
 4. Add backend members (repeat for each backend site):
    - Click **New Member**
-   - **Address**: Backend BIG-IP API virtual server IP
+   - **Address**: Backend BIG-IP API virtual server IP for Site <SITENAME>
    - **Service Port**: `443`
    - Click **Add**
 
@@ -354,7 +354,7 @@ For health checking of backend APIs:
    - **Timeout**: `16` seconds
    - **Send String**: 
      ```
-     GET /api/health HTTP/1.1\r\nHost: %{server_ip}\r\nConnection: Close\r\n\r\n
+     GET /api/health HTTP/1.1\r\nConnection: Close\r\n\r\n
      ```
    - **Receive String**: `(healthy|unhealthy)`
 
