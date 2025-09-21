@@ -608,22 +608,22 @@ If creating a new access policy:
 
 ---
 
-### Backend API Setup
-The **Dashboard API Host** provides JSON-based pool data endpoints for remote sites. Backend hosts perform the actual pool member status checks, DNS hostname resolution (if configured), and serve optimized data to frontend dashboard instances. Multiple backend API hosts can support a single frontend for distributed monitoring.
+### Backend API Host Setup
+The **Dashboard API Host** provides JSON-based endpoints for remote sites. 
 
 #### Dashboard API Hosts Critical Dependencies:
 
 **1. `datagroup-dashboard-trusted-frontends` (Address)**
-- Used to restrict access to authorized dashboard front-ends Self-IPs
+- Used to restrict access to authorized dashboard front-ends Self-IPs to the API Host virtualserver
 
 **2. `datagroup-dashboard-api-keys` (String)**
-- Used to authenticate Front-end to API host
+- Used to authenticate Front-ends to the API host
 
 **3. `datagroup-dashboard-pools` (String)**
-- Used to provide a list of pools to display
+- Used to provide a local list of pools to display
 
 **4. `datagroup-dashboard-pool-alias` (String)**
-- Used to create alias names for actual pool names
+- Used to create alias names for actual configuration pool names
 
 **5. `dashboard-dns_udp53_pool` (API Host LTM Pool)**
 - This pool contains the DNS listener for monitoring
@@ -723,27 +723,8 @@ echo "Total pools configured: $(echo $POOLS | wc -w)"
 ## Create Required Pools
 The frontend requires specific pools for health monitoring and backend communication.
 
-### Pool 1 - dashboard-api-hosts_https_pool
-This pool is used only for monitoring and detection of API host reachability and operation. The Front-end uses the datagroup 'datagroup-dashboard-api-host' to actually map client requests for specific sites to back-end virtualserver IPs. This pool enables dashboard to present intelligence about the state of the API host instead of failing silently.
-
-1. Navigate to **Local Traffic → Pools → Pool List**
-2. Click **Create**
-3. Configure pool settings:
-   - **Name**: `dashboard-api-hosts_https_pool`
-   - **Description**: `Backend BIG-IP API endpoints for dashboard`
-   - **Health Monitors**: `https` (recommended to create a custom HTTPS monitor)
-   - **Load Balancing Method**: `Round Robin`
-
-4. Add backend members (repeat for each backend site):
-   - Click **New Member**
-   - **Address**: Backend BIG-IP API virtual server IP for Site <SITENAME>
-   - **Service Port**: `443`
-   - Click **Add**
-
-5. Click **Finished**
-
-### Pool 2 - dashboard-dns_udp53_pool
-This pool monitors DNS resolver availability. The Front-end iRule will check member state for this pool and fail back gracefully to IP-only mode if all members in this pool are down.
+### Pool 1 - dashboard-dns_udp53_pool
+This pool monitors DNS resolver availability. The API Host iRule will check member state for this pool and fail back gracefully to IP-only mode if all members in this pool are down.
 
 1. Navigate to **Local Traffic → Pools → Pool List**
 2. Click **Create**
@@ -760,26 +741,6 @@ This pool monitors DNS resolver availability. The Front-end iRule will check mem
    - **Click** **Add**
 
 5. Click **Finished**
-
-### Create a Custom HTTPS Monitor
-For health checking of backend APIs:
-
-1. Navigate to **Local Traffic → Monitors → Monitor List**
-2. Click **Create**
-3. Configure monitor:
-   - **Name**: `dashboard-api-host_https_monitor`
-   - **Type**: `HTTPS`
-   - **Interval**: `5` seconds
-   - **Timeout**: `16` seconds
-   - **Send String**: 
-     ```
-     GET /api/health HTTP/1.1\r\nConnection: Close\r\n\r\n
-     ```
-   - **Receive String**: `(healthy|unhealthy)`
-   - note that any JSON response from the API host is a valid check of the API host operation. "unhealthy" is used by an endpoint to inform the client about a problem on the API host, but is valid for a health check.
-
-4. Click **Finished**
-5. Return to backend pool and assign this monitor to the dashboard-api-hosts_https_pool
 
 ---
 
