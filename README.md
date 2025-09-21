@@ -166,44 +166,6 @@ All datagroups, pools and DNS resolver must exist in LTM and match the item name
 - `dashboard_logo.png`     - logo image file
 
 # Front-end Configuration
-## DNS Resolver Configuration
-The DNS resolver enables hostname display for pool members in dashboard responses. This step is optional but recommended for enhanced user experience.
-
-### Access BIG-IP via SSH
-1. SSH to your Frontend BIG-IP as an administrative user
-2. Access the tmsh shell:
-   ```
-   tmsh
-   ```
-
-### Create DNS Resolver
-Execute the following command, replacing the DNS server IP with your environment's DNS server:
-
-```tcl
-create net dns-resolver dashboard-DNS forward-zones add { in-addr.arpa { nameservers add { 192.168.1.53:53 } } }
-```
-
-### Configuration Notes:
-- Replace `192.168.1.53` with your DNS server IP address
-- Use port 53 unless your DNS server uses a different port
-- For GTM integration, use your GTM listener IP address
-- Dashboard will only request PTR records so it is recommended to scope the resolver to in-addr-arpa. unless a shared resolver is used
-
-### Verify DNS Resolver Creation
-```tcl
-list net dns-resolver dashboard-DNS
-```
-
-### Save Configuration
-```tcl
-save sys config
-```
-
-### Exit TMSH
-```tcl
-quit
-```
----
 
 ## Create Required Pools
 The frontend requires specific pools for health monitoring and backend communication.
@@ -246,7 +208,7 @@ This pool manages connections to backend BIG-IP API endpoints.
 
 5. Click **Finished**
 
-### Create Custom HTTPS Monitor (Optional)
+### Create Custom HTTPS Monitor
 
 For better health checking of backend APIs:
 
@@ -261,7 +223,7 @@ For better health checking of backend APIs:
      ```
      GET /api/health HTTP/1.1\r\nHost: %{server_ip}\r\nConnection: Close\r\n\r\n
      ```
-   - **Receive String**: `healthy`
+   - **Receive String**: `(healthy|unhealthy)`
 
 4. Click **Finished**
 5. Return to backend pool and assign this monitor
@@ -382,7 +344,43 @@ The dashboard requires several data groups for configuration and access control.
 
 **Security Note**: Generate a strong, unique API key. This same key must be configured on all backend BIG-IP systems.
 
+## DNS Resolver Configuration
+The DNS resolver enables hostname display for pool members in dashboard responses. This step is optional but recommended for enhanced user experience.
 
+### Access BIG-IP via SSH
+1. SSH to your Frontend BIG-IP as an administrative user
+2. Access the tmsh shell:
+   ```
+   tmsh
+   ```
+
+### Create DNS Resolver
+Execute the following command, replacing the DNS server IP with your environment's DNS server:
+
+```tcl
+create net dns-resolver dashboard-DNS forward-zones add { in-addr.arpa { nameservers add { 192.168.1.53:53 } } }
+```
+
+### Configuration Notes:
+- Replace `192.168.1.53` with your DNS server IP address
+- Use port 53 unless your DNS server uses a different port
+- For GTM integration, use your GTM listener IP address
+- Dashboard will only request PTR records so it is recommended to scope the resolver to in-addr-arpa. unless a shared resolver is used
+
+### Verify DNS Resolver Creation
+```tcl
+list net dns-resolver dashboard-DNS
+```
+
+### Save Configuration
+```tcl
+save sys config
+```
+
+### Exit TMSH
+```tcl
+quit
+```
 
 
 ### Automated Pool Discovery
