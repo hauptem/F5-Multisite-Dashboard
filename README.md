@@ -165,32 +165,223 @@ All datagroups, pools and DNS resolver must exist in LTM and match the item name
 
 #### Front-end Configuration
 
-**1. Create Required Data Groups:**
-```bash
-# Client access control
-tmsh create ltm data-group internal datagroup-dashboard-clients type ip
+## DNS Resolver Configuration
+The DNS resolver enables hostname display for pool members in dashboard responses. This step is optional but recommended for enhanced user experience.
 
-# Debug access control  
-tmsh create ltm data-group internal datagroup-dashboard-debug type ip
+### Access BIG-IP via SSH
+1. SSH to your Frontend BIG-IP as an administrative user
+2. Access the tmsh shell:
+   ```
+   tmsh
+   ```
 
-# Available sites with sort order. Sites are listed top-down in the site dropdown from lowest to highest. The Front-end typically is assigned the lowest value.
-tmsh create ltm data-group internal datagroup-dashboard-sites type string
+### Create DNS Resolver
+Execute the following command, replacing the DNS server IP with your environment's DNS server:
 
-# API host mappings. This maps a site name to an API host virtualserver IP
-tmsh create ltm data-group internal datagroup-dashboard-api-host type string
-
-# Pool configuration with sort order. The sort order is an administrative control that allows the UI Module
-# to present the pools in a controlled order. If no sort order value is set, the iRule applies a value of
-# 999 and the UI displays the pools in the order they exist within the pools datagroup.
-tmsh create ltm data-group internal datagroup-dashboard-pools type string
-
-# Pool aliases (optional) - If the LTM pool names are sufficiently descriptive then aliases may not be
-# required; Note that by default the dashboard shows the alias names with the actual names in the tooltip.
-tmsh create ltm data-group internal datagroup-dashboard-pool-alias type string
-
-# API authentication keys - this can be any value but must match from Front-End to API Hosts
-tmsh create ltm data-group internal datagroup-dashboard-api-keys type string
+```tcl
+create net dns-resolver dashboard-DNS forward-zones add { in-addr.arpa { nameservers add { 192.168.1.53:53 } } }
 ```
+
+### Configuration Notes:
+- Replace `192.168.1.53` with your DNS server IP address
+- Use port 53 unless your DNS server uses a different port
+- For GTM integration, use your GTM listener IP address
+
+### Verify DNS Resolver Creation
+```tcl
+list net dns-resolver dashboard-DNS
+```
+
+### Save Configuration
+```tcl
+save sys config
+```
+
+### Exit TMSH
+```tcl
+quit
+```
+---
+
+## Create Required Pools
+The frontend requires specific pools for health monitoring and backend communication.
+
+### Pool 1: DNS Health Check Pool
+This pool monitors DNS server availability for hostname resolution.
+
+1. Navigate to **Local Traffic → Pools → Pool List**
+2. Click **Create**
+3. Configure pool settings:
+   - **Name**: `dashboard-dns_udp53_pool`
+   - **Description**: `DNS servers for dashboard hostname resolution`
+   - **Health Monitors**: `udp` (or create custom monitor)
+   - **Load Balancing Method**: `Round Robin`
+
+4. Add DNS server member:
+   - Click **New Member**
+   - **Address**: Enter your DNS server IP (same as used in resolver)
+   - **Service Port**: `53`
+   - **Click** **Add**
+
+5. Click **Finished**
+
+### Pool 2: Backend API Hosts Pool
+This pool manages connections to backend BIG-IP API endpoints.
+
+1. Navigate to **Local Traffic → Pools → Pool List**
+2. Click **Create**
+3. Configure pool settings:
+   - **Name**: `dashboard-api-hosts_https_pool`
+   - **Description**: `Backend BIG-IP API endpoints for dashboard`
+   - **Health Monitors**: `https` (or create custom HTTPS monitor)
+   - **Load Balancing Method**: `Round Robin`
+
+4. Add backend members (repeat for each backend site):
+   - Click **New Member**
+   - **Address**: Backend BIG-IP API virtual server IP
+   - **Service Port**: `443`
+   - Click **Add**
+
+5. Click **Finished**
+
+### Create Custom HTTPS Monitor (Optional)
+
+For better health checking of backend APIs:
+
+1. Navigate to **Local Traffic → Monitors → Monitor List**
+2. Click **Create**
+3. Configure monitor:
+   - **Name**: `dashboard-api-host_https_monitor`
+   - **Type**: `HTTPS`
+   - **Interval**: `5` seconds
+   - **Timeout**: `16` seconds
+   - **Send String**: 
+     ```
+     GET /api/health HTTP/1.1\r\nHost: %{server_ip}\r\nConnection: Close\r\n\r\n
+     ```
+   - **Receive String**: `healthy`
+
+4. Click **Finished**
+5. Return to backend pool and assign this monitor
+
+---
+
+## Create Data Groups
+
+The dashboard requires several data groups for configuration and access control.
+
+### Data Group 1: Client Authorization
+
+1. Navigate to **Local Traffic → iRules → Data Group List**
+2. Click **Create**
+3. Configure data group:
+   - **Name**: `datagroup-dashboard-clients`
+   - **Type**: `Address`
+   - **Description**: `Authorized client networks for dashboard access`
+
+4. Add client networks:
+   - **Address**: `192.168.1.0/24` (example - your client network)
+   - **Address**: `10.0.0.0/8` (add your specific subnets)
+   - **Address**: `172.16.0.0/12` (if using private networks)
+
+5. Click **Finished**
+
+### Data Group 2: Debug Authorization (Optional)
+
+1. Click **Create** (new data group)
+2. Configure data group:
+   - **Name**: `datagroup-dashboard-debug`
+   - **Type**: `Address`
+   - **Description**: `Client IPs authorized for debug logging`
+
+3. Add debug clients:
+   - **Address**: `192.168.1.100` (admin workstation IP)
+   - **Address**: `10.0.1.50` (network engineer desktop)
+
+4. Click **Finished**
+
+### Data Group 3: Available Sites
+
+1. Click **Create** (new data group)
+2. Configure data group:
+   - **Name**: `datagroup-dashboard-sites`
+   - **Type**: `String`
+   - **Description**: `Available monitoring sites with display order`
+
+3. Add sites (use sort order increments of 10):
+   - **String**: `CHICAGO`, **Value**: `10`
+   - **String**: `NEW_YORK`, **Value**: `20`
+   - **String**: `LONDON`, **Value**: `30`
+   - **String**: `TOKYO`, **Value**: `40`
+
+4. Click **Finished**
+
+### Data Group 4: Site-to-IP Mapping
+
+1. Click **Create** (new data group)
+2. Configure data group:
+   - **Name**: `datagroup-dashboard-api-host`
+   - **Type**: `String`
+   - **Description**: `Maps site names to backend BIG-IP API IPs`
+
+3. Add site mappings:
+   - **String**: `NEW_YORK`, **Value**: `192.168.2.100`
+   - **String**: `LONDON`, **Value**: `192.168.3.100`
+   - **String**: `TOKYO`, **Value**: `192.168.4.100`
+
+4. Click **Finished**
+
+**Note**: Do not include the local frontend site (CHICAGO) in this data group.
+
+### Data Group 5: Local Pool Configuration
+
+1. Click **Create** (new data group)
+2. Configure data group:
+   - **Name**: `datagroup-dashboard-pools`
+   - **Type**: `String`
+   - **Description**: `Local pools to monitor with display order`
+
+3. Add local pools (use sort order increments of 10):
+   - **String**: `web_servers_pool`, **Value**: `10`
+   - **String**: `app_servers_pool`, **Value**: `20`
+   - **String**: `database_pool`, **Value**: `30`
+   - **String**: `api_pool`, **Value**: `40`
+
+4. Click **Finished**
+
+### Data Group 6: Pool Aliases (Optional)
+
+1. Click **Create** (new data group)
+2. Configure data group:
+   - **Name**: `datagroup-dashboard-pool-alias`
+   - **Type**: `String`
+   - **Description**: `User-friendly names for pools`
+
+3. Add pool aliases:
+   - **String**: `web_servers_pool`, **Value**: `Web Servers`
+   - **String**: `app_servers_pool`, **Value**: `Application Tier`
+   - **String**: `database_pool`, **Value**: `Database Cluster`
+   - **String**: `api_pool`, **Value**: `API Gateway`
+
+4. Click **Finished**
+
+### Data Group 7: API Authentication Keys
+
+1. Click **Create** (new data group)
+2. Configure data group:
+   - **Name**: `datagroup-dashboard-api-keys`
+   - **Type**: `String`
+   - **Description**: `API keys for backend authentication`
+
+3. Add API key:
+   - **String**: `dashboard-api-key-2025-v17`, **Value**: `1`
+
+4. Click **Finished**
+
+**Security Note**: Generate a strong, unique API key. This same key must be configured on all backend BIG-IP systems.
+
+
+
 
 ### Automated Pool Discovery
 
