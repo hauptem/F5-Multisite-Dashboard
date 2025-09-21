@@ -35,6 +35,8 @@ Traditionally, this means logging into the F5 GUI, navigating through Local Traf
 
 Your enterprise monitoring tools excel at historical trends and alerting, but when you need current state of specific pool members - not 5 minutes ago when the last poll happened - there's a gap that forces manual investigation.
 
+---
+
 ### What This Actually Is
 
 This isn't another monitoring dashboard. 
@@ -52,6 +54,8 @@ A 170KB modular JavaScript application runs entirely in your browser, served dir
 
 **Technical Assumptions:** Most don't realize that modern browsers can handle sophisticated applications, or that iRules can serve as full application backends. The pattern of using F5s to inject third-party monitoring JavaScript exists, but always for sending data out to external systems, never for serving applications that query the F5 itself.
 
+---
+
 **Dashboard AGLight (theme1) in MACRO mode**
 <img width="1504" height="1021" alt="Image" src="https://github.com/user-attachments/assets/82483b0d-de24-424c-87ea-eb6c59252431" />
 
@@ -66,6 +70,8 @@ A 170KB modular JavaScript application runs entirely in your browser, served dir
 
 **Notional layout of the multi-site topology. Supports multiple Front-ends; scales horizontally as needed**
 <img width="2026" height="1130" alt="Image" src="https://github.com/user-attachments/assets/d629864e-4614-4e6b-8886-553c0b720f2c" />
+
+---
 
 ## Features
 
@@ -84,6 +90,8 @@ A 170KB modular JavaScript application runs entirely in your browser, served dir
 - **Keyboard Shortcuts** - Full keyboard navigation and control
 - **Session Persistence** - Settings and state preserved across browser sessions
 
+---
+
 ## Architecture
 
 The dashboard consists of two main components:
@@ -100,6 +108,8 @@ The dashboard consists of two main components:
 - Supports pool filtering optimization headers
 - Provides health monitoring endpoints
 
+---
+
 ## Installation
 
 ### Prerequisites
@@ -108,6 +118,8 @@ The dashboard consists of two main components:
 - DNS resolver configured for PTR lookups (optional)
 - **Note:** This version (1.7) is not multi-partition compatible
 - All objects must be in `/Common` partition. Partition compatibility is planned for version 2.0.- 
+
+---
 
 ## Frontend Setup
 ### Dashboard Front-End Critical Dependencies:
