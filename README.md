@@ -1139,6 +1139,7 @@ Enable comprehensive logging:
 **Scalability:**
 - Tested with 500+ pools per site on a lab grade VE
 - Tested with 1000+ pool members on a lab grade VE
+- Currently deployed and in operation with various customers on pre-iSeries, iSeries, and rSeries tenants
 
 **Resource Usage:**
 - ~2MB memory per dashboard instance
