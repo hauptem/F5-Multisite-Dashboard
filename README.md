@@ -456,6 +456,33 @@ Upload the following files:
 4. Verify file appears in iFile list
 
 ### Verify All Files Uploaded
+```bash
+tmsh list ltm ifile
+
+ltm ifile F5_logo.png {
+    file-name F5_logo.png
+}
+ltm ifile dashboard_js-client.js {
+    file-name dashboard_js-client.js
+}
+ltm ifile dashboard_js-core.js {
+    file-name dashboard_js-core.js
+}
+ltm ifile dashboard_js-data.js {
+    file-name dashboard_js-data.js
+}
+ltm ifile dashboard_js-logger.js {
+    file-name dashboard_js-logger.js
+}
+ltm ifile dashboard_js-ui.js {
+    file-name dashboard_js-ui.js
+}
+ltm ifile dashboard_logo.png {
+    file-name dashboard_logo.png
+}
+ltm ifile dashboard_themes.css {
+    file-name dashboard_themes.css
+```
 
 **4. Create Virtual Server:**
 ```bash
