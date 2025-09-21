@@ -167,71 +167,7 @@ All datagroups, pools and DNS resolver must exist in LTM and match the item name
 
 # Front-end Configuration
 
-## Create Required Pools
-The frontend requires specific pools for health monitoring and backend communication.
-
-### Pool 1: DNS Health Check Pool
-This pool monitors DNS server availability for hostname resolution.
-
-1. Navigate to **Local Traffic → Pools → Pool List**
-2. Click **Create**
-3. Configure pool settings:
-   - **Name**: `dashboard-dns_udp53_pool`
-   - **Description**: `DNS servers for dashboard hostname resolution`
-   - **Health Monitors**: `udp` (or create custom monitor)
-   - **Load Balancing Method**: `Round Robin`
-
-4. Add DNS server member:
-   - Click **New Member**
-   - **Address**: Enter your DNS server IP (same as used in resolver)
-   - **Service Port**: `53`
-   - **Click** **Add**
-
-5. Click **Finished**
-
-### Pool 2: Backend API Hosts Pool
-This pool manages connections to backend BIG-IP API endpoints.
-
-1. Navigate to **Local Traffic → Pools → Pool List**
-2. Click **Create**
-3. Configure pool settings:
-   - **Name**: `dashboard-api-hosts_https_pool`
-   - **Description**: `Backend BIG-IP API endpoints for dashboard`
-   - **Health Monitors**: `https` (or create custom HTTPS monitor)
-   - **Load Balancing Method**: `Round Robin`
-
-4. Add backend members (repeat for each backend site):
-   - Click **New Member**
-   - **Address**: Backend BIG-IP API virtual server IP
-   - **Service Port**: `443`
-   - Click **Add**
-
-5. Click **Finished**
-
-### Create Custom HTTPS Monitor
-
-For better health checking of backend APIs:
-
-1. Navigate to **Local Traffic → Monitors → Monitor List**
-2. Click **Create**
-3. Configure monitor:
-   - **Name**: `dashboard-api-host_https_monitor`
-   - **Type**: `HTTPS`
-   - **Interval**: `5` seconds
-   - **Timeout**: `16` seconds
-   - **Send String**: 
-     ```
-     GET /api/health HTTP/1.1\r\nHost: %{server_ip}\r\nConnection: Close\r\n\r\n
-     ```
-   - **Receive String**: `(healthy|unhealthy)`
-
-4. Click **Finished**
-5. Return to backend pool and assign this monitor
-
----
-
 ## Create Data Groups
-
 The dashboard requires several data groups for configuration and access control.
 
 ### Data Group 1: Client Authorization
@@ -343,6 +279,69 @@ The dashboard requires several data groups for configuration and access control.
 4. Click **Finished**
 
 **Security Note**: Generate a strong, unique API key. This same key must be configured on all backend BIG-IP systems.
+
+## Create Required Pools
+The frontend requires specific pools for health monitoring and backend communication.
+
+### Pool 1: DNS Health Check Pool
+This pool monitors DNS server availability for hostname resolution.
+
+1. Navigate to **Local Traffic → Pools → Pool List**
+2. Click **Create**
+3. Configure pool settings:
+   - **Name**: `dashboard-dns_udp53_pool`
+   - **Description**: `DNS servers for dashboard hostname resolution`
+   - **Health Monitors**: `udp` (or create custom monitor)
+   - **Load Balancing Method**: `Round Robin`
+
+4. Add DNS server member:
+   - Click **New Member**
+   - **Address**: Enter your DNS server IP (same as used in resolver)
+   - **Service Port**: `53`
+   - **Click** **Add**
+
+5. Click **Finished**
+
+### Pool 2: Backend API Hosts Pool
+This pool manages connections to backend BIG-IP API endpoints.
+
+1. Navigate to **Local Traffic → Pools → Pool List**
+2. Click **Create**
+3. Configure pool settings:
+   - **Name**: `dashboard-api-hosts_https_pool`
+   - **Description**: `Backend BIG-IP API endpoints for dashboard`
+   - **Health Monitors**: `https` (or create custom HTTPS monitor)
+   - **Load Balancing Method**: `Round Robin`
+
+4. Add backend members (repeat for each backend site):
+   - Click **New Member**
+   - **Address**: Backend BIG-IP API virtual server IP
+   - **Service Port**: `443`
+   - Click **Add**
+
+5. Click **Finished**
+
+### Create Custom HTTPS Monitor
+
+For better health checking of backend APIs:
+
+1. Navigate to **Local Traffic → Monitors → Monitor List**
+2. Click **Create**
+3. Configure monitor:
+   - **Name**: `dashboard-api-host_https_monitor`
+   - **Type**: `HTTPS`
+   - **Interval**: `5` seconds
+   - **Timeout**: `16` seconds
+   - **Send String**: 
+     ```
+     GET /api/health HTTP/1.1\r\nHost: %{server_ip}\r\nConnection: Close\r\n\r\n
+     ```
+   - **Receive String**: `(healthy|unhealthy)`
+
+4. Click **Finished**
+5. Return to backend pool and assign this monitor
+
+---
 
 ## DNS Resolver Configuration
 The DNS resolver enables hostname display for pool members in dashboard responses. This step is optional but recommended for enhanced user experience.
