@@ -165,7 +165,7 @@ All datagroups, pools and DNS resolver must exist in LTM and match the item name
  
 - `dashboard_logo.png`     - logo image file
 
-### Front-end Configuration
+# Front-end Configuration
 ## DNS Resolver Configuration
 The DNS resolver enables hostname display for pool members in dashboard responses. This step is optional but recommended for enhanced user experience.
 
