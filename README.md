@@ -955,80 +955,6 @@ Test API key authentication:
    - Each pool should have name, alias, status, members array
    - Members should include ip, port, status, hostname fields
 
-3. **Compare with BIG-IP Reality**:
-   - Pool statuses should match actual BIG-IP pool states
-   - Member counts should be accurate
-   - IP addresses should be correct
-   - Hostnames should resolve properly (if DNS enabled)
-
-**GTM/DNS Listener Configuration:**
-If using GTM for DNS resolution, create a dedicated listener with access restrictions:
-
-```bash
-# Create GTM listener for dashboard DNS
-tmsh create gtm listener dashboard-dns-listener {
-    address 192.168.1.53
-    port 53
-    ip-protocol udp
-    profiles add { dns }
-    rules { DNS_Dashboard-DNS-Restrict_v1.0_irule }
-}
-
-# Create data group for authorized DNS clients (LTM Self-IPs)
-tmsh create ltm data-group internal dashboard-dns-clients type ip
-tmsh modify ltm data-group internal dashboard-dns-clients records add { 
-    10.1.1.100/32 { }    # Frontend BIG-IP Self-IP
-    10.1.2.100/32 { }    # Backend BIG-IP Self-IP
-}
-```
-
-**DNS Restriction iRule (DNS_Dashboard-DNS-Restrict_v1.0_irule):**
-This iRule should be applied to the GTM listener to restrict DNS queries:
-- Allows PTR queries from authorized clients (for hostname resolution)
-- Restricts A record queries to specific dashboard hostnames
-- Refuses all other query types and unauthorized clients
-
-## Configuration
-
-### Debug Settings
-Enable debug logging or DNS resolution by modifying these two iRule variables:
-```tcl
-# In CLIENT_ACCEPTED event
-set debug_enabled 1    # Set to 1 to enable debug
-set dns_enabled 1      # Set to 1 to enable DNS resolution
-```
-No other irule variables should be changed other than the Front-end Site variable.
-
-## API Reference
-### Health Endpoint
-```
-GET /api/health
-```
-Returns API health status (no authentication required).
-
-**Response:**
-```json
-{
-  "status": "healthy",
-  "hostname": "bigip-01.example.com",
-  "timestamp": "2025-01-15 14:30:45",
-  "uptime_seconds": 1234567,
-  "version": "1.7",
-  "pools_configured": 5,
-  "message": "API endpoint is operational with 5 pools configured"
-}
-```
-
-### Pool Data Endpoint
-```
-GET /api/proxy/pools
-Headers:
-  X-API-Key: your-secure-api-key-here
-  X-Selected-Site: CHICAGO
-  X-Instance-ID: inst_abc123
-```
-Returns detailed pool and member status information.
-
 **Response:**
 ```json
 {
@@ -1059,13 +985,43 @@ Returns detailed pool and member status information.
 }
 ```
 
-## Usage
+**GTM/DNS Listener Configuration:**
+If using GTM for DNS resolution, create a dedicated listener with access restrictions:
 
-### Basic Operation
-1. Access dashboard URL in web browser
-2. Authenticate via APM policy and ensure APM sets session variable `session.custom.dashboard.auth = 1`
-3. Select desired site from dropdown
-4. Monitor pool status in near real-time
+```bash
+# Create GTM listener for dashboard DNS
+tmsh create gtm listener dashboard-dns-listener {
+    address 192.168.1.53
+    port 53
+    ip-protocol udp
+    profiles add { dns }
+    rules { DNS_Dashboard-DNS-Restrict_v1.0_irule }
+}
+
+# Create data group for authorized DNS clients (LTM Self-IPs)
+tmsh create ltm data-group internal dashboard-dns-clients type ip
+tmsh modify ltm data-group internal dashboard-dns-clients records add { 
+    10.1.1.100/32 { }    # Frontend BIG-IP Self-IP
+    10.1.2.100/32 { }    # Backend BIG-IP Self-IP
+}
+```
+
+**DNS Restriction iRule (DNS_Dashboard-DNS-Restrict_v1.0_irule):**
+This iRule should be applied to the GTM listener to restrict DNS queries:
+- Allows PTR queries from authorized clients (for hostname resolution)
+- Restricts A record queries to specific dashboard hostnames
+- Refuses all other query types and unauthorized clients
+
+### Debug Settings
+Enable debug logging or DNS resolution by modifying these two iRule variables:
+```tcl
+# In CLIENT_ACCEPTED event
+set debug_enabled 1    # Set to 1 to enable debug
+set dns_enabled 1      # Set to 1 to enable DNS resolution
+```
+No other irule variables should be changed other than the Front-end Site variable.
+
+---
 
 ### Search and Filtering
 - **Search Syntax:** Boolean operators (AND, OR, NOT)
@@ -1074,6 +1030,8 @@ Returns detailed pool and member status information.
   - `web AND up` - Pools containing "web" with "up" status
   - `NOT disabled` - All pools except disabled ones
   - `changed` - Pools with member state changes
+
+---
 
 ### Keyboard Shortcuts
 - `Ctrl+F` / `Cmd+F` - Focus search filter
@@ -1086,13 +1044,9 @@ Returns detailed pool and member status information.
 - `Alt+1-5` - Load saved searches
 - `Alt+Shift+1-5` - Save current search
 
-### View Modes
-- **MACRO Mode:** Full member details with status and actions
-- **MICRO Mode:** Compact pool-only view with change indicators
+---
 
 ## Troubleshooting
-
-### Common Issues
 
 **Dashboard shows "No pools configured"**
 - Verify `datagroup-dashboard-pools` contains pool names
@@ -1112,6 +1066,8 @@ Returns detailed pool and member status information.
 **Site selection shows no sites**
 - Check `datagroup-dashboard-sites` configuration in `/Common` partition
 
+---
+
 ### Debug Mode
 Enable comprehensive logging:
 1. Set `debug_enabled = 1` in iRule
@@ -1121,9 +1077,9 @@ Enable comprehensive logging:
 
 ## Known Limitations
 
-### Multi-Partition Support
 **Dashboard v1.7 is not multi-partition compatible.** All BIG-IP objects (pools, data groups, virtual servers, iRules, etc.) must reside in the `/Common` partition. 
-
+- DNS resolution only supports IPv4 PTR lookups at this time
+- 
 ### TMOS Version Compatibility
 **Minimum Required:** TMOS 15.0
 **Tested Versions:**
@@ -1131,8 +1087,7 @@ Enable comprehensive logging:
 - TMOS 16.x series (all versions)
 - TMOS 17.x series (all versions)
 
-### Other Limitations
-- DNS resolution only supports IPv4 PTR lookups at this time
+---
 
 ## Performance
 
@@ -1143,9 +1098,8 @@ Enable comprehensive logging:
 
 **Resource Usage:**
 - ~2MB memory per dashboard instance
+- 5000 entry FIFO for logger
 - ~1KB/pool in session storage
-- Minimal CPU impact on F5 device
-- Network traffic scales with refresh frequency
 - 0% GPU Browser pipeline usage when in an unalarmed state
 
 ## Contributing
