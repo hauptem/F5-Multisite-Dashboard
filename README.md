@@ -103,9 +103,11 @@ The dashboard consists of two main components:
 - TMOS Version: 15.0 or higher (tested on 15.x, 16.x, 17.x)
 - DNS resolver configured for PTR lookups (optional)
 - **Note:** This version (1.7) is not multi-partition compatible - all objects must be in `/Common` partition. Partition compatibility is planned for version 2.0.
-
+- 
+###############################################################################
 ### Frontend Setup
-#### Dashboard Front-End Critical Dependencies:
+###############################################################################
+### Dashboard Front-End Critical Dependencies:
 
 All datagroups, pools and DNS resolver must exist in LTM and match the item names in the iRule. If you wish to use custom names for pools, make sure to edit the relevant iRule references.
 
@@ -163,8 +165,7 @@ All datagroups, pools and DNS resolver must exist in LTM and match the item name
  
 - `dashboard_logo.png`     - logo image file
 
-#### Front-end Configuration
-
+### Front-end Configuration
 ## DNS Resolver Configuration
 The DNS resolver enables hostname display for pool members in dashboard responses. This step is optional but recommended for enhanced user experience.
 
