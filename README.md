@@ -187,6 +187,7 @@ create net dns-resolver dashboard-DNS forward-zones add { in-addr.arpa { nameser
 - Replace `192.168.1.53` with your DNS server IP address
 - Use port 53 unless your DNS server uses a different port
 - For GTM integration, use your GTM listener IP address
+- Dashboard will only request PTR records so it is recommended to scope the resolver to in-addr-arpa. unless a shared resolver is used
 
 ### Verify DNS Resolver Creation
 ```tcl
