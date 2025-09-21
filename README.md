@@ -304,25 +304,6 @@ echo "Total pools configured: $(echo $POOLS | wc -w)"
 ## Create Required Pools
 The frontend requires specific pools for health monitoring and backend communication.
 
-### Pool - dashboard-dns_udp53_pool
-This pool monitors DNS resolver availability. The Front-end iRule will check member state for this pool and fail back gracefully to IP-only mode if all members in this pool are down.
-
-1. Navigate to **Local Traffic → Pools → Pool List**
-2. Click **Create**
-3. Configure pool settings:
-   - **Name**: `dashboard-dns_udp53_pool`
-   - **Description**: `DNS servers for dashboard hostname resolution`
-   - **Health Monitors**: `dns` (recommended to create a custom monitor)
-   - **Load Balancing Method**: `Round Robin`
-
-4. Add DNS server member:
-   - Click **New Member**
-   - **Address**: Enter your DNS server IP (same as used in the resolver dashboard-DNS)
-   - **Service Port**: `53`
-   - **Click** **Add**
-
-5. Click **Finished**
-
 ### Pool - dashboard-api-hosts_https_pool
 This pool manages is used only for monitoring and detection of API host reachability and operation
 
@@ -363,6 +344,25 @@ For health checking of backend APIs:
 
 ---
 
+### Pool - dashboard-dns_udp53_pool
+This pool monitors DNS resolver availability. The Front-end iRule will check member state for this pool and fail back gracefully to IP-only mode if all members in this pool are down.
+
+1. Navigate to **Local Traffic → Pools → Pool List**
+2. Click **Create**
+3. Configure pool settings:
+   - **Name**: `dashboard-dns_udp53_pool`
+   - **Description**: `DNS servers for dashboard hostname resolution`
+   - **Health Monitors**: `dns` (recommended to create a custom monitor)
+   - **Load Balancing Method**: `Round Robin`
+
+4. Add DNS server member:
+   - Click **New Member**
+   - **Address**: Enter your DNS server IP (same as used in the resolver dashboard-DNS)
+   - **Service Port**: `53`
+   - **Click** **Add**
+
+5. Click **Finished**
+
 ## DNS Resolver Configuration (Optional but the iRule will require unless edited)
 The DNS resolver enables hostname display for pool members in dashboard responses.
 
@@ -399,16 +399,6 @@ save sys config
 ### Exit TMSH
 ```tcl
 quit
-```
-
-**Create Pools:**
-
-```bash
-# API hosts pool
-tmsh create ltm pool dashboard-api-hosts_https_pool 
-
-# DNS pool 
-tmsh create ltm pool dashboard-dns_udp53_pool members 
 ```
 
 ## Upload Static Files (iFiles)
