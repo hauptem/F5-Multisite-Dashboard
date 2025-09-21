@@ -117,7 +117,7 @@ The dashboard consists of two main components:
 - TMOS Version: 15.0 or higher (tested on 15.x, 16.x, 17.x)
 - DNS resolver configured for PTR lookups (optional)
 - **Note:** This version (1.7) is not multi-partition compatible
-- All objects must be in `/Common` partition. Partition compatibility is planned for version 2.0.- 
+- All objects must be in `/Common` partition. Partition compatibility is planned for version 2.0. 
 
 ---
 
