@@ -57,13 +57,13 @@ A 170KB modular JavaScript application runs entirely in your browser, served dir
 ---
 
 **Dashboard AGLight (theme1) in MACRO mode**
-<img width="1504" height="1021" alt="Image" src="https://github.com/user-attachments/assets/82483b0d-de24-424c-87ea-eb6c59252431" />
+<img width="2560" height="1400" alt="Image" src="https://github.com/user-attachments/assets/ef0294cf-8c74-45fd-849e-a2dbe34f44ce" />
 
-**Dashboard Monochrome Grey (theme2) micro mode with CLI-based logger active**
-<img width="1504" height="1021" alt="Image" src="https://github.com/user-attachments/assets/2a480ec3-c8c8-4463-a3df-acde98ed012f" />
+**Dashboard Monochrome Grey (theme2) micro mode with CLI-based logger active and alarmed pools**
+<img width="2560" height="1400" alt="Image" src="https://github.com/user-attachments/assets/4c037655-ea14-43b2-9cda-46575cc7c20f" />
 
 **Dashboard Amber (theme3) MACRO mode with alarmed pools**
-<img width="1504" height="1021" alt="Image" src="https://github.com/user-attachments/assets/dff7ae0e-5673-4048-8a4a-19eabea016a5" />
+<img width="2560" height="1400" alt="Image" src="https://github.com/user-attachments/assets/eda0b8db-24f7-413f-912b-e85584dc715a" />
 
 **Three instances of Dashboard three sites in three tabs of Microsoft Edge - complete data isolation**
 <img width="2497" height="1186" alt="Image" src="https://github.com/user-attachments/assets/980ad18f-fa62-431b-b6ac-38dbb86cc6ea" />
