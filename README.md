@@ -1023,26 +1023,71 @@ No other irule variables should be changed other than the Front-end Site variabl
 
 ---
 
-### Search and Filtering
-- **Search Syntax:** Boolean operators (AND, OR, NOT)
-- **Special Keywords:** `changed` (shows pools with unacknowledged member changes)
-- **Examples:**
-  - `web AND up` - Pools containing "web" with "up" status
-  - `NOT disabled` - All pools except disabled ones
-  - `changed` - Pools with member state changes
+# Dashboard Keyboard Shortcuts Reference
 
----
+## Search & Filter Controls
 
-### Keyboard Shortcuts
-- `Ctrl+F` / `Cmd+F` - Focus search filter
-- `Alt+C` - Filter for changed members
-- `Alt+M` - Toggle MACRO/MICRO view mode
-- `Alt+T` - Cycle themes
-- `Alt+L` - Toggle event logger
-- `Alt+R` - Resolve DNS hostnames
-- `Alt+F` - Flush DNS cache
-- `Alt+1-5` - Load saved searches
-- `Alt+Shift+1-5` - Save current search
+| Shortcut | Action | Description |
+|----------|--------|-------------|
+| `Ctrl+F` / `Cmd+F` | **Focus Search** | Opens search input and selects all text |
+| `Alt+C` | **Filter Changed** | Sets search filter to "changed" to show only pools with member changes |
+| `Alt+X` | **Clear Search** | Clears the search filter and focuses search input |
+| `Escape` | **Clear Filter** | Clears search filter when search input is focused |
+
+## View & Display Controls
+
+| Shortcut | Action | Description |
+|----------|--------|-------------|
+| `Alt+M` | **Toggle View Mode** | Switches between MACRO and MICRO view modes |
+| `Alt+T` | **Toggle Theme** | Cycles through available themes (theme1, theme2, theme3) |
+| `Alt+A` | **Toggle Alias Mode** | Switches between showing pool aliases or actual pool names |
+| `Alt+H` | **Toggle Bottom Bar** | Shows/hides the bottom control bar |
+
+## Site & Refresh Controls
+
+| Shortcut | Action | Description |
+|----------|--------|-------------|
+| `Alt+S` | **Cycle Sites** | Cycles through available sites in the dropdown |
+| `Alt+P` | **Cycle Refresh Interval** | Cycles through refresh intervals (10s, 30s, 60s, 90s) |
+
+## DNS & Network Controls
+
+| Shortcut | Action | Description |
+|----------|--------|-------------|
+| `Alt+R` | **Resolve DNS** | Initiates DNS resolution for member hostnames |
+| `Alt+F` | **Flush DNS Cache** | Clears the DNS hostname cache |
+
+## Logger Controls
+
+| Shortcut | Action | Description |
+|----------|--------|-------------|
+| `Alt+L` | **Toggle Logger** | Shows/hides the event logger window |
+
+## Saved Searches
+
+| Shortcut | Action | Description |
+|----------|--------|-------------|
+| `Alt+1` through `Alt+5` | **Load Saved Search** | Loads saved search from slots 1-5 |
+| `Alt+Shift+1` through `Alt+Shift+5` | **Save Current Search** | Saves current search term to slots 1-5 |
+
+## Additional Features
+
+### Context Menu Options
+- **Right-click on search input**: Opens context menu for loading/saving searches to numbered slots
+
+### Search Input Behavior
+- **Enter in search input**: Immediately applies the search filter without waiting for the debounce timer
+
+## Search Filter Syntax
+
+The search filter supports Boolean operators for advanced filtering:
+
+| Operator | Usage | Example |
+|----------|-------|---------|
+| `OR` | Default behavior (space-separated) | `pool1 pool2` (shows pools containing either term) |
+| `AND` | Requires all terms | `pool1 AND up` (shows pools containing both terms) |
+| `NOT` | Excludes terms | `pool1 NOT down` (shows pools with "pool1" but not "down") |
+| `changed` | Special keyword | Shows only pools with unacknowledged member status changes |
 
 ---
 
