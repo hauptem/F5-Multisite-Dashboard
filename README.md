@@ -1069,7 +1069,6 @@ Returns detailed pool and member status information.
 - Verify `datagroup-dashboard-pools` contains pool names
 - Check pool names match actual BIG-IP pool configuration in `/Common` partition
 - Ensure all dashboard components are deployed in `/Common` partition (v1.7 limitation)
-- Enable debug logging to see backend responses
 
 **API authentication failures**
 - Verify API keys match between frontend and backend
@@ -1080,18 +1079,16 @@ Returns detailed pool and member status information.
 - Verify DNS resolver configuration in `/Common` partition
 - Check `dashboard-dns_udp53_pool` has active members
 - Set `dns_enabled = 1` in iRule configuration
-- Ensure TMOS version supports advanced DNS features (13.0+ recommended)
 
 **Site selection shows no sites**
 - Check `datagroup-dashboard-sites` configuration in `/Common` partition
-- Verify `datagroup-dashboard-api-host` mappings
-- Ensure backend API hosts are accessible from the Front-end
 
 ### Debug Mode
 Enable comprehensive logging:
 1. Set `debug_enabled = 1` in iRule
 2. Add client IP to `datagroup-dashboard-debug`
 3. Monitor logs: `tail -f /var/log/ltm`
+4. Note that in order to see console logs in browser devtools, you must enable irule debug and be a client in the debug datagroup. The irule will signal the client that you are a debug_enabled client. This is for the non-minified Javascript only.
 
 ## Known Limitations
 
@@ -1106,13 +1103,13 @@ Enable comprehensive logging:
 - TMOS 17.x series (all versions)
 
 ### Other Limitations
-- DNS resolution only supports IPv4 PTR lookups
+- DNS resolution only supports IPv4 PTR lookups at this time
 
 ## Performance
 
 **Scalability:**
-- Tested with 500+ pools per site
-- Tested with 1000+ pool members 
+- Tested with 500+ pools per site on a lab grade VE
+- Tested with 1000+ pool members on a lab grade VE
 
 **Resource Usage:**
 - ~2MB memory per dashboard instance
