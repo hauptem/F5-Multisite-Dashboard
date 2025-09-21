@@ -57,19 +57,19 @@ The JavaScript application includes real-time state tracking, DNS hostname resol
 
 **Technical Assumptions:** Most don't realize that modern browsers can handle sophisticated applications, or that iRules can serve as full application backends. The pattern of using F5s to inject third-party monitoring JavaScript exists, but always for sending data out to external systems, never for serving applications that query the F5 itself.
 
-Dashboard showing AGLight (theme1) in MACRO mode
+**Dashboard AGLight (theme1) in MACRO mode**
 <img width="1504" height="1021" alt="Image" src="https://github.com/user-attachments/assets/82483b0d-de24-424c-87ea-eb6c59252431" />
 
-Dashboard showing Monochrome Grey (theme2) in micro mode with the CLI-based logger active
+**Dashboard Monochrome Grey (theme2) micro mode with CLI-based logger active**
 <img width="1504" height="1021" alt="Image" src="https://github.com/user-attachments/assets/2a480ec3-c8c8-4463-a3df-acde98ed012f" />
 
-Dashboard showing Amber (theme3) in micro mode with alarmed pools
+**Dashboard Amber (theme3) micro mode with alarmed pools**
 <img width="1504" height="1021" alt="Image" src="https://github.com/user-attachments/assets/dff7ae0e-5673-4048-8a4a-19eabea016a5" />
 
-Three sites of Dashboard displayed in three tabs of Microsoft Edge. Javascript "instanceID" ensures AJAX data isolation
+**Three instances of Dashboard three sites in three tabs of Microsoft Edge**
 <img width="2497" height="1186" alt="Image" src="https://github.com/user-attachments/assets/980ad18f-fa62-431b-b6ac-38dbb86cc6ea" />
 
-Notional layout of the multi-site topology. Supports multiple Front-ends and scales horizontally infinitely
+**Notional layout of the multi-site topology. Supports multiple Front-ends; scales horizontally as needed**
 <img width="2026" height="1130" alt="Image" src="https://github.com/user-attachments/assets/d629864e-4614-4e6b-8886-553c0b720f2c" />
 
 ## Features
