@@ -691,12 +691,18 @@ The dashboard requires several data groups for configuration and access control.
 2. Configure data group:
    - **Name**: `datagroup-dashboard-api-keys`
    - **Type**: `String`
-   - **Description**: `API keys for Front-end authentication`
+   - **Description**: `Valid API keys for dashboard authentication`
 
 3. Add API key:
-   - **String**: `dashboard-api-key-2025-v17`
+   - **String**: `dashboard-api-key-2025-v17`, **Value**: `Production API Key - Issued 2025-09 - Shared with Frontend`
 
 4. Click **Finished**
+
+**Security Requirements**:
+- Use strong, randomly generated API keys (minimum 32 characters)
+- Include letters, numbers, and special characters
+- Same key must be configured on all frontend BIG-IPs
+- Consider key rotation procedures for enhanced security
 
 ### Automated Pool Discovery
 Use this script to automatically discover and populate existing pools into both pool data groups:
@@ -729,7 +735,7 @@ echo "Total pools configured: $(echo $POOLS | wc -w)"
 **Note:** After running this script, you can manually customize aliases by modifying the `datagroup-dashboard-pool-alias` data group to provide user-friendly display names.
 
 ## Create Required Pools
-The frontend requires specific pools for health monitoring and backend communication.
+The API Host requires a single specific pool for health monitoring of the dashboard-DNS resolver
 
 ### Pool 1 - dashboard-dns_udp53_pool
 This pool monitors DNS resolver availability. The API Host iRule will check member state for this pool and fail back gracefully to IP-only mode if all members in this pool are down.
@@ -860,6 +866,72 @@ set dns_enabled 1
 
 ---
 
+### Basic API Testing
+
+**Health Endpoint Test**
+
+Test the health endpoint without authentication:
+
+1. **From authorized IP** (frontend or authorized client):
+   ```bash
+   curl -k https://[api-host-ip]:443/api/health
+   ```
+
+2. **Expected Response** (HTTP 200):
+   ```json
+   {
+     "status": "healthy",
+     "hostname": "api-host-bigip.company.com",
+     "timestamp": "2025-09-25 14:30:15",
+     "uptime_seconds": 1234567,
+     "version": "1.7",
+     "pools_configured": 5,
+     "message": "API endpoint is operational with 5 pools configured"
+   }
+   ```
+
+### Authentication Test
+
+Test API key authentication:
+
+1. **Without API Key** (should fail):
+   ```bash
+   curl -k https://[api-host-ip]:443/api/proxy/pools
+   ```
+   **Expected**: HTTP 403 Forbidden
+
+2. **With Invalid API Key** (should fail):
+   ```bash
+   curl -k -H "X-API-Key: invalid-key" https://[api-host-ip]:443/api/proxy/pools
+   ```
+   **Expected**: HTTP 403 Forbidden
+
+3. **With Valid API Key** (should succeed):
+   ```bash
+   curl -k -H "X-API-Key: [your-api-key]" https://[api-host-ip]:443/api/proxy/pools
+   ```
+   **Expected**: HTTP 200 with pool data
+
+### Pool Data Validation
+
+**Verify Pool Data Response**
+
+1. **Test Data Endpoint**:
+   ```bash
+   curl -k -H "X-API-Key: [your-api-key]" https://[api-host-ip]:443/api/proxy/pools
+   ```
+
+2. **Validate JSON Structure**:
+   - Response should include hostname, timestamp, instanceId, pools array
+   - Each pool should have name, alias, status, members array
+   - Members should include ip, port, status, hostname fields
+
+3. **Compare with BIG-IP Reality**:
+   - Pool statuses should match actual BIG-IP pool states
+   - Member counts should be accurate
+   - IP addresses should be correct
+   - Hostnames should resolve properly (if DNS enabled)
+
 **GTM/DNS Listener Configuration:**
 If using GTM for DNS resolution, create a dedicated listener with access restrictions:
 
@@ -890,12 +962,13 @@ This iRule should be applied to the GTM listener to restrict DNS queries:
 ## Configuration
 
 ### Debug Settings
-Enable debug logging by modifying the iRule variables:
+Enable debug logging or DNS resolution by modifying these two iRule variables:
 ```tcl
 # In CLIENT_ACCEPTED event
 set debug_enabled 1    # Set to 1 to enable debug
 set dns_enabled 1      # Set to 1 to enable DNS resolution
 ```
+No other irule variables should be changed other than the Front-end Site variable.
 
 ## API Reference
 ### Health Endpoint
