@@ -475,14 +475,48 @@ ltm ifile dashboard_themes.css {
     file-name dashboard_themes.css
 ```
 
-**4. Create Virtual Server:**
-```bash
-tmsh create ltm virtual dashboard-frontend_https_vs 
-```
+## Create and Configure the Frontend iRule
 
-**5. Configure APM Policy:**
-   - Create APM policy with session variable `session.custom.dashboard.auth = 1`
-   - Apply policy to the virtual server
+### Create the iRule
+
+1. Navigate to **Local Traffic → iRules → iRule List**
+2. Click **Create**
+3. Configure iRule:
+   - **Name**: `LTM_Dashboard-Frontend_v1.7_irule`
+   - **Description**: `F5 Multi-Site Dashboard Frontend v1.7`
+
+### Add iRule Content
+
+Copy the complete frontend iRule code (from `LTM_Dashboard-Frontend_v1.7_irule.txt`) into the **Definition** field.
+
+### Key Configuration Points in iRule
+
+**Local Site Configuration**
+
+Locate line 82 and modify for your environment:
+```tcl
+set local_site_name "CHICAGO"
+```
+Change `"CHICAGO"` to match your frontend site name from the sites data group.
+
+**Debug Configuration**
+
+Locate lines 30-31 to enable/disable debug logging:
+```tcl
+set debug_enabled 0
+set dns_enabled 1
+```
+- Set `debug_enabled` to `1` to enable debug logging (recommended during setup)
+- Set `dns_enabled` to `1` to enable DNS hostname resolution
+- Set to `0` to disable features
+
+### Save iRule
+
+1. Click **Finished**
+2. Verify iRule appears in iRule list without syntax errors
+3. If errors exist, review and correct the iRule code
+
+---
 
 ### Backend API Setup
 
