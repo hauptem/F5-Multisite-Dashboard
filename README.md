@@ -59,11 +59,11 @@ A 170KB modular JavaScript application runs entirely in your browser, served dir
 **Theme1 - AGLight in MACRO mode**
 <img width="2560" height="1400" alt="Image" src="https://github.com/user-attachments/assets/ef0294cf-8c74-45fd-849e-a2dbe34f44ce" />
 
-**Theme2 - Monochrome Grey in micro mode with CLI-based logger active, alarmed pools, and an active search**
+**Theme2 - Monochrome Grey in micro mode with logger active, alarmed pools, an active search, and actual pool name mode enabled**
 <img width="2560" height="1400" alt="Image" src="https://github.com/user-attachments/assets/4c037655-ea14-43b2-9cda-46575cc7c20f" />
 
 **Theme3 - Amber in MACRO mode with alarmed pool members**
-<img width="2560" height="1400" alt="Image" src="https://github.com/user-attachments/assets/eda0b8db-24f7-413f-912b-e85584dc715a" />
+<img width="2560" height="1400" alt="Image" src="https://github.com/user-attachments/assets/72a7a8dd-bc03-48ca-b12d-e81258b69e11" />
 
 **Three instances of Dashboard three sites in three tabs of Microsoft Edge - complete data isolation**
 <img width="2497" height="1186" alt="Image" src="https://github.com/user-attachments/assets/980ad18f-fa62-431b-b6ac-38dbb86cc6ea" />
