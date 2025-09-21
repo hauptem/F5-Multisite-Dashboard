@@ -576,9 +576,6 @@ set dns_enabled 1
 
 ---
 
-
----
-
 ### Backend API Setup
 
 The **Dashboard API Host** provides JSON-based pool data endpoints for remote sites. Backend hosts perform the actual pool member status checks, DNS hostname resolution (if configured), and serve optimized data to frontend dashboard instances. Multiple backend API hosts can support a single frontend for distributed monitoring.
