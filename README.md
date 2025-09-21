@@ -66,6 +66,9 @@ Dashboard showing Monochrome Grey (theme2) in micro mode with the CLI-based logg
 Dashboard showing Amber (theme3) in micro mode with alarmed pools
 <img width="1504" height="1021" alt="Image" src="https://github.com/user-attachments/assets/dff7ae0e-5673-4048-8a4a-19eabea016a5" />
 
+Three sites of Dashboard displayed in three tabs of Microsoft Edge. Javascript "instanceID" ensures AJAX data isolation
+<img width="1915" height="1403" alt="Image" src="https://github.com/user-attachments/assets/36a211df-2346-4cb8-8fae-7cb9aec64d11" />
+
 Notional layout of the multi-site topology. Supports multiple Front-ends and scales horizontally infinitely
 <img width="2026" height="1130" alt="Image" src="https://github.com/user-attachments/assets/d629864e-4614-4e6b-8886-553c0b720f2c" />
 
