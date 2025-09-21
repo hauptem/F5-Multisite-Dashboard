@@ -102,13 +102,14 @@ The dashboard consists of two main components:
 - F5 BIG-IP with LTM and APM modules provisioned
 - TMOS Version: 15.0 or higher (tested on 15.x, 16.x, 17.x)
 - DNS resolver configured for PTR lookups (optional)
-- **Note:** This version (1.7) is not multi-partition compatible - all objects must be in `/Common` partition. Partition compatibility is planned for version 2.0.
-- 
+- **Note:** This version (1.7) is not multi-partition compatible
+- All objects must be in `/Common` partition. Partition compatibility is planned for version 2.0.- 
 
 ## Frontend Setup
 ### Dashboard Front-End Critical Dependencies:
 
-All datagroups, pools and DNS resolver must exist in LTM and match the item names in the iRule. If you wish to use custom names for pools, make sure to edit the relevant iRule references.
+All datagroups, pools and DNS resolver must exist in LTM and match the item names in the iRule.
+If you wish to use custom names for pools, make sure to edit the relevant iRule references.
 
 **1. `datagroup-dashboard-clients` (Address)**
 - Used to restrict dashboard access via Client IP or Client Subnet
@@ -342,6 +343,8 @@ This pool monitors DNS resolver availability. The Front-end iRule will check mem
 
 5. Click **Finished**
 
+--- 
+
 ### Create a Custom HTTPS Monitor
 For health checking of backend APIs:
 
@@ -402,6 +405,8 @@ save sys config
 ```tcl
 quit
 ```
+
+---
 
 ## Upload Static Files (iFiles)
 The dashboard requires multiple static files for the web interface.
@@ -475,6 +480,8 @@ ltm ifile dashboard_logo.png {
 ltm ifile dashboard_themes.css {
     file-name dashboard_themes.css
 ```
+
+---
 
 ## Create and Configure the Frontend iRule
 
