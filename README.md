@@ -411,16 +411,51 @@ tmsh create ltm pool dashboard-api-hosts_https_pool
 tmsh create ltm pool dashboard-dns_udp53_pool members 
 ```
 
-**3. Upload Static Assets as iFiles:**
-```bash
-tmsh create sys file ifile dashboard_js-core.js source-path file:///path/to/dashboard_js-core.js
-tmsh create sys file ifile dashboard_js-client.js source-path file:///path/to/dashboard_js-client.js
-tmsh create sys file ifile dashboard_js-data.js source-path file:///path/to/dashboard_js-data.js
-tmsh create sys file ifile dashboard_js-ui.js source-path file:///path/to/dashboard_js-ui.js
-tmsh create sys file ifile dashboard_js-logger.js source-path file:///path/to/dashboard_js-logger.js
-tmsh create sys file ifile dashboard_themes.css source-path file:///path/to/dashboard_themes.css
-tmsh create sys file ifile dashboard_logo.png source-path file:///path/to/dashboard_logo.png
-```
+## Upload Static Files (iFiles)
+The dashboard requires multiple static files for the web interface.
+
+### Access iFile Management
+1. Navigate to **Local Traffic → iRules → iFile List**
+
+Upload the following files:
+
+1. **dashboard_logo.png**
+   - Name: `dashboard_logo.png`
+   - Upload your organization's logo image
+
+2. **dashboard_themes.css**
+   - Name: `dashboard_themes.css`
+   - Contains all 5 themes and responsive design
+
+3. **dashboard_js-core.js**
+   - Name: `dashboard_js-core.js`
+   - Core coordination and timing functionality
+
+4. **dashboard_js-client.js**
+   - Name: `dashboard_js-client.js`
+   - HTTP communication and API management
+
+5. **dashboard_js-data.js**
+   - Name: `dashboard_js-data.js`
+   - Data management and state tracking
+
+6. **dashboard_js-ui.js**
+   - Name: `dashboard_js-ui.js`
+   - UI rendering and search functionality
+
+7. **dashboard_js-logger.js**
+   - Name: `dashboard_js-logger.js`
+   - Event logging with session persistence
+
+1. Click **Import**
+2. Configure import:
+   - **Import Type**: `File Upload`
+   - **File Name**: Select file from your computer
+   - **Name**: Use exact filename (e.g., `dashboard_logo.png`)
+3. Click **Import**
+4. Verify file appears in iFile list
+
+### Verify All Files Uploaded
 
 **4. Create Virtual Server:**
 ```bash
