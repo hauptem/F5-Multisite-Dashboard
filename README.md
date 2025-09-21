@@ -169,8 +169,7 @@ All datagroups, pools and DNS resolver must exist in LTM and match the item name
 ## Create Data Groups
 The dashboard requires several data groups for configuration and access control.
 
-### Data Group 1: Client Authorization
-
+### Data Group - datagroup-dashboard-clients
 1. Navigate to **Local Traffic → iRules → Data Group List**
 2. Click **Create**
 3. Configure data group:
@@ -181,13 +180,11 @@ The dashboard requires several data groups for configuration and access control.
 4. Add client networks:
    - **Address**: `192.168.1.0/24` (example - your client network)
    - **Address**: `10.0.0.0/8` (add your specific subnets)
-   - **Address**: `172.16.0.0/12` (if using private networks)
 
 5. Click **Finished**
 
-### Data Group 2: Debug Authorization (Optional)
-
-1. Click **Create** (new data group)
+### Data Group - datagroup-dashboard-debug
+1. Click **Create** 
 2. Configure data group:
    - **Name**: `datagroup-dashboard-debug`
    - **Type**: `Address`
@@ -199,15 +196,14 @@ The dashboard requires several data groups for configuration and access control.
 
 4. Click **Finished**
 
-### Data Group 3: Available Sites
-
-1. Click **Create** (new data group)
+### Data Group - datagroup-dashboard-sites
+1. Click **Create** 
 2. Configure data group:
    - **Name**: `datagroup-dashboard-sites`
    - **Type**: `String`
    - **Description**: `Available monitoring sites with display order`
 
-3. Add sites (use sort order increments of 10):
+3. Add sites; note that the Front-end itself should be first with the lowest sort order:
    - **String**: `CHICAGO`, **Value**: `10`
    - **String**: `NEW_YORK`, **Value**: `20`
    - **String**: `LONDON`, **Value**: `30`
@@ -215,9 +211,8 @@ The dashboard requires several data groups for configuration and access control.
 
 4. Click **Finished**
 
-### Data Group 4: Site-to-IP Mapping
-
-1. Click **Create** (new data group)
+### Data Group - datagroup-dashboard-api-host
+1. Click **Create** 
 2. Configure data group:
    - **Name**: `datagroup-dashboard-api-host`
    - **Type**: `String`
@@ -230,17 +225,16 @@ The dashboard requires several data groups for configuration and access control.
 
 4. Click **Finished**
 
-**Note**: Do not include the local frontend site (CHICAGO) in this data group.
+**Note**: Do not include your frontend site (CHICAGO) in this data group.
 
-### Data Group 5: Local Pool Configuration
-
+### Data Group - datagroup-dashboard-pools
 1. Click **Create** (new data group)
 2. Configure data group:
    - **Name**: `datagroup-dashboard-pools`
    - **Type**: `String`
-   - **Description**: `Local pools to monitor with display order`
+   - **Description**: `Local pools to display with sort order`
 
-3. Add local pools (use sort order increments of 10):
+3. Add local pools (recommended to use sort order increments of 10 for later adjustment):
    - **String**: `web_servers_pool`, **Value**: `10`
    - **String**: `app_servers_pool`, **Value**: `20`
    - **String**: `database_pool`, **Value**: `30`
@@ -248,8 +242,7 @@ The dashboard requires several data groups for configuration and access control.
 
 4. Click **Finished**
 
-### Data Group 6: Pool Aliases (Optional)
-
+### Data Group  - datagroup-dashboard-pool-alias
 1. Click **Create** (new data group)
 2. Configure data group:
    - **Name**: `datagroup-dashboard-pool-alias`
@@ -264,8 +257,7 @@ The dashboard requires several data groups for configuration and access control.
 
 4. Click **Finished**
 
-### Data Group 7: API Authentication Keys
-
+### Data Group - datagroup-dashboard-api-keys
 1. Click **Create** (new data group)
 2. Configure data group:
    - **Name**: `datagroup-dashboard-api-keys`
@@ -273,11 +265,11 @@ The dashboard requires several data groups for configuration and access control.
    - **Description**: `API keys for backend authentication`
 
 3. Add API key:
-   - **String**: `dashboard-api-key-2025-v17`, **Value**: `1`
+   - **String**: `dashboard-api-key-2025-v17`
 
 4. Click **Finished**
 
-**Security Note**: Generate a strong, unique API key. This same key must be configured on all backend BIG-IP systems.
+**Note**: This same key must be configured on all backend BIG-IP systems.
 
 ## Create Required Pools
 The frontend requires specific pools for health monitoring and backend communication.
