@@ -383,7 +383,7 @@ For health checking of backend APIs:
    - note that any JSON response from the API host is a valid check of the API host operation. "unhealthy" is used by an endpoint to inform the client about a problem on the API host, but is valid for a health check.
 
 4. Click **Finished**
-5. Return to backend pool and assign this monitor to the dashboard-api-hosts_https_pool
+5. Assign this monitor to the dashboard-api-hosts_https_pool
 
 ---
 
@@ -536,7 +536,7 @@ set dns_enabled 1
 ```
 - Set `debug_enabled` to `1` to enable debug logging (recommended during setup)
 - Set `dns_enabled` to `1` to enable DNS hostname resolution
-- Set to `0` to disable features
+- Set to `0` to disable these features
 
 ### Save iRule
 
