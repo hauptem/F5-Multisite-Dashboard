@@ -343,8 +343,7 @@ This pool manages connections to backend BIG-IP API endpoints.
 5. Click **Finished**
 
 ### Create Custom HTTPS Monitor
-
-For better health checking of backend APIs:
+For health checking of backend APIs:
 
 1. Navigate to **Local Traffic → Monitors → Monitor List**
 2. Click **Create**
@@ -360,12 +359,12 @@ For better health checking of backend APIs:
    - **Receive String**: `(healthy|unhealthy)`
 
 4. Click **Finished**
-5. Return to backend pool and assign this monitor
+5. Return to backend pool and assign this monitor to the dashboard-api-hosts_https_pool
 
 ---
 
-## DNS Resolver Configuration
-The DNS resolver enables hostname display for pool members in dashboard responses. This step is optional but recommended for enhanced user experience.
+## DNS Resolver Configuration (Optional but the iRule will require unless edited)
+The DNS resolver enables hostname display for pool members in dashboard responses.
 
 ### Access BIG-IP via SSH
 1. SSH to your Frontend BIG-IP as an administrative user
@@ -375,7 +374,8 @@ The DNS resolver enables hostname display for pool members in dashboard response
    ```
 
 ### Create DNS Resolver
-Execute the following command, replacing the DNS server IP with your environment's DNS server:
+Execute the following command, replacing the DNS server IP with your environment's DNS server.
+Note that the iRule will expect 'dashboard-DNS' to exist unless this reference is edited for a different resolver name.
 
 ```tcl
 create net dns-resolver dashboard-DNS forward-zones add { in-addr.arpa { nameservers add { 192.168.1.53:53 } } }
@@ -383,9 +383,8 @@ create net dns-resolver dashboard-DNS forward-zones add { in-addr.arpa { nameser
 
 ### Configuration Notes:
 - Replace `192.168.1.53` with your DNS server IP address
-- Use port 53 unless your DNS server uses a different port
 - For GTM integration, use your GTM listener IP address
-- Dashboard will only request PTR records so it is recommended to scope the resolver to in-addr-arpa. unless a shared resolver is used
+- Dashboard will only request PTR records so it is recommended to scope the resolver to in-addr-arpa. unless a shared resolver is used for dashboard
 
 ### Verify DNS Resolver Creation
 ```tcl
@@ -402,15 +401,13 @@ save sys config
 quit
 ```
 
+**Create Pools:**
 
-
-
-**2. Create Pools:**
 ```bash
 # API hosts pool
 tmsh create ltm pool dashboard-api-hosts_https_pool 
 
-# DNS pool (if using DNS resolution)
+# DNS pool 
 tmsh create ltm pool dashboard-dns_udp53_pool members 
 ```
 
