@@ -1169,10 +1169,10 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ## Disclaimer
 
-- This solution is **NOT** officially endorsed, supported, or maintained by F5 Networks, Inc.
+- This solution is **NOT** officially endorsed, supported, or maintained by F5 Inc.
 - F5 Networks, Inc. retains all rights to their trademarks, including but not limited to "F5", "BIG-IP", "LTM", "APM", and related marks
-- This is an independent, community-developed solution that utilizes F5 products but is not affiliated with F5 Networks, Inc.
-- For official F5 support and solutions, please contact F5 Networks, Inc. directly
+- This is an independent, community-developed solution that utilizes F5 products but is not affiliated with F5 Inc.
+- For official F5 support and solutions, please contact F5 Inc. directly
 
 **Technical Disclaimer:**
 
