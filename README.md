@@ -608,9 +608,7 @@ If creating a new access policy:
 
 ---
 
-
 ### Backend API Setup
-
 The **Dashboard API Host** provides JSON-based pool data endpoints for remote sites. Backend hosts perform the actual pool member status checks, DNS hostname resolution (if configured), and serve optimized data to frontend dashboard instances. Multiple backend API hosts can support a single frontend for distributed monitoring.
 
 #### Dashboard API Hosts Critical Dependencies:
@@ -634,44 +632,74 @@ The **Dashboard API Host** provides JSON-based pool data endpoints for remote si
 - This resolver should map to a GTM listener dedicated for dashboard and scoped for in-addr.arpa.
 
 #### Backend API Configuration
+## Create Data Groups
+The dashboard requires several data groups for configuration and access control.
 
-**1. Create Required Data Groups:**
-```bash
-# Trusted frontend IPs
-tmsh create ltm data-group internal datagroup-dashboard-trusted-frontends type ip
-tmsh modify ltm data-group internal datagroup-dashboard-trusted-frontends records add { 192.168.1.100 { } }
+### Data Group - datagroup-dashboard-clients
+1. Navigate to **Local Traffic → iRules → Data Group List**
+2. Click **Create**
+3. Configure data group:
+   - **Name**: `datagroup-dashboard-trusted-frontends`
+   - **Type**: `Address`
+   - **Description**: `Front-end Self-IPs `
 
-# API authentication (same key as frontend)
-tmsh create ltm data-group internal datagroup-dashboard-api-keys type string
-tmsh modify ltm data-group internal datagroup-dashboard-api-keys records add { 
-    "your-secure-api-key-here" { data "1" } 
-}
+4. Add Front-end Self-IPs:
+   - **Address**: `192.168.1.0/24` (front-end self network)
 
-# Pool configuration (backend-specific pools)
-tmsh create ltm data-group internal datagroup-dashboard-pools type string
-tmsh modify ltm data-group internal datagroup-dashboard-pools records add { 
-    "backend_web_pool" { data "10" } 
-    "backend_app_pool" { data "20" } 
-}
+5. Click **Finished**
 
-# DNS pool (if using DNS resolution)
-tmsh create ltm pool dashboard-dns_udp53_pool members add { 192.168.2.53:53 }
-```
+### Data Group - datagroup-dashboard-pools
+1. Click **Create** (new data group)
+2. Configure data group:
+   - **Name**: `datagroup-dashboard-pools`
+   - **Type**: `String`
+   - **Description**: `Local pools to display with sort order`
+
+3. Add local pools (recommended to use sort order increments of 10 for later adjustment):
+   - **String**: `web2_servers_pool`, **Value**: `10`
+   - **String**: `app2_servers_pool`, **Value**: `20`
+   - **String**: `database2_pool`, **Value**: `30`
+   - **String**: `api2_pool`, **Value**: `40`
+
+4. Click **Finished**
+
+### Data Group  - datagroup-dashboard-pool-alias
+1. Click **Create** (new data group)
+2. Configure data group:
+   - **Name**: `datagroup-dashboard-pool-alias`
+   - **Type**: `String`
+   - **Description**: `User-friendly names for pools`
+
+3. Add pool aliases:
+   - **String**: `web2_servers_pool`, **Value**: `Web Servers`
+   - **String**: `app2_servers_pool`, **Value**: `Application Tier`
+   - **String**: `database2_pool`, **Value**: `Database Cluster`
+   - **String**: `api2_pool`, **Value**: `API Gateway`
+
+4. Click **Finished**
+
+### Data Group - datagroup-dashboard-api-keys
+1. Click **Create** (new data group)
+2. Configure data group:
+   - **Name**: `datagroup-dashboard-api-keys`
+   - **Type**: `String`
+   - **Description**: `API keys for Front-end authentication`
+
+3. Add API key:
+   - **String**: `dashboard-api-key-2025-v17`
+
+4. Click **Finished**
 
 ### Automated Pool Discovery
-
-Use the same pool discovery script on backend API hosts:
+Use this script to automatically discover and populate existing pools into both pool data groups:
 
 ```bash
 #!/bin/bash
 # Automated Pool Discovery Script
 # This script discovers all existing pools and populates the dashboard data groups
-
 # Get all pool names from /Common partition (removing /Common/ prefix)
 POOLS=$(tmsh list ltm pool one-line | grep -o "ltm pool [^{]*" | awk '{print $3}' | sed 's|^/Common/||' | tr '\n' ' ')
-
 echo "Discovered pools: $POOLS"
-
 # Populate dashboard-pools data group with auto-incrementing sort order (by 10s)
 POOL_RECORDS=""
 SORT_ORDER=10
@@ -679,59 +707,325 @@ for POOL in $POOLS; do
     POOL_RECORDS="$POOL_RECORDS \"$POOL\" { data \"$SORT_ORDER\" }"
     ((SORT_ORDER+=10))
 done
-
 # Apply to data groups
 tmsh modify ltm data-group internal datagroup-dashboard-pools records replace-all-with { $POOL_RECORDS }
-
 # Initialize empty aliases (can be customized later)
 ALIAS_RECORDS=""
 for POOL in $POOLS; do
     ALIAS_RECORDS="$ALIAS_RECORDS \"$POOL\" { data \"\" }"
 done
-
 tmsh modify ltm data-group internal datagroup-dashboard-pool-alias records replace-all-with { $ALIAS_RECORDS }
-
 echo "Pool data groups populated successfully!"
 echo "Total pools configured: $(echo $POOLS | wc -w)"
 ```
-
 **Note:** After running this script, you can manually customize aliases by modifying the `datagroup-dashboard-pool-alias` data group to provide user-friendly display names.
 
-**2. Create API Virtual Server:**
-```bash
-tmsh create ltm virtual dashboard-api_https_vs {
-    destination 192.168.2.100:443
-    ip-protocol tcp
-    pool none
-    profiles add {
-        tcp { }
-        http { }
-        clientssl { 
-            context clientside 
-        }
-    }
-    rules { LTM_Dashboard-API-Host_v1.7_irule }
-}
+## Create Required Pools
+The frontend requires specific pools for health monitoring and backend communication.
+
+### Pool 1 - dashboard-api-hosts_https_pool
+This pool is used only for monitoring and detection of API host reachability and operation. The Front-end uses the datagroup 'datagroup-dashboard-api-host' to actually map client requests for specific sites to back-end virtualserver IPs. This pool enables dashboard to present intelligence about the state of the API host instead of failing silently.
+
+1. Navigate to **Local Traffic → Pools → Pool List**
+2. Click **Create**
+3. Configure pool settings:
+   - **Name**: `dashboard-api-hosts_https_pool`
+   - **Description**: `Backend BIG-IP API endpoints for dashboard`
+   - **Health Monitors**: `https` (recommended to create a custom HTTPS monitor)
+   - **Load Balancing Method**: `Round Robin`
+
+4. Add backend members (repeat for each backend site):
+   - Click **New Member**
+   - **Address**: Backend BIG-IP API virtual server IP for Site <SITENAME>
+   - **Service Port**: `443`
+   - Click **Add**
+
+5. Click **Finished**
+
+### Pool 2 - dashboard-dns_udp53_pool
+This pool monitors DNS resolver availability. The Front-end iRule will check member state for this pool and fail back gracefully to IP-only mode if all members in this pool are down.
+
+1. Navigate to **Local Traffic → Pools → Pool List**
+2. Click **Create**
+3. Configure pool settings:
+   - **Name**: `dashboard-dns_udp53_pool`
+   - **Description**: `DNS servers for dashboard hostname resolution`
+   - **Health Monitors**: `dns` (recommended to create a custom monitor)
+   - **Load Balancing Method**: `Round Robin`
+
+4. Add DNS server member:
+   - Click **New Member**
+   - **Address**: Enter your DNS server IP (same as used in the resolver dashboard-DNS)
+   - **Service Port**: `53`
+   - **Click** **Add**
+
+5. Click **Finished**
+
+### Create a Custom HTTPS Monitor
+For health checking of backend APIs:
+
+1. Navigate to **Local Traffic → Monitors → Monitor List**
+2. Click **Create**
+3. Configure monitor:
+   - **Name**: `dashboard-api-host_https_monitor`
+   - **Type**: `HTTPS`
+   - **Interval**: `5` seconds
+   - **Timeout**: `16` seconds
+   - **Send String**: 
+     ```
+     GET /api/health HTTP/1.1\r\nConnection: Close\r\n\r\n
+     ```
+   - **Receive String**: `(healthy|unhealthy)`
+   - note that any JSON response from the API host is a valid check of the API host operation. "unhealthy" is used by an endpoint to inform the client about a problem on the API host, but is valid for a health check.
+
+4. Click **Finished**
+5. Return to backend pool and assign this monitor to the dashboard-api-hosts_https_pool
+
+---
+
+## DNS Resolver Configuration 
+(Optional to use but the iRule will require it to exist unless edited)
+The DNS resolver enables hostname display for pool members in dashboard responses.
+
+### Access BIG-IP via SSH
+1. SSH to your Frontend BIG-IP as an administrative user
+2. Access the tmsh shell:
+   ```
+   tmsh
+   ```
+
+### Create DNS Resolver
+Execute the following command, replacing the DNS server IP with your environment's DNS server.
+Note that the iRule will expect 'dashboard-DNS' to exist unless this reference is edited for a different resolver name.
+
+```tcl
+create net dns-resolver dashboard-DNS forward-zones add { in-addr.arpa { nameservers add { 192.168.1.53:53 } } }
 ```
 
+### Configuration Notes:
+- Replace `192.168.1.53` with your DNS server IP address
+- For GTM integration, use your GTM listener IP address
+- Dashboard will only request PTR records so it is recommended to scope the resolver to in-addr-arpa. unless a shared resolver is used for dashboard
 
-
-
-### DNS Resolver Setup (Optional)
-
-The **DNS Resolver** provides hostname resolution capabilities for both frontend and backend components. This enables the dashboard to display friendly hostnames instead of IP addresses for pool members. The resolver can be a standard LTM DNS resolver or a dedicated GTM listener with access restrictions.
-
-**Create DNS Resolver:**
-```bash
-tmsh create net dns-resolver dashboard-DNS {
-    forward-zones add { 
-        in-addr.arpa { 
-            nameservers add { 192.168.1.53:53 }
-        }
-    }
-    route-domain 0
-}
+### Verify DNS Resolver Creation
+```tcl
+list net dns-resolver dashboard-DNS
 ```
+
+### Save Configuration
+```tcl
+save sys config
+```
+
+### Exit TMSH
+```tcl
+quit
+```
+
+## Upload Static Files (iFiles)
+The dashboard requires multiple static files for the web interface.
+
+### Access iFile Management
+1. Navigate to **Local Traffic → iRules → iFile List**
+
+Upload the following files:
+
+1. **dashboard_logo.png**
+   - Name: `dashboard_logo.png`
+   - Upload your organization's logo image
+
+2. **dashboard_themes.css**
+   - Name: `dashboard_themes.css`
+   - Contains all 5 themes and responsive design
+
+3. **dashboard_js-core.js**
+   - Name: `dashboard_js-core.js`
+   - Core coordination and timing functionality
+
+4. **dashboard_js-client.js**
+   - Name: `dashboard_js-client.js`
+   - HTTP communication and API management
+
+5. **dashboard_js-data.js**
+   - Name: `dashboard_js-data.js`
+   - Data management and state tracking
+
+6. **dashboard_js-ui.js**
+   - Name: `dashboard_js-ui.js`
+   - UI rendering and search functionality
+
+7. **dashboard_js-logger.js**
+   - Name: `dashboard_js-logger.js`
+   - Event logging with session persistence
+
+1. Click **Import**
+2. Configure import:
+   - **Import Type**: `File Upload`
+   - **File Name**: Select file from your computer
+   - **Name**: Use exact filename (e.g., `dashboard_logo.png`)
+3. Click **Import**
+4. Verify file appears in iFile list
+
+### Verify All Files Uploaded
+```bash
+tmsh list ltm ifile
+
+ltm ifile F5_logo.png {
+    file-name F5_logo.png
+}
+ltm ifile dashboard_js-client.js {
+    file-name dashboard_js-client.js
+}
+ltm ifile dashboard_js-core.js {
+    file-name dashboard_js-core.js
+}
+ltm ifile dashboard_js-data.js {
+    file-name dashboard_js-data.js
+}
+ltm ifile dashboard_js-logger.js {
+    file-name dashboard_js-logger.js
+}
+ltm ifile dashboard_js-ui.js {
+    file-name dashboard_js-ui.js
+}
+ltm ifile dashboard_logo.png {
+    file-name dashboard_logo.png
+}
+ltm ifile dashboard_themes.css {
+    file-name dashboard_themes.css
+```
+
+## Create and Configure the Frontend iRule
+
+### Create the iRule
+
+1. Navigate to **Local Traffic → iRules → iRule List**
+2. Click **Create**
+3. Configure iRule:
+   - **Name**: `LTM_Dashboard-Frontend_v1.7_irule`
+   - **Description**: `F5 Multi-Site Dashboard Frontend v1.7`
+
+### Add iRule Content
+
+Copy the complete frontend iRule code (from `LTM_Dashboard-Frontend_v1.7_irule.txt`) into the **Definition** field.
+
+### Key Configuration Points in iRule
+
+**Local Site Configuration**
+
+Locate line 82 and modify for your environment:
+```tcl
+set local_site_name "CHICAGO"
+```
+Change `"CHICAGO"` to match your frontend site name from the sites data group.
+
+**Debug Configuration**
+
+Locate lines 30-31 to enable/disable debug logging:
+```tcl
+set debug_enabled 0
+set dns_enabled 1
+```
+- Set `debug_enabled` to `1` to enable debug logging (recommended during setup)
+- Set `dns_enabled` to `1` to enable DNS hostname resolution
+- Set to `0` to disable features
+
+### Save iRule
+
+1. Click **Finished**
+2. Verify iRule appears in iRule list without syntax errors
+3. If errors exist, review and correct the iRule code
+
+## Create Virtual Server
+
+### Create Virtual Server
+
+1. Navigate to **Local Traffic → Virtual Servers → Virtual Server List**
+2. Click **Create**
+
+### Basic Configuration
+
+- **Name**: `dashboard_frontend_vs`
+- **Description**: `F5 Multi-Site Dashboard Frontend v1.7`
+- **Type**: `Standard`
+- **Source Address**: `0.0.0.0/0`
+- **Destination Address**: Choose appropriate IP for dashboard access
+- **Service Port**: `443` (HTTPS recommended)
+
+### Protocol Configuration
+
+- **HTTP Profile (Client)**: `http`
+- **SSL Profile (Client)**: Select appropriate SSL profile for HTTPS
+- **SSL Profile (Server)**: `serverssl` 
+
+### Advanced Configuration
+
+- **Source Address Translation**: `Auto Map`
+- **Address Translation**: `Enabled`
+- **Port Translation**: `Enabled`
+
+### Access Policy Assignment
+
+- **Access Profile**: Select your configured APM access policy
+
+### iRule Assignment
+
+1. In **Resources** section, find **iRules**
+2. Move `LTM_Dashboard-Frontend_v1.7_irule` from Available to Enabled
+
+### Default Pool Assignment
+
+- **Default Pool**: Leave blank (iRule handles all routing)
+
+### Finish Virtual Server Creation
+
+1. Click **Finished**
+2. Verify virtual server shows as **Available (Enabled)**
+
+---
+
+### Access APM Configuration
+
+1. Navigate to **Access → Profiles/Policies → Access Profiles (Per-Session Policies)**
+
+### Required Session Variables
+
+The dashboard requires a specific session variable to function. Your access policy **must** set:
+
+**Variable Name**: `session.custom.dashboard.auth`  
+**Required Value**: `1`
+
+### Implementation Options
+
+**Option 1: Modify Existing Policy**
+If you have an existing access policy:
+
+1. Click **Edit** on your access policy
+2. Add a **Variable Assign** action after successful authentication
+3. Configure variable assignment:
+   - **Variable Type**: `Session Variable`
+   - **Variable Name**: `session.custom.dashboard.auth`
+   - **Variable Value**: `1`
+4. Save and apply the access policy
+
+**Option 2: Create New Policy**
+If creating a new access policy:
+
+1. Click **Create**
+2. Configure basic policy settings:
+   - **Name**: `dashboard_access_policy`
+   - **Profile Type**: `All`
+   - **Language Settings**: Configure as needed
+3. Click **Finished**
+4. Click **Edit** to modify the policy flow
+5. Add authentication steps as required by your organization
+6. Before the final **Allow** ending, add **Variable Assign**:
+   - **Variable Type**: `Session Variable`
+   - **Variable Name**: `session.custom.dashboard.auth`
+   - **Variable Value**: `1`
+7. Save and apply the policy
+
+---
 
 **GTM/DNS Listener Configuration:**
 If using GTM for DNS resolution, create a dedicated listener with access restrictions:
