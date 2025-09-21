@@ -476,9 +476,6 @@ Upload the following files:
 ```bash
 tmsh list ltm ifile
 
-ltm ifile F5_logo.png {
-    file-name F5_logo.png
-}
 ltm ifile dashboard_js-client.js {
     file-name dashboard_js-client.js
 }
