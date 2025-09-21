@@ -783,79 +783,6 @@ save sys config
 quit
 ```
 
-## Upload Static Files (iFiles)
-The dashboard requires multiple static files for the web interface.
-
-### Access iFile Management
-1. Navigate to **Local Traffic → iRules → iFile List**
-
-Upload the following files:
-
-1. **dashboard_logo.png**
-   - Name: `dashboard_logo.png`
-   - Upload your organization's logo image
-
-2. **dashboard_themes.css**
-   - Name: `dashboard_themes.css`
-   - Contains all 5 themes and responsive design
-
-3. **dashboard_js-core.js**
-   - Name: `dashboard_js-core.js`
-   - Core coordination and timing functionality
-
-4. **dashboard_js-client.js**
-   - Name: `dashboard_js-client.js`
-   - HTTP communication and API management
-
-5. **dashboard_js-data.js**
-   - Name: `dashboard_js-data.js`
-   - Data management and state tracking
-
-6. **dashboard_js-ui.js**
-   - Name: `dashboard_js-ui.js`
-   - UI rendering and search functionality
-
-7. **dashboard_js-logger.js**
-   - Name: `dashboard_js-logger.js`
-   - Event logging with session persistence
-
-1. Click **Import**
-2. Configure import:
-   - **Import Type**: `File Upload`
-   - **File Name**: Select file from your computer
-   - **Name**: Use exact filename (e.g., `dashboard_logo.png`)
-3. Click **Import**
-4. Verify file appears in iFile list
-
-### Verify All Files Uploaded
-```bash
-tmsh list ltm ifile
-
-ltm ifile F5_logo.png {
-    file-name F5_logo.png
-}
-ltm ifile dashboard_js-client.js {
-    file-name dashboard_js-client.js
-}
-ltm ifile dashboard_js-core.js {
-    file-name dashboard_js-core.js
-}
-ltm ifile dashboard_js-data.js {
-    file-name dashboard_js-data.js
-}
-ltm ifile dashboard_js-logger.js {
-    file-name dashboard_js-logger.js
-}
-ltm ifile dashboard_js-ui.js {
-    file-name dashboard_js-ui.js
-}
-ltm ifile dashboard_logo.png {
-    file-name dashboard_logo.png
-}
-ltm ifile dashboard_themes.css {
-    file-name dashboard_themes.css
-```
-
 ## Create and Configure the Frontend iRule
 
 ### Create the iRule
@@ -863,22 +790,13 @@ ltm ifile dashboard_themes.css {
 1. Navigate to **Local Traffic → iRules → iRule List**
 2. Click **Create**
 3. Configure iRule:
-   - **Name**: `LTM_Dashboard-Frontend_v1.7_irule`
-   - **Description**: `F5 Multi-Site Dashboard Frontend v1.7`
+   - **Name**: `LTM_Dashboard-API-Host_v1.7_irule`
 
 ### Add iRule Content
 
-Copy the complete frontend iRule code (from `LTM_Dashboard-Frontend_v1.7_irule.txt`) into the **Definition** field.
+Copy the complete frontend iRule code (from `LTM_Dashboard-API-Host_v1.7_irule.txt`) into the **Definition** field.
 
 ### Key Configuration Points in iRule
-
-**Local Site Configuration**
-
-Locate line 82 and modify for your environment:
-```tcl
-set local_site_name "CHICAGO"
-```
-Change `"CHICAGO"` to match your frontend site name from the sites data group.
 
 **Debug Configuration**
 
@@ -906,8 +824,8 @@ set dns_enabled 1
 
 ### Basic Configuration
 
-- **Name**: `dashboard_frontend_vs`
-- **Description**: `F5 Multi-Site Dashboard Frontend v1.7`
+- **Name**: `dashboard_api_host_vs`
+- **Description**: `F5 Multi-Site Dashboard API Host`
 - **Type**: `Standard`
 - **Source Address**: `0.0.0.0/0`
 - **Destination Address**: Choose appropriate IP for dashboard access
@@ -917,74 +835,20 @@ set dns_enabled 1
 
 - **HTTP Profile (Client)**: `http`
 - **SSL Profile (Client)**: Select appropriate SSL profile for HTTPS
-- **SSL Profile (Server)**: `serverssl` 
-
-### Advanced Configuration
-
-- **Source Address Translation**: `Auto Map`
-- **Address Translation**: `Enabled`
-- **Port Translation**: `Enabled`
-
-### Access Policy Assignment
-
-- **Access Profile**: Select your configured APM access policy
 
 ### iRule Assignment
 
 1. In **Resources** section, find **iRules**
-2. Move `LTM_Dashboard-Frontend_v1.7_irule` from Available to Enabled
+2. Move `LTM_Dashboard-API-Host_v1.7_irule` from Available to Enabled
 
 ### Default Pool Assignment
 
-- **Default Pool**: Leave blank (iRule handles all routing)
+- **Default Pool**: Leave blank 
 
 ### Finish Virtual Server Creation
 
 1. Click **Finished**
 2. Verify virtual server shows as **Available (Enabled)**
-
----
-
-### Access APM Configuration
-
-1. Navigate to **Access → Profiles/Policies → Access Profiles (Per-Session Policies)**
-
-### Required Session Variables
-
-The dashboard requires a specific session variable to function. Your access policy **must** set:
-
-**Variable Name**: `session.custom.dashboard.auth`  
-**Required Value**: `1`
-
-### Implementation Options
-
-**Option 1: Modify Existing Policy**
-If you have an existing access policy:
-
-1. Click **Edit** on your access policy
-2. Add a **Variable Assign** action after successful authentication
-3. Configure variable assignment:
-   - **Variable Type**: `Session Variable`
-   - **Variable Name**: `session.custom.dashboard.auth`
-   - **Variable Value**: `1`
-4. Save and apply the access policy
-
-**Option 2: Create New Policy**
-If creating a new access policy:
-
-1. Click **Create**
-2. Configure basic policy settings:
-   - **Name**: `dashboard_access_policy`
-   - **Profile Type**: `All`
-   - **Language Settings**: Configure as needed
-3. Click **Finished**
-4. Click **Edit** to modify the policy flow
-5. Add authentication steps as required by your organization
-6. Before the final **Allow** ending, add **Variable Assign**:
-   - **Variable Type**: `Session Variable`
-   - **Variable Name**: `session.custom.dashboard.auth`
-   - **Variable Value**: `1`
-7. Save and apply the policy
 
 ---
 
@@ -1025,19 +889,7 @@ set debug_enabled 1    # Set to 1 to enable debug
 set dns_enabled 1      # Set to 1 to enable DNS resolution
 ```
 
-### Pool Configuration
-Pools are configured via data groups:
-- `datagroup-dashboard-pools`: Pool names with sort order
-- `datagroup-dashboard-pool-alias`: Optional display aliases
-- Sort order determines display sequence (lower numbers first)
-
-### Site Configuration
-Multi-site setup via data groups:
-- `datagroup-dashboard-sites`: Available sites with sort order
-- `datagroup-dashboard-api-host`: Site-to-IP mappings for API backends
-
 ## API Reference
-
 ### Health Endpoint
 ```
 GET /api/health
