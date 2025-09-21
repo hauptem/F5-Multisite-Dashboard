@@ -63,7 +63,7 @@ The JavaScript application includes real-time state tracking, DNS hostname resol
 **Dashboard Monochrome Grey (theme2) micro mode with CLI-based logger active**
 <img width="1504" height="1021" alt="Image" src="https://github.com/user-attachments/assets/2a480ec3-c8c8-4463-a3df-acde98ed012f" />
 
-**Dashboard Amber (theme3) micro mode with alarmed pools**
+**Dashboard Amber (theme3) MACRO mode with alarmed pools**
 <img width="1504" height="1021" alt="Image" src="https://github.com/user-attachments/assets/dff7ae0e-5673-4048-8a4a-19eabea016a5" />
 
 **Three instances of Dashboard three sites in three tabs of Microsoft Edge**
