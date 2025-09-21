@@ -21,7 +21,11 @@
 ![Zero Infrastructure](https://img.shields.io/badge/Infrastructure-Zero%20Additional-brightgreen)
 ![Self Hosted](https://img.shields.io/badge/Hosting-Self%20Contained-blue)
 
+---
+
 A comprehensive real-time monitoring dashboard for F5 BIG-IP load balancers featuring multi-site support, DNS hostname resolution, member state tracking, and advanced filtering capabilities.
+
+---
 
 ## Overview
 
