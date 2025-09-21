@@ -364,7 +364,8 @@ For health checking of backend APIs:
 
 ---
 
-## DNS Resolver Configuration (Optional to use but the iRule will require it to exist unless edited)
+## DNS Resolver Configuration 
+(Optional to use but the iRule will require it to exist unless edited)
 The DNS resolver enables hostname display for pool members in dashboard responses.
 
 ### Access BIG-IP via SSH
