@@ -985,7 +985,7 @@ Enable debug logging or DNS resolution by modifying these two iRule variables:
 set debug_enabled 1    # Set to 1 to enable debug
 set dns_enabled 1      # Set to 1 to enable DNS resolution
 ```
-No other irule variables should be changed other than the Front-end Site variable.
+**No other irule variables should be modified other than the Front-end local site variable.**
 
 ---
 
@@ -1042,7 +1042,7 @@ No other irule variables should be changed other than the Front-end Site variabl
 - **Right-click on search input**: Opens context menu for loading/saving searches to numbered slots
 
 ### Search Input Behavior
-- **Enter in search input**: Immediately applies the search filter without waiting for the debounce timer
+- **Enter in search input**: Immediately applies the search filter 
 
 ## Search Filter Syntax
 
@@ -1051,8 +1051,8 @@ The search filter supports Boolean operators for advanced filtering:
 | Operator | Usage | Example |
 |----------|-------|---------|
 | `OR` | Default behavior (space-separated) | `pool1 pool2` (shows pools containing either term) |
-| `AND` | Requires all terms | `pool1 AND up` (shows pools containing both terms) |
-| `NOT` | Excludes terms | `pool1 NOT down` (shows pools with "pool1" but not "down") |
+| `AND` | Requires all terms | `pool1 AND up` (shows pools containing pool1 in the name with up members) |
+| `NOT` | Excludes terms | `web NOT down` (shows pools with "web" but no down members) |
 | `changed` | Special keyword | Shows only pools with unacknowledged member status changes |
 
 ---
