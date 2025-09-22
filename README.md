@@ -75,9 +75,9 @@ A 170KB modular JavaScript application runs entirely in your browser, served dir
 ### User Interface
 - **Three Visual Themes** - AGLight, Monochrome Grey, and Amber
 - **MACRO/MICRO View Modes** - Toggle between detailed member view and compact pool overview
-- **Drag & Drop Pool Reordering** - Custom pool arrangement with persistence
-- **Keyboard Shortcuts** - Full keyboard navigation and control
-- **Text-based Event Logger** - 5000 line text based logger to capture and display event history
+- **Drag & Drop Pool Reordering** - Custom pool arrangement with persistence and an administratively controlled pool sort order
+- **Keyboard Shortcuts** - Full keyboard navigation and control via ALT key combinations
+- **Text-based Event Logger** - 5000 event (FIFO buffer) logger to capture and display event history in text format
 
 ---
 
@@ -99,13 +99,11 @@ The dashboard consists of two main components:
 
 ---
 
-## Installation
-
 ### Prerequisites
 - F5 BIG-IP with LTM and APM modules provisioned
 - TMOS Version: 15.0 or higher (tested on 15.x, 16.x, 17.x)
 - DNS resolver configured for PTR lookups (optional)
-- **Note:** Version 1.7 is not multi-partition compatible. Partition compatibility is planned for version 2.0. 
+- **Note:** Version 1.7 is not multi-partition compatible; Partition compatibility is planned for version 2.0. 
 
 ---
 
@@ -113,7 +111,7 @@ The dashboard consists of two main components:
 ### Critical Dependencies:
 
 Note: All datagroups, pools and DNS resolver must exist in LTM and match the item names in the iRule.
-If you wish to use custom names for pools, make sure to edit the relevant iRule references.
+If you wish to use custom names for dashboard specific pools or the resolver, make sure to edit the relevant iRule references.
 
 **1. `datagroup-dashboard-clients` (Address)**
 - Used to restrict dashboard access via Client IP or Client Subnet
