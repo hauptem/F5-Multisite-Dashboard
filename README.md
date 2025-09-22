@@ -44,16 +44,6 @@ This isn't another monitoring dashboard.
 
 A 170KB modular JavaScript application runs entirely in your browser, served directly from the F5's high-speed operational dataplane. One or more sites operate as Dashboard Front-Ends serving the dashboard interface (HTML, JavaScript, CSS) via iFiles, while other sites operate as API Hosts providing pool data through optimized JSON-based dashboard API calls. This provides unified visibility across multiple sites from a single interface without requiring even a read-only account on any of the BIG-IPs, allowing you to switch between locations and see consistent pool, member, and health status data with almost no latency and very little overhead. All dashboard sites inherit the high-availability capabilities of their host BIG-IP cluster. Think of it as an extension of the F5 GUI: near real-time state tracking, DNS hostname resolution (if configured), advanced search/filtering, and the ability to see exactly what changed and when. It gives application teams and operations teams direct visibility into application state without needing to wait for answers from F5 engineers, eliminating the organizational bottleneck that slows down troubleshooting when every minute counts. F5-Multisite-Dashboard is an ultra-performant, near real-time looking glass directly into application pool state. It doesn't replace Network Management Systems - it complements them by providing instant visibility that NMS platforms can't match.
 
-**Bottom Line:** When you need to know what's really happening with your applications behind the F5, Dashboard gives you that answer immediately, with zero additional infrastructure cost.
-
-### Why This Approach Wasn't Considered Before
-
-**Organizational Boundaries:** Network teams manage F5s while monitoring teams buy enterprise platforms. The idea of the F5 serving sophisticated applications never crosses organizational boundaries.
-
-**Conceptual Limitations:** F5s are still unfortunately seen as network devices, not application delivery platforms. The enterprise software industry has institutionalized the belief that monitoring must be external and centralized, even when the device being monitored is perfectly capable of providing its own real-time interface.
-
-**Technical Assumptions:** Most don't realize that modern browsers can handle sophisticated applications, or that iRules can serve as full application backends. The pattern of using F5s to inject third-party monitoring JavaScript exists, but always for sending data out to external systems, never for serving applications that query the F5 itself.
-
 ---
 
 **Theme1 - AGLight in MACRO mode**
@@ -76,19 +66,18 @@ A 170KB modular JavaScript application runs entirely in your browser, served dir
 ## Features
 
 ### Core Functionality
-- **Real-time Pool Monitoring** - Live status updates for pool members across multiple sites
-- **Multi-Site Architecture** - Frontend/backend separation supporting distributed F5 deployments
+- **Near Real-time Pool Monitoring** - Live status updates for pool members across multiple sites
+- **Multi-Site Architecture** - Frontend/backend separation supporting large distributed F5 deployments
 - **DNS Hostname Resolution** - Automatic PTR lookups with intelligent caching
 - **Member State Tracking** - Persistent monitoring of status changes with acknowledgment system
 - **Advanced Search & Filtering** - Boolean search with saved search functionality
-- **Responsive Grid Layout** - Dynamic column adjustment based on content and viewport
 
 ### User Interface
-- **Three Visual Themes** - AGLight, Monochrome Grey, and Amber Terminal
+- **Three Visual Themes** - AGLight, Monochrome Grey, and Amber
 - **MACRO/MICRO View Modes** - Toggle between detailed member view and compact pool overview
 - **Drag & Drop Pool Reordering** - Custom pool arrangement with persistence
 - **Keyboard Shortcuts** - Full keyboard navigation and control
-- **Session Persistence** - Settings and state preserved across browser sessions
+- **Text-based Event Logger** - 5000 line text based logger to capture and display event history
 
 ---
 
