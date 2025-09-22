@@ -150,32 +150,19 @@ If you wish to use custom names for pools, make sure to edit the relevant iRule 
 
 **12. iFiles:**
 
-`dashboard_js-core.js`
-**Javascript Core Module** 
-Core coordination functionality including initialization, themes switching, timers, MACRO/micro view modes, wake lock management, and alias switching
+`dashboard_js-core.js` **Javascript Core Module** Core coordination functionality including initialization, themes switching, timers, MACRO/micro view modes, wake lock management, and alias switching
  
-`dashboard_js-client.js`
-**Javascript Client Module** 
-HTTP communication layer for JSON fetch API calls, settings persistence, DNS operations, and fetch request lifecycle management
+`dashboard_js-client.js` **Javascript Client Module** HTTP communication layer for JSON fetch API calls, settings persistence, DNS operations, and fetch request lifecycle management
  
-`dashboard_js-data.js`  
-**Javascript Data Module** 
-Data management, instance tracking, state tracking, pool reordering functionality, and DNS hostname caching
+`dashboard_js-data.js` **Javascript Data Module** Data management, instance tracking, state tracking, pool reordering functionality, and DNS hostname caching
 
-`dashboard_js-ui.js`
-**Javascript UI Module** 
-UI rendering, search filtering, visual state management, MACRO/micro view mode support, search recall and save, and integrated pool grid management 
+`dashboard_js-ui.js` **Javascript UI Module** UI rendering, search filtering, visual state management, MACRO/micro view mode support, search recall and save, and integrated pool grid management 
  
-`dashboard_js-logger.js`
-**Javascript Logger Module** 
-Dedicated logger with resizable UI, state persistence, memory management, wake lock integration, session storage and copy
+`dashboard_js-logger.js` **Javascript Logger Module** Dedicated logger with resizable UI, state persistence, memory management, wake lock integration, session storage and copy
 
-`dashboard_themes.css`
-**Dashboard CSS with 3 themes** 
-AGLight (theme1) which is reminiscint of AdminGUI, Monochrome Grey (theme2), and Amber (theme3)
+`dashboard_themes.css` **Dashboard CSS with 3 themes** AGLight (theme1) which is reminiscint of AdminGUI, Monochrome Grey (theme2), and Amber (theme3)
  
-`dashboard_logo.png`
-any 51px by 53px logo image file
+`dashboard_logo.png` any 51px by 53px png logo image
 
 # Multisite Dashboard Front-end Configuration
 
