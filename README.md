@@ -110,10 +110,10 @@ The dashboard consists of two main components:
 
 ---
 
-## Frontend Setup
-### Dashboard Front-End Critical Dependencies:
+## Multisite Dashboard Front-end 
+### Critical Dependencies:
 
-All datagroups, pools and DNS resolver must exist in LTM and match the item names in the iRule.
+Note: All datagroups, pools and DNS resolver must exist in LTM and match the item names in the iRule.
 If you wish to use custom names for pools, make sure to edit the relevant iRule references.
 
 **1. `datagroup-dashboard-clients` (Address)**
@@ -170,7 +170,7 @@ If you wish to use custom names for pools, make sure to edit the relevant iRule 
  
 - `dashboard_logo.png`     - logo image file
 
-# Front-end Configuration
+# Multisite Dashboard Front-end Configuration
 
 ## Create Data Groups
 The dashboard requires several data groups for configuration and access control.
@@ -431,27 +431,21 @@ Upload the following files:
 
 2. **dashboard_themes.css**
    - Name: `dashboard_themes.css`
-   - Contains all 5 themes and responsive design
 
 3. **dashboard_js-core.js**
    - Name: `dashboard_js-core.js`
-   - Core coordination and timing functionality
 
 4. **dashboard_js-client.js**
    - Name: `dashboard_js-client.js`
-   - HTTP communication and API management
 
 5. **dashboard_js-data.js**
    - Name: `dashboard_js-data.js`
-   - Data management and state tracking
 
 6. **dashboard_js-ui.js**
    - Name: `dashboard_js-ui.js`
-   - UI rendering and search functionality
 
 7. **dashboard_js-logger.js**
    - Name: `dashboard_js-logger.js`
-   - Event logging with session persistence
 
 1. Click **Import**
 2. Configure import:
@@ -489,7 +483,7 @@ ltm ifile dashboard_themes.css {
 
 ---
 
-## Create and Configure the Frontend iRule
+## Create and Configure the Front-end iRule
 
 ### Create the iRule
 
@@ -618,12 +612,12 @@ If creating a new access policy:
 6. Before the final **Allow** ending, add **Variable Assign**:
    - **Variable Type**: `Session Variable`
    - **Variable Name**: `session.custom.dashboard.auth`
-   - **Variable Value**: `1`
+   - **Variable Value**: Text `1`
 7. Save and apply the policy
 
 ---
 
-### Backend API Host Setup
+### Multisite Dashboard Backend API-Host Setup
 The **Dashboard API Host** provides JSON-based endpoints for remote sites accessible by one or more Front-ends. 
 
 #### Dashboard API Hosts Critical Dependencies:
@@ -713,11 +707,10 @@ The dashboard requires several data groups for configuration and access control.
 
 4. Click **Finished**
 
-**Security Requirements**:
+**Security recommemdations**:
 - Use strong, randomly generated API keys (minimum 32 characters)
-- Include letters, numbers, and special characters
-- Same key must be configured on all frontend BIG-IPs
-- Consider key rotation procedures for enhanced security
+- Same key must be configured on all dashboard hosts
+- Periodically change key in accordance with organization requirements
 
 ### Automated Pool Discovery
 Use this script to automatically discover and populate existing pools into both pool data groups:
@@ -749,7 +742,7 @@ echo "Total pools configured: $(echo $POOLS | wc -w)"
 ```
 **Note:** After running this script, you can manually customize aliases by modifying the `datagroup-dashboard-pool-alias` data group to provide user-friendly display names.
 
-## Create Required Pools
+## Create API Host Required Pools
 The API Host requires a single specific pool for health monitoring of the dashboard-DNS resolver
 
 ### Pool 1 - dashboard-dns_udp53_pool
@@ -774,7 +767,7 @@ This pool monitors DNS resolver availability. The API Host iRule will check memb
 ---
 
 ## DNS Resolver Configuration 
-(Optional to use but the iRule will require it to exist unless edited)
+(Optional to use but the iRule will require it to exist unless the iRule is edited)
 The DNS resolver enables hostname display for pool members in dashboard responses.
 
 ### Access BIG-IP via SSH
@@ -812,7 +805,7 @@ save sys config
 quit
 ```
 
-## Create and Configure the Frontend iRule
+## Create and Configure the API Host iRule
 
 ### Create the iRule
 
@@ -853,8 +846,8 @@ set dns_enabled 1
 
 ### Basic Configuration
 
-- **Name**: `dashboard_api_host_vs`
-- **Description**: `F5 Multi-Site Dashboard API Host`
+- **Name**: `dashboard_api-host_vs`
+- **Description**: `F5 Multi-Site Dashboard API-Host`
 - **Type**: `Standard`
 - **Source Address**: `0.0.0.0/0`
 - **Destination Address**: Choose appropriate IP for dashboard access
@@ -887,7 +880,7 @@ set dns_enabled 1
 
 Test the health endpoint without authentication:
 
-1. **From authorized IP** (frontend or authorized client):
+1. **From authorized IP** (front-end or any authorized client):
    ```bash
    curl -k https://[api-host-ip]:443/api/health
    ```
@@ -925,23 +918,11 @@ Test API key authentication:
    ```bash
    curl -k -H "X-API-Key: [your-api-key]" https://[api-host-ip]:443/api/proxy/pools
    ```
-   **Expected**: HTTP 200 with pool data
+   **Expected**: HTTP 200 with pool data (if configured)
 
 ### Pool Data Validation
 
-**Verify Pool Data Response**
-
-1. **Test Data Endpoint**:
-   ```bash
-   curl -k -H "X-API-Key: [your-api-key]" https://[api-host-ip]:443/api/proxy/pools
-   ```
-
-2. **Validate JSON Structure**:
-   - Response should include hostname, timestamp, instanceId, pools array
-   - Each pool should have name, alias, status, members array
-   - Members should include ip, port, status, hostname fields
-
-**Response:**
+**Example Pool Data Response:**
 ```json
 {
   "hostname": "bigip-01.example.com",
@@ -1110,15 +1091,13 @@ Enable comprehensive logging:
 
 **Dashboard v1.7 is not multi-partition compatible.** All BIG-IP objects (pools, data groups, virtual servers, iRules, etc.) must reside in the `/Common` partition. 
 - DNS resolution only supports IPv4 PTR lookups at this time
-- 
+
 ### TMOS Version Compatibility
 **Minimum Required:** TMOS 15.0
 **Tested Versions:**
 - TMOS 15.x series (15.1.0 and higher recommended)
 - TMOS 16.x series (all versions)
 - TMOS 17.x series (all versions)
-
----
 
 ## Performance
 
@@ -1132,6 +1111,8 @@ Enable comprehensive logging:
 - 5000 entry FIFO buffer for logger
 - ~1KB/pool in session storage
 - 0% GPU Browser pipeline usage when in an unalarmed state
+
+---
 
 ## Contributing
 
@@ -1149,9 +1130,13 @@ When contributing:
 6. Add debug logging for new features
 7. Consider TMOS version compatibility for new iRule features
 
+---
+
 ## License
 
 MIT License - see [LICENSE](LICENSE) file for details.
+
+---
 
 ## Disclaimer
 
