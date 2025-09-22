@@ -149,25 +149,26 @@ If you wish to use custom names for pools, make sure to edit the relevant iRule 
 - This variable must be equal to 1 for the Front-end irule to trigger and needs to be set by the APM Policy that is placed on the Front-End virtualserver. Use any authentications methods appropriate for your organization or use no authentication, but APM must set this variable for the Front-End iRule to trigger. This is primarily done to ensure APM completes before the iRule starts processing client HTTP requests. It's an APM / LTM interoperability control. If you do not desire APM controls, simply set the variable in the LTM iRule or remove the variable check.
 
 **12. iFiles:**
-- `dashboard_js-core.js`   - **Javascript Core Module**
-   Core coordination functionality including initialization, themes switching, timers, MACRO/micro view modes, wake lock management, and alias switching
+- `dashboard_js-core.js`
+**Javascript Core Module** Core coordination functionality including initialization, themes switching, timers, MACRO/micro view modes, wake lock management, and alias switching
  
-- `dashboard_js-client.js` - **Javascript Client Module**
-   HTTP communication layer for JSON fetch API calls, settings persistence, DNS operations, and fetch request lifecycle management
+- `dashboard_js-client.js`
+**Javascript Client Module** HTTP communication layer for JSON fetch API calls, settings persistence, DNS operations, and fetch request lifecycle management
  
-- `dashboard_js-data.js`   - **Javascript Data Module**
-   Data management, instance tracking, state tracking, pool reordering functionality, and DNS hostname caching
+- `dashboard_js-data.js`  
+**Javascript Data Module** Data management, instance tracking, state tracking, pool reordering functionality, and DNS hostname caching
 
-- `dashboard_js-ui.js`     - **Javascript UI Module**
-   UI rendering, search filtering, visual state management, MACRO/micro view mode support, search recall and save, and integrated pool grid management 
+- `dashboard_js-ui.js`
+**Javascript UI Module** UI rendering, search filtering, visual state management, MACRO/micro view mode support, search recall and save, and integrated pool grid management 
  
-- `dashboard_js-logger.js` - **Javascript Logger Module**
-   Dedicated logger with resizable UI, state persistence, memory management, wake lock integration, session storage and copy
+- `dashboard_js-logger.js`
+**Javascript Logger Module** Dedicated logger with resizable UI, state persistence, memory management, wake lock integration, session storage and copy
 
-- `dashboard_themes.css`   - **Dashboard CSS with 3 themes**
-   AGLight (theme1) which is reminiscint of AdminGUI, Monochrome Grey (theme2), and Amber (theme3)
+- `dashboard_themes.css`
+**Dashboard CSS with 3 themes** AGLight (theme1) which is reminiscint of AdminGUI, Monochrome Grey (theme2), and Amber (theme3)
  
-- `dashboard_logo.png`     - logo image file
+- `dashboard_logo.png`
+any logo image file
 
 # Multisite Dashboard Front-end Configuration
 
