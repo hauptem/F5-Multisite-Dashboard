@@ -11,7 +11,7 @@
 #   This iRule needs to be applied to the dedicated and cache-enabled DNS UDP listener
 #   that will be used by LTM to perform PTR queries for the dashboard.
 #
-#  Datagroup: dashboard-dns-clients 
+#  Datagroup: datagroup-dns-clients 
 #   Contains authorized client subnets (LTM Self-IPs) which permits DNS request to the listener.
 #   A TCP listener is not required for the dashboard.
 #
@@ -27,7 +27,7 @@ when DNS_REQUEST {
     # Get client IP address
     set client_ip [IP::client_addr]
     # Check if client IP is in the allowed data group
-    if { not ([class match $client_ip equals dashboard-dns-clients]) } {
+    if { not ([class match $client_ip equals datagroup-dns-clients]) } {
         # Refuse requests from unauthorized IP addresses
         log local0.info "DNS query refused from unauthorized IP: $client_ip"
         DNS::answer clear
@@ -39,12 +39,12 @@ when DNS_REQUEST {
     set qname [DNS::question name]
     # Check if the query type is PTR or A record
     if { $qtype equals "PTR" } {
-        # Allow all PTR queries to proceed (dashboard uses only reverse DNS)
+        # Allow all PTR queries to proceed (dashboard requires only reverse DNS)
     } elseif { $qtype equals "A" } {
         # Restrict A record queries to specific allowed hostnames
         # Convert to lowercase for consistent matching
         set qname_lower [string tolower $qname]
-        # Define allowed A record patterns for dashboard LTM monitors
+        # Define allowed A record patterns for dashboard LTM monitors from Front-end and API Hosts
         # Specific hostname allowlist
         set allowed_a_records {
             "dashboard.lab.local"
@@ -71,4 +71,5 @@ when DNS_REQUEST {
         DNS::header rcode REFUSED
         DNS::return
     }
+
 }
