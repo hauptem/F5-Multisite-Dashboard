@@ -1119,7 +1119,7 @@ Enable comprehensive logging:
 This project uses:
 - **iRules (Tcl)** for F5 BIG-IP integration
 - **Vanilla JavaScript** for frontend (no frameworks)
-- **CSS Grid/Flexbox** for responsive layout
+- **CSS** for responsive layout
 
 When contributing:
 1. Maintain compatibility with F5 BIG-IP TMOS 15.0+ (test on multiple versions)
@@ -1136,8 +1136,6 @@ When contributing:
 
 MIT License - see [LICENSE](LICENSE) file for details.
 
----
-
 ## Disclaimer
 
 - This solution is **NOT** officially endorsed, supported, or maintained by F5 Inc.
@@ -1145,7 +1143,7 @@ MIT License - see [LICENSE](LICENSE) file for details.
 - This is an independent, community-developed solution that utilizes F5 products but is not affiliated with F5 Inc.
 - For official F5 support and solutions, please contact F5 Inc. directly
 
-**Technical Disclaimer:**
+**Technical Disclaimer**
 
 - This software is provided "AS IS" without warranty of any kind
 - The authors and contributors are not responsible for any damages or issues that may arise from its use
