@@ -208,7 +208,7 @@ The dashboard requires several data groups for configuration and access control.
    - **Type**: `String`
    - **Description**: `Available monitoring sites with display order`
 
-3. Add sites; note that the Front-end itself should be first with the lowest sort order:
+3. Add sites; note that the Front-end itself should have the lowest sort order which will cause it to appear first in the list:
    - **String**: `CHICAGO`, **Value**: `10`
    - **String**: `NEW_YORK`, **Value**: `20`
    - **String**: `LONDON`, **Value**: `30`
