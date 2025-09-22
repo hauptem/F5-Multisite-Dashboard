@@ -643,7 +643,7 @@ The **Dashboard API Host** provides JSON-based endpoints for remote sites access
 ## Create Data Groups
 The dashboard requires several data groups for configuration and access control.
 
-### Data Group - datagroup-dashboard-clients
+### Data Group - datagroup-dashboard-trusted-frontends
 1. Navigate to **Local Traffic → iRules → Data Group List**
 2. Click **Create**
 3. Configure data group:
@@ -654,7 +654,6 @@ The dashboard requires several data groups for configuration and access control.
 4. Add frontend IPs:
    - **Address**: `192.168.1.50` (Primary Frontend BIG-IP self-IP)
    - **Address**: `192.168.1.51` (Secondary Frontend BIG-IP self-IP)
-   - **Address**: `10.0.1.100` (Development Frontend)
 
 5. Click **Finished**
 
@@ -1059,25 +1058,33 @@ The search filter supports Boolean operators for advanced filtering:
 
 ## Troubleshooting
 
+**Cannot connect to Front-end"**
+- Verify that iRule `LTM_Dashboard-Frontend_v1.7_irule` has been applied to the Front-end virtualserver
+- Verify `datagroup-dashboard-clients` contains client IP addresses or client subnets
+- Verify that APM is setting variable `session.custom.dashboard.auth` to `1` upon successful authentication
+
+- **Site selection shows no sites**
+- Check the `datagroup-dashboard-sites` configuration on the Front-end
+
 **Dashboard shows "No pools configured"**
 - Verify `datagroup-dashboard-pools` contains pool names
-- Check pool names match actual BIG-IP pool configuration in `/Common` partition
-- Ensure all dashboard components are deployed in `/Common` partition (v1.7 limitation)
+- Check that the datagroup pool names match the actual Front-end LTM pool names (case sensitive!)
 
-**API authentication failures**
+**Cannot connect to API Host"**
+- Verify API Host `datagroup-dashboard-trusted-frontends` contains the correct Front-end Self-IPs
+- Verify that iRule `LTM_Dashboard-API-Host_v1.7_irule` has been applied to the API Host virtualserver
+
+**API authentication failure when selecting a backend site**
 - Verify API keys match between frontend and backend
-- Check `datagroup-dashboard-api-keys` configuration in `/Common` partition
-- Ensure frontend IP is in `datagroup-dashboard-trusted-frontends`
+- Check `datagroup-dashboard-api-keys` configuration on both clusters
 
 **DNS resolution not working**
-- Verify DNS resolver configuration in `/Common` partition
-- Check `dashboard-dns_udp53_pool` has active members
-- Set `dns_enabled = 1` in iRule configuration
-
-**Site selection shows no sites**
-- Check `datagroup-dashboard-sites` configuration in `/Common` partition
-
----
+- Verify DNS resolver configuration in LTM
+- Check `dashboard-dns_udp53_pool` has at least one active member
+- Set `dns_enabled = 1` in the dashboard iRule configuration
+- Validate LTM resolver using dig from bash
+- If DNS irule is used on a GTM listener, ensure the dashboard hosts Self-IPs (Front-End or API Host) exist within the datagroup `dashboard-dns-clients`
+- Debug the dashboard Front-end or Back-end while performing "Resolve" requests
 
 ### Debug Mode
 Enable comprehensive logging:
@@ -1086,10 +1093,11 @@ Enable comprehensive logging:
 3. Monitor logs: `tail -f /var/log/ltm`
 4. Note that in order to see console logs in browser devtools, you must enable irule debug and be a client in the debug datagroup. The irule will signal the client that you are a debug_enabled client. This is for the non-minified Javascript only.
 
-## Known Limitations
+## Dashboard Current Limitations
 
-**Dashboard v1.7 is not multi-partition compatible.** All BIG-IP objects (pools, data groups, virtual servers, iRules, etc.) must reside in the `/Common` partition. 
-- DNS resolution only supports IPv4 PTR lookups at this time
+**Dashboard v1.7 is not multi-partition compatible.** 
+All BIG-IP objects (pools, data groups, virtual servers, iRules, etc.) must reside in the `/Common` partition. 
+DNS resolution only supports IPv4 PTR lookups at this time
 
 ### TMOS Version Compatibility
 **Minimum Required:** TMOS 15.0
