@@ -1004,7 +1004,7 @@ set dns_enabled 1      # Set to 1 to enable DNS resolution
 
 | Shortcut | Action | Description |
 |----------|--------|-------------|
-| `Alt+M` | **Toggle View Mode** | Switches between MACRO and MICRO view modes |
+| `Alt+M` | **Toggle View Mode** | Switches between MACRO and Micro view modes |
 | `Alt+T` | **Toggle Theme** | Cycles through available themes (theme1, theme2, theme3) |
 | `Alt+A` | **Toggle Alias Mode** | Switches between showing pool aliases or actual pool names |
 | `Alt+H` | **Toggle Bottom Bar** | Shows/hides the bottom control bar |
@@ -1014,20 +1014,20 @@ set dns_enabled 1      # Set to 1 to enable DNS resolution
 | Shortcut | Action | Description |
 |----------|--------|-------------|
 | `Alt+S` | **Cycle Sites** | Cycles through available sites in the dropdown |
-| `Alt+P` | **Cycle Refresh Interval** | Cycles through refresh intervals (10s, 30s, 60s, 90s) |
+| `Alt+P` | **Cycle Polling Interval** | Cycles through Polling intervals (10s, 30s, 60s, 90s) |
 
 ## DNS & Network Controls
 
 | Shortcut | Action | Description |
 |----------|--------|-------------|
-| `Alt+R` | **Resolve DNS** | Initiates DNS resolution for member hostnames |
-| `Alt+F` | **Flush DNS Cache** | Clears the DNS hostname cache |
+| `Alt+R` | **Resolve DNS** | Initiates a poll with DNS resolution requested for unknown member hostnames |
+| `Alt+F` | **Flush DNS Cache** | Clears the dashboard DNS hostname cache |
 
 ## Logger Controls
 
 | Shortcut | Action | Description |
 |----------|--------|-------------|
-| `Alt+L` | **Toggle Logger** | Shows/hides the event logger window |
+| `Alt+L` | **Toggle Logger** | Shows/hides the logger window |
 
 ## Saved Searches
 
