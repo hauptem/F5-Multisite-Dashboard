@@ -85,13 +85,13 @@ A 170KB modular JavaScript application runs entirely in your browser, served dir
 
 The dashboard consists of two main components:
 
-### Frontend (Dashboard Host)
+### Front-end (one, or more)
 - Serves the web interface and static assets
 - Handles user authentication via APM
 - Provides local pool monitoring for the frontend site
 - Proxies requests to remote backend API hosts
 
-### Backend API (API Host)
+### API-Host (as many as are deployed)
 - Exposes JSON API endpoints for pool data
 - Performs DNS resolution and member status checks
 - Supports pool filtering optimization headers
@@ -105,8 +105,7 @@ The dashboard consists of two main components:
 - F5 BIG-IP with LTM and APM modules provisioned
 - TMOS Version: 15.0 or higher (tested on 15.x, 16.x, 17.x)
 - DNS resolver configured for PTR lookups (optional)
-- **Note:** This version (1.7) is not multi-partition compatible
-- All objects must be in `/Common` partition. Partition compatibility is planned for version 2.0. 
+- **Note:** Version 1.7 is not multi-partition compatible. Partition compatibility is planned for version 2.0. 
 
 ---
 
