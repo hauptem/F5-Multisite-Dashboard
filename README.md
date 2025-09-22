@@ -85,13 +85,13 @@ A 170KB modular JavaScript application runs entirely in your browser, served dir
 
 The dashboard consists of two main components:
 
-### Front-end (one, or more)
+### Front-end (one - or more as desired)
 - Serves the web interface and static assets
 - Handles user authentication via APM
 - Provides local pool monitoring for the frontend site
 - Proxies requests to remote backend API hosts
 
-### API-Host (as many as are deployed)
+### API-Host (as many as are deployed within a topology)
 - Exposes JSON API endpoints for pool data
 - Performs DNS resolution and member status checks
 - Supports pool filtering optimization headers
