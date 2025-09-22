@@ -91,7 +91,7 @@ The dashboard consists of two main components:
 - Provides local pool monitoring for the frontend site
 - Proxies requests to remote backend API hosts
 
-### API-Host (as many as are Big-IP clusters deployed within a topology)
+### API-Host (equal to the number of Big-IP clusters deployed within a organizations topology)
 - Exposes JSON API endpoints for pool data
 - Performs DNS resolution and member status checks
 - Supports pool filtering optimization headers
