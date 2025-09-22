@@ -508,7 +508,7 @@ Locate lines 30-31 to enable/disable debug logging:
 set debug_enabled 0
 set dns_enabled 1
 ```
-- Set `debug_enabled` to `1` to enable debug logging (recommended during setup)
+- Set `debug_enabled` to `1` to enable debug logging
 - Set `dns_enabled` to `1` to enable DNS hostname resolution
 - Set to `0` to disable these features
 
@@ -559,7 +559,7 @@ set dns_enabled 1
 
 ### Default Pool Assignment
 
-- **Default Pool**: Leave blank (iRule handles all routing)
+- **Default Pool**: Leave blank (iRule handles proxy based on datagroup-dashboard-api-host mapping)
 
 ### Finish Virtual Server Creation
 
