@@ -36,11 +36,9 @@
 #    /api/proxy/pools - Returns JSON array of pool status and member data (requires API key)
 #    /api/health - Returns health status of the API endpoint (no auth)
 #
-
 when CLIENT_ACCEPTED {
 # ======================================================================================================
 # USER CONFIGURATION VARIABLES - Set Debug enable, DNS enable, Dashboard pool name, and Resolver name 
-# ======================================================================================================
    
     # Dashboard Debug toggle - set to 1 to enable Dashboard debug, 0 to disable
     set debug_enabled 0
@@ -54,7 +52,6 @@ when CLIENT_ACCEPTED {
     # Dashboard DNS Resolver Name - Update this pool name variable to match your environment
     set dashboard_dns_resolver "/Common/dashboard-DNS"
 
-# ======================================================================================================
 # END CONFIGURATION VARIABLES - Do not modify any variables below this line
 # ======================================================================================================
     # Restrict access to authorized dashboard front-ends Self-IPs
