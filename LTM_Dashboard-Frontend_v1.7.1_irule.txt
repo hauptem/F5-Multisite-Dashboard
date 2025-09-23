@@ -56,11 +56,9 @@
 #        dashboard_logo.png     - logo image file
 #        dashboard_themes.css  	- Dashboard CSS with themes
 #
-
 when CLIENT_ACCEPTED {
 # ======================================================================================================
 # USER CONFIGURATION VARIABLES - Set Debug, DNS, Dashboard pool names, Resolver name, and Front-End Name
-# ======================================================================================================
    
     # Dashboard Debug toggle - set to 1 to enable Dashboard debug, 0 to disable
     set debug_enabled 0
@@ -78,7 +76,6 @@ when CLIENT_ACCEPTED {
     # Dashboard Front-End Site Name - This must match your site name desired for the Front-end
     set local_site_name "CHICAGO"
 
-# ======================================================================================================
 # END CONFIGURATION VARIABLES - Do not modify any variables below this line
 # ======================================================================================================
     # Validate client authorization for debug logging 
