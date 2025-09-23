@@ -76,7 +76,7 @@ when CLIENT_ACCEPTED {
     # Dashboard Front-End Site Name - This must match your site name desired for the Front-end
     set local_site_name "CHICAGO"
 
-# END CONFIGURATION VARIABLES - Do not modify any variables below this line
+# END USER CONFIGURATION VARIABLES - Do not modify any variables below this line
 # ======================================================================================================
     # Validate client authorization for debug logging 
     set client_debug_enabled 0
