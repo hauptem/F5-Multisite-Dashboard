@@ -1081,6 +1081,38 @@ DNS resolution only supports IPv4 PTR lookups at this time
 
 ---
 
+## JSON Scheme v1.7.x
+
+/api/proxy/pools
+   {
+     "hostname": "bigip-hostname",
+     "timestamp": "YYYY-MM-DD HH:MM:SS",
+     "debug_enabled": "enabled|disabled",
+     "instanceId":"inst_timestamp_random" or null,
+     "pools": [
+       {
+         "name": "pool_name",
+         "alias": "user_friendly_name" or "null",
+         "sort_order": number,
+         "status": "UP|DOWN|DISABLED|UNKNOWN|EMPTY",
+         "up_members": number,
+         "down_members": number,
+         "disabled_members": number,
+         "total_members": number,
+         "members": [
+           {
+             "ip": "x.x.x.x",
+             "port": "port",
+             "status": "up|down|disabled|session_disabled",
+             "hostname": "resolved-hostname" or "null"
+           }
+         ]
+       }
+     ]
+   }
+
+---
+
 ## Contributing
 
 This project uses:
