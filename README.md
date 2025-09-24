@@ -482,11 +482,11 @@ ltm ifile dashboard_themes.css {
 1. Navigate to **Local Traffic → iRules → iRule List**
 2. Click **Create**
 3. Configure iRule:
-   - **Name**: `LTM_Dashboard-Frontend_v1.7_irule`
+   - **Name**: `LTM_Dashboard-Frontend_v1.7.1_irule`
 
 ### Add iRule Content
 
-Copy the complete frontend iRule code (from `LTM_Dashboard-Frontend_v1.7_irule.txt`) into the **Definition** field.
+Copy the complete frontend iRule code (from `LTM_Dashboard-Frontend_v1.7.1_irule.txt`) into the **Definition** field.
 
 ### Key Configuration Points in iRule
 
@@ -792,11 +792,11 @@ quit
 1. Navigate to **Local Traffic → iRules → iRule List**
 2. Click **Create**
 3. Configure iRule:
-   - **Name**: `LTM_Dashboard-API-Host_v1.7_irule`
+   - **Name**: `LTM_Dashboard-API-Host_v1.7.1_irule`
 
 ### Add iRule Content
 
-Copy the complete frontend iRule code (from `LTM_Dashboard-API-Host_v1.7_irule.txt`) into the **Definition** field.
+Copy the complete frontend iRule code (from `LTM_Dashboard-API-Host_v1.7.1_irule.txt`) into the **Definition** field.
 
 ### Save iRule
 
@@ -828,7 +828,7 @@ Copy the complete frontend iRule code (from `LTM_Dashboard-API-Host_v1.7_irule.t
 ### iRule Assignment
 
 1. In **Resources** section, find **iRules**
-2. Move `LTM_Dashboard-API-Host_v1.7_irule` from Available to Enabled
+2. Move `LTM_Dashboard-API-Host_v1.7.1_irule` from Available to Enabled
 
 ### Default Pool Assignment
 
