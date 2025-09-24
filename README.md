@@ -528,12 +528,12 @@ Change `"CHICAGO"` to match your frontend site name from the sites data group. O
 
 ### Basic Configuration
 
-- **Name**: `dashboard_frontend_vs`
-- **Description**: `F5 Multi-Site Dashboard Frontend v1.7`
+- **Name**: `Dashboard-Front-end_https_vs`
+- **Description**: `F5 Multisite Dashboard Frontend`
 - **Type**: `Standard`
 - **Source Address**: `0.0.0.0/0`
 - **Destination Address**: Choose appropriate IP for dashboard access
-- **Service Port**: `443` (HTTPS recommended)
+- **Service Port**: `443` 
 
 ### Protocol Configuration
 
@@ -825,12 +825,12 @@ Copy the complete frontend iRule code (from `LTM_Dashboard-API-Host_v1.7.1_irule
 
 ### Basic Configuration
 
-- **Name**: `dashboard_api-host_vs`
-- **Description**: `F5 Multi-Site Dashboard API-Host`
+- **Name**: `Dashboard-API-Host_https_vs`
+- **Description**: `F5 Multisite Dashboard API-Host`
 - **Type**: `Standard`
 - **Source Address**: `0.0.0.0/0`
 - **Destination Address**: Choose appropriate IP for dashboard access
-- **Service Port**: `443` (HTTPS recommended)
+- **Service Port**: `443` 
 
 ### Protocol Configuration
 
