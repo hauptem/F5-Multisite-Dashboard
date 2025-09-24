@@ -249,9 +249,8 @@ In MICRO view mode:
 - **Use Case**: Clear stale DNS cache entries
 - **Button Location**: "Flush" button in bottom bar
 
-## Keyboard Shortcuts
 
-# Dashboard Keyboard Shortcuts Reference
+## Keyboard Shortcuts Reference
 
 ## Search & Filter Controls
 
@@ -356,7 +355,7 @@ Settings and preferences stored include:
 
 ### Overview
 
-The integrated logger provides near real-time activity tracking and debugging information in a resizable, movable text-based window interface.
+The integrated logger provides near real-time activity tracking and debugging information in a resizable, movable text-based window interface. The logger is optional and the dashboard will function if this module is not deployed.
 
 ### Accessing the Logger
 
