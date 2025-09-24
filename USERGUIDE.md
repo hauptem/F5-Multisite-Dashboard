@@ -251,36 +251,71 @@ In MICRO view mode:
 
 ## Keyboard Shortcuts
 
-### Primary Navigation
+# Dashboard Keyboard Shortcuts Reference
 
-- **Alt+M** - Toggle Mode (MACRO ↔ MICRO view)
-- **Alt+A** - Toggle Alias (pool display name mode)
-- **Alt+T** - Toggle Theme (cycles through available themes)
-- **Alt+L** - Toggle Logs (show/hide event logger)
+## Search & Filter Controls
 
-### Search and Filtering
+| Shortcut | Action | Description |
+|----------|--------|-------------|
+| `Ctrl+F` / `Cmd+F` | **Focus Search** | Opens search input and selects all text |
+| `Alt+C` | **Filter Changed** | Sets search filter to "changed" to show only pools with member changes |
+| `Alt+X` | **Clear Search** | Clears the search filter and focuses search input |
+| `Escape` | **Clear Filter** | Clears search filter when search input is focused |
 
-- **Ctrl+F** - Focus search input field
-- **Alt+C** - Filter for Changed members (pools needing attention)
-- **Alt+X** - Clear search filter
-- **Escape** - Clear filter (when search input focused)
+## View & Display Controls
 
-### Saved Searches
+| Shortcut | Action | Description |
+|----------|--------|-------------|
+| `Alt+M` | **Toggle View Mode** | Switches between MACRO and Micro view modes |
+| `Alt+T` | **Toggle Theme** | Cycles through available themes (theme1, theme2, theme3) |
+| `Alt+A` | **Toggle Alias Mode** | Switches between showing pool aliases or actual pool names |
+| `Alt+H` | **Toggle Bottom Bar** | Shows/hides the bottom control bar |
 
-- **Alt+1** through **Alt+5** - Load saved search from slot 1-5
-- **Alt+Shift+1** through **Alt+Shift+5** - Save current search to slot 1-5
-- **Right-click on search input** - Show saved search context menu
+## Site & Refresh Controls
 
-### Site and System Management
+| Shortcut | Action | Description |
+|----------|--------|-------------|
+| `Alt+S` | **Cycle Sites** | Cycles through available sites in the dropdown |
+| `Alt+P` | **Cycle Polling Interval** | Cycles through Polling intervals (10s, 30s, 60s, 90s) |
 
-- **Alt+S** - Cycle through site dropdown options
-- **Alt+P** - Cycle through refresh polling intervals
-- **Alt+H** - Toggle bottom bar visibility
+## DNS & Network Controls
 
-### DNS Functions
+| Shortcut | Action | Description |
+|----------|--------|-------------|
+| `Alt+R` | **Resolve DNS** | Initiates a poll with DNS resolution requested for unknown member hostnames |
+| `Alt+F` | **Flush DNS Cache** | Clears the dashboard DNS hostname cache |
 
-- **Alt+R** - Resolve DNS hostname resolution
-- **Alt+F** - Flush dashboard DNS hostname cache
+## Logger Controls
+
+| Shortcut | Action | Description |
+|----------|--------|-------------|
+| `Alt+L` | **Toggle Logger** | Shows/hides the logger window |
+
+## Saved Searches
+
+| Shortcut | Action | Description |
+|----------|--------|-------------|
+| `Alt+1` through `Alt+5` | **Load Saved Search** | Loads saved search from slots 1-5 |
+| `Alt+Shift+1` through `Alt+Shift+5` | **Save Current Search** | Saves current search term to slots 1-5 |
+
+## Additional Features
+
+### Context Menu Options
+- **Right-click on search input**: Opens context menu for loading/saving searches to numbered slots
+
+### Search Input Behavior
+- **Enter in search input**: Immediately applies the search filter 
+
+## Search Filter Syntax
+
+The search filter supports Boolean operators for advanced filtering:
+
+| Operator | Usage | Example |
+|----------|-------|---------|
+| `OR` | Default behavior (space-separated) | `pool1 pool2` (shows pools containing either term) |
+| `AND` | Requires all terms | `pool1 AND up` (shows pools containing pool1 in the name with up members) |
+| `NOT` | Excludes terms | `web NOT down` (shows pools with "web" but no down members) |
+| `changed` | Special keyword | Shows only pools with unacknowledged member status changes |
 
 ## Theme Selection
 
