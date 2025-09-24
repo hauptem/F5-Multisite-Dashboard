@@ -1082,7 +1082,7 @@ DNS resolution only supports IPv4 PTR lookups at this time
 ---
 
 ## JSON Scheme v1.7.x
-
+```bash
 /api/proxy/pools
    {
      "hostname": "bigip-hostname",
@@ -1110,7 +1110,7 @@ DNS resolution only supports IPv4 PTR lookups at this time
        }
      ]
    }
-
+```
 ---
 
 ## Contributing
