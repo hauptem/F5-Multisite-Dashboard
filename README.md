@@ -492,22 +492,12 @@ Copy the complete frontend iRule code (from `LTM_Dashboard-Frontend_v1.7_irule.t
 
 **Local Site Configuration**
 
-Locate line 82 and modify for your environment:
+Locate the variable "local_site_name" and modify for your environment:
 ```tcl
 set local_site_name "CHICAGO"
 ```
-Change `"CHICAGO"` to match your frontend site name from the sites data group.
+Change `"CHICAGO"` to match your frontend site name from the sites data group. Only the front-end needs to be made site-aware. The API hosts simply process requests received and do not require site awareness.
 
-**Debug Configuration**
-
-Locate lines 30-31 to enable/disable debug logging:
-```tcl
-set debug_enabled 0
-set dns_enabled 1
-```
-- Set `debug_enabled` to `1` to enable debug logging
-- Set `dns_enabled` to `1` to enable DNS hostname resolution
-- Set to `0` to disable these features
 
 ### Save iRule
 
