@@ -1081,7 +1081,7 @@ DNS resolution only supports IPv4 PTR lookups at this time
 
 ---
 
-## JSON Scheme v1.7.x
+## JSON Schema v1.7.x
 ```bash
 /api/proxy/pools
    {
@@ -1109,6 +1109,19 @@ DNS resolution only supports IPv4 PTR lookups at this time
          ]
        }
      ]
+   }
+```
+
+```bash
+/api/health
+   {
+     "status": "healthy|unhealthy",
+     "hostname": "bigip-hostname",
+     "timestamp": "YYYY-MM-DD HH:MM:SS",
+     "uptime_seconds": number,
+     "version": "1.7",
+     "pools_configured": number,
+     "message": "status description"
    }
 ```
 ---
