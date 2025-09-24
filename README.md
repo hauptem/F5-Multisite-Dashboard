@@ -627,10 +627,10 @@ The **Dashboard API Host** provides JSON-based endpoints for remote sites access
 **4. `datagroup-dashboard-pool-alias` (String)**
 - Used to create alias names for actual configuration pool names
 
-**5. `dashboard-dns_udp53_pool` (API Host LTM Pool)**
+**5. `dashboard-dns_udp53_pool` (LTM Pool)**
 - This pool contains the DNS listener for monitoring
 
-**6. `/Common/dashboard-DNS` (API Host LTM dns-resolver)**
+**6. `/Common/dashboard-DNS` (LTM dns-resolver)**
 - This resolver should map to a GTM listener dedicated for dashboard and scoped for in-addr.arpa.
 
 #### Backend API Configuration
