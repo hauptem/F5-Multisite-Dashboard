@@ -483,7 +483,6 @@ ltm ifile dashboard_themes.css {
 2. Click **Create**
 3. Configure iRule:
    - **Name**: `LTM_Dashboard-Frontend_v1.7_irule`
-   - **Description**: `F5 Multi-Site Dashboard Frontend v1.7`
 
 ### Add iRule Content
 
