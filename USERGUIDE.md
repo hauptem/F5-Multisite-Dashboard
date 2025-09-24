@@ -370,8 +370,6 @@ Each log entry contains:
 
 ## FAQ
 
-### General Usage
-
 **Q: How often does the dashboard refresh data?**
 
 The default refresh interval is 30 seconds, but you can change it to 10, 60, or 90 seconds using the dropdown next to the countdown timer or by pressing Alt+P to cycle through options.
@@ -388,8 +386,6 @@ Yes, the dashboard supports multi-instance operation as of version 1.6.
 
 Pool names are the actual F5 LTM identifiers. Aliases are user-friendly names configured for easier identification. Use Alt+A to toggle between displaying actual names and aliases.
 
-### Search and Filtering
-
 **Q: How do I search for pools with any DOWN members?**
 
 Type "down" in the search box. This will show pools that either have DOWN status themselves or contain members with DOWN status.
@@ -401,8 +397,6 @@ Type "changed" in the search box, click the "Changed" button, or press Alt+C. Th
 **Q: What's the difference between "web app" and "web AND app" in search?**
 
 "web app" (without quotes) searches for pools containing "web" OR "app". "web AND app" requires both terms to be present. Use quotes for exact phrases: "web app".
-
-### Status Change Tracking
 
 **Q: Why are some status badges pulsing?**
 
@@ -416,8 +410,6 @@ The pulsing will continue until you either click to acknowledge, use the "Reset"
 
 Yes, enable the logger (Alt+L) to see real-time status changes with timestamps. The logger maintains a history of changes for your current session.
 
-### DNS Features
-
 **Q: Why do some pools show hostnames and others show IP addresses?**
 
 The dashboard uses DNS resolution when configured. If a hostname can be resolved for a pool member, it displays the hostname. Otherwise, it shows the IP address. You can hover over hostnames to see the underlying IP address.
@@ -425,12 +417,6 @@ The dashboard uses DNS resolution when configured. If a hostname can be resolved
 **Q: How do I update hostnames after DNS changes?**
 
 Press Alt+R or click the "Resolve" button to force fresh DNS resolution. Press Alt+F or click "Flush" to clear the DNS cache completely.
-
-### Technical Questions
-
-**Q: Why does my browser tab stay active even when I'm not looking at it?**
-
-When the logger is visible, the dashboard uses Wake Lock technology to prevent your browser tab from going to sleep. This ensures continuous monitoring and logging. The wake lock is released when you hide the logger. Wake-lock may not be available on all client systems.
 
 **Q: How much data does the dashboard use?**
 
