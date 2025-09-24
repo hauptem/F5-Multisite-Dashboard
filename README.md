@@ -81,6 +81,16 @@ All dashboard sites inherit the high-availability capabilities of their host BIG
 - **Keyboard Shortcuts** - Full keyboard navigation and control via ALT key combinations
 - **Text-based Event Logger** - 5000 event (FIFO buffer) logger to capture and display event history in text format
 
+### Scoped Requests
+
+In the interest of ensuring that we manage how the dashboard interfaces with the dataplane of the Big-IP's we have scoped the pools and DNS features for visibility.
+
+*Pools*
+-  At each poll the status of the entire datagroup-dashboard-pools is requested, but this is also scoped for visibility. So if 100 pools exist at a site but only four pools are visible due to a dashboard search filter, only those visible pools will be requested via X-Need-Pools headers which are used whenever a search is active. If you want an update for an entire site's pools, make sure you do not have an active search.
+
+*DNS*
+- DNS resolution is per user request, not per poll. Browsers are unable to query for PTR records due to security limitations, so the dashboard client will package IP addresses of pool members without a hostname into X-NEED-DNS headers when a "Resolve" action is detected. This is an out of cycle poll fetch request with the additional X-NEED-DNS headers included. The Front-end or API Host will detect these headers and build a list of IP Addresses to query PTR records for. Note that this feature is scoped for visibility, which means even if 50 pools exist at a site but only two pools are shown because of a search, then only the IP addresses of the shown pool members will be requested in a Resolve poll.
+
 ---
 
 ## Architecture
