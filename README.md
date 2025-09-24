@@ -158,7 +158,7 @@ If you wish to use custom names for dashboard specific pools or the resolver, ma
  
 `dashboard_js-logger.js` **Javascript Logger Module** Dedicated logger with resizable UI, state persistence, memory management, wake lock integration, session storage and copy
 
-`dashboard_themes.css` **Dashboard CSS with 3 themes** AGLight (theme1) which is reminiscint of AdminGUI, Monochrome Grey (theme2), and Amber (theme3)
+`dashboard_themes.css` **Dashboard CSS with 3 themes** AGLight (theme1) which is reminiscent of AdminGUI, Monochrome Grey (theme2), and Amber (theme3)
  
 `dashboard_logo.png` any 51px by 53px png logo image
 
