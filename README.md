@@ -1,4 +1,4 @@
-# F5 BIG-IP Multisite Dashboard
+# F5 Multisite Dashboard
 
 ![Dashboard Version](https://img.shields.io/badge/version-1.7-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
