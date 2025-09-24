@@ -57,7 +57,7 @@ All dashboard sites inherit the high-availability capabilities of their host BIG
 **Theme3 - Amber in MACRO mode with alarmed pool members**
 <img width="2560" height="1400" alt="Image" src="https://github.com/user-attachments/assets/72a7a8dd-bc03-48ca-b12d-e81258b69e11" />
 
-**3 instances of Dashboard showing 3 sites in 3 tabs of Microsoft Edge with complete AJAX site table data isolation**
+**3 instances of Dashboard showing 3 sites in 3 tabs of Microsoft Edge with instance site table data isolation**
 <img width="2497" height="1186" alt="Image" src="https://github.com/user-attachments/assets/980ad18f-fa62-431b-b6ac-38dbb86cc6ea" />
 
 **Notional layout of the multi-site topology. Supports multiple Front-ends; scales horizontally as needed**
