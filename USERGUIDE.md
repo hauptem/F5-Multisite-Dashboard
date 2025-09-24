@@ -15,7 +15,7 @@ The F5 Multi-Site Pool Status Dashboard provides centralized monitoring of LTM l
 
 ### Header Section
 
-- **Logo and Title**: F5 logo (links to Big-IP Front-end management interface)
+- **Logo and Title**: F5 logo (links to Big-IP Front-end management interface if DNS record exists)
 - **Site Information Bar**: Displays current site hostname and last update timestamp (when a site is selected)
 - **Logout Button**: Ends your dashboard session and logs you out of APM
 
@@ -110,7 +110,7 @@ When a site is selected, the header shows:
 
 - **Hostname**: The source Big-IP hostname providing the data
 - **Last Updated**: Timestamp of the most recent client data fetch
-- **Direct Link**: Click hostname to access the source Big-IP management interface
+- **Direct Link**: Click hostname to access the source Big-IP management interface (if DNS record exists)
 
 ## Advanced Search and Filtering
 
@@ -142,9 +142,9 @@ When a site is selected, the header shows:
 #### Special Keywords
 
 - **changed - Find Alarms**
-  - `changed` → Only pools with pulsing status badges (unacknowledged state changes)
+- `changed` → Only pools with pulsing status badges (unacknowledged state changes)
 
-### Advanced Search Examples
+### Search Examples
 
 - `"web server" AND up` → Pools with exact phrase "web server" and "up" status
 - `centos AND changed NOT disabled` → Changed centos servers (not disabled)
