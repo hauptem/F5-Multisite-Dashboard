@@ -123,7 +123,7 @@ If you wish to use custom names for dashboard specific pools or the resolver, ma
 - Used to define dashboard site list in the dropdown control - the Front-End is typically the first site defined with the lowest sort order e.g. "CHICAGO = 10".
 
 **4. `datagroup-dashboard-api-host` (String)**
-- Used to map remote Site names to API Host Virtualserver IP addresses. e.g. "NEW YORK = 192.168.4.33". It is this mapping that the Front-end uses to proxy pool requests to the API hosts.
+- Used to map remote Site names to API Host Virtualserver IP addresses. e.g. "NEWYORK = 192.168.4.33". It is this mapping that the Front-end uses to proxy pool requests to the API hosts.
 
 **5. `datagroup-dashboard-pools` (String)**
 - Used to provide a list of pools to display. **This is an essential step.** LTM does not permit an iRule to determine general elements of TMOS configuration. Therefore we **must** administratively provide configuration attributes in the form of a list of LTM pool names that the dashboard will be permitted to process via LB::status events and subsequently display. A script has been provided to assist with the initial population of this datagroup.
