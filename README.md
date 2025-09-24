@@ -1064,7 +1064,7 @@ Enable comprehensive logging:
 
 ## Dashboard Current Limitations
 
-**Dashboard v1.7 is not multi-partition compatible.** 
+**Dashboard v1.7.x is not multi-partition compatible.** 
 All BIG-IP objects (pools, data groups, virtual servers, iRules, etc.) must reside in the `/Common` partition. 
 DNS resolution only supports IPv4 PTR lookups at this time
 
