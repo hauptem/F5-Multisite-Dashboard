@@ -54,14 +54,14 @@ The F5 Multi-Site Pool Status Dashboard provides centralized monitoring of LTM l
 
 ## View Modes
 
-### MACRO View (Default)
+### MACRO View 
 
 - **Detail Level**: Full member details with individual status indicators
 - **Use Case**: Detailed monitoring and troubleshooting
 - **Pool Display**: Complete member lists with scrollable tables
 - **Status Changes**: Individual member change indicators
 
-### MICRO View
+### MICRO View (Default)
 
 - **Detail Level**: Pool-level summary with alarm indicators
 - **Use Case**: High-level overview monitoring
@@ -73,13 +73,12 @@ The F5 Multi-Site Pool Status Dashboard provides centralized monitoring of LTM l
 - **Button Location**: "Mode" button in bottom bar
 - **Keyboard Shortcut**: Alt+M
 - **Per-Site Setting**: Each site remembers its preferred view mode
-- **Instant Application**: View changes immediately without page reload
 
 ## Alias Display Mode
 
 - **Alias Mode ON (Default)**: Shows pool alias names when available
-- **Alias Mode OFF**: Shows actual pool names
-- **Fallback**: If no alias exists, always shows actual pool name
+- **Alias Mode OFF**: Shows actual LTM pool names
+- **Fallback**: If no alias exists, always shows actual LTM pool name
 - **Tooltip**: Hover to see alternate name (actual name when showing alias, alias when showing actual name)
 - **Button Location**: "Alias" button in bottom bar
 - **Button States**:
@@ -100,7 +99,7 @@ The F5 Multi-Site Pool Status Dashboard provides centralized monitoring of LTM l
 
 ### Site States
 
-- **No Site Selected**: Shows "Choose a site..." message with instruction to select from dropdown
+- **No Site Selected**: Shows "Select a site..." message with instruction to select from dropdown
 - **Site Loading**: Displays loading indicator while fetching data
 - **Site Active**: Shows real-time pool data with auto-refresh
 - **Site Error**: Displays error message with retry option if site is unavailable
