@@ -232,7 +232,7 @@ The dashboard requires several data groups for configuration and access control.
    - **Type**: `String`
    - **Description**: `Local pools to display with sort order`
 
-3. Add local pools (recommended to use sort order increments of 10 for later adjustment):
+3. Add local pools. You can also add a sort order; the Javascript UI will show pools from lowest to highest. If no sort order is configured the pools will be displayed in the order they appear within the pools datagroup. (It is recommended to use sort order increments of 10 for later re-adjustments):
    - **String**: `web_servers_pool`, **Value**: `10`
    - **String**: `app_servers_pool`, **Value**: `20`
    - **String**: `database_pool`, **Value**: `30`
