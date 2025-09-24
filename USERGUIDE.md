@@ -441,7 +441,7 @@ The pulsing will continue until you either click to acknowledge, use the "Reset"
 
 **Q: Can I see a history of status changes?**
 
-Yes, enable the logger (Alt+L) to see real-time status changes with timestamps. The logger maintains a history of changes for your current session.
+Yes, enable the logger (Alt+L) to see real-time status changes with timestamps. The logger maintains a history of changes for your current session. 5000 event FIFO buffer.
 
 **Q: Why do some pools show hostnames and others show IP addresses?**
 
