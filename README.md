@@ -946,15 +946,6 @@ This iRule should be applied to the GTM listener to restrict DNS queries:
 - Restricts A record queries to specific dashboard hostnames
 - Refuses all other query types and unauthorized clients
 
-### Debug Settings
-Enable debug logging or DNS resolution by modifying these two iRule variables:
-```tcl
-# In CLIENT_ACCEPTED event
-set debug_enabled 1    # Set to 1 to enable debug
-set dns_enabled 1      # Set to 1 to enable DNS resolution
-```
-**No other irule variables should be modified other than the Front-end local site variable.**
-
 ---
 
 # Dashboard Keyboard Shortcuts Reference
