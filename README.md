@@ -1028,7 +1028,7 @@ The search filter supports Boolean operators for advanced filtering:
 ## Troubleshooting
 
 **Cannot connect to Front-end"**
-- Verify that iRule `LTM_Dashboard-Frontend_v1.7_irule` has been applied to the Front-end virtualserver
+- Verify that the Front-end iRule has been applied to the Front-end virtualserver
 - Verify `datagroup-dashboard-clients` contains client IP addresses or client subnets
 - Verify that APM is setting variable `session.custom.dashboard.auth` to `1` upon successful authentication
 
@@ -1041,7 +1041,7 @@ The search filter supports Boolean operators for advanced filtering:
 
 **Cannot connect to API Host"**
 - Verify API Host `datagroup-dashboard-trusted-frontends` contains the correct Front-end Self-IPs
-- Verify that iRule `LTM_Dashboard-API-Host_v1.7_irule` has been applied to the API Host virtualserver
+- Verify that teh API Host iRule has been applied to the API Host virtualserver
 
 **API authentication failure when selecting a backend site**
 - Verify API keys match between frontend and backend
