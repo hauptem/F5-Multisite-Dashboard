@@ -1039,7 +1039,7 @@ The search filter supports Boolean operators for advanced filtering:
 - Verify `datagroup-dashboard-pools` contains pool names
 - Check that the datagroup pool names match the actual Front-end LTM pool names (case sensitive!)
 
-**Cannot connect to API Host"**
+**Cannot connect to API Host**
 - Verify API Host `datagroup-dashboard-trusted-frontends` contains the correct Front-end Self-IPs
 - Verify that the API Host iRule has been applied to the API Host virtualserver
 
