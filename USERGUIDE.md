@@ -236,14 +236,14 @@ In MICRO view mode:
 
 ### DNS Management Functions
 
-#### Resolve DNS (Alt+R)
+#### Resolve DNS
 
 - **Function**: Forces fresh DNS resolution for all current pool members
 - **Use Case**: Update hostnames after DNS changes
 - **Button Location**: "Resolve" button in bottom bar
 - **Optimization**: Only resolves IPs not already cached with valid hostnames
 
-#### Flush DNS Cache (Alt+F)
+#### Flush DNS Cache
 
 - **Function**: Clears all cached DNS entries for current site
 - **Effect**: Immediate UI update showing IP addresses instead of hostnames
@@ -287,9 +287,7 @@ In MICRO view mode:
 
 ### Changing Themes
 
-- **Access**: "Theme" button in bottom-right controls or Alt+T
-- **Cycling**: Each activation advances to the next theme in sequence
-- **Persistence**: Theme choice persists across sessions and sites
+- "Theme" button in bottom-right controls or Alt+T
 
 ## Settings and Preferences
 
@@ -306,16 +304,11 @@ In MICRO view mode:
 
 - **Dropdown Method**: Use dropdown next to countdown timer in bottom bar
 - **Keyboard Method**: Alt+P to cycle through intervals
-- **Effect**: Immediately applies new interval without page reload
-- **Persistence**: Setting persists across sessions
 
 #### Refresh Behavior
 
 - **Visual Countdown**: Shows seconds remaining until next refresh
-- **Auto-Reset**: Timer resets after each data fetch
-- **Tab Visibility**: Refreshing pauses when tab is hidden (unless logger is open)
-- **Error Handling**: Timer continues running even if data fetch fails
-- **Wake Lock**: Prevents tab sleeping when logger is visible
+- Timer resets after each data fetch
 
 ### Data Persistence
 
@@ -324,13 +317,6 @@ Settings and preferences stored include:
 - **Theme Selection**: Current visual theme
 - **View Mode**: MACRO/MICRO mode per site
 - **Alias Mode**: Pool name display preference per site
-- **Refresh Interval**: Auto-refresh rate
-- **Selected Site**: Currently monitored site
-- **Pool Order**: Custom pool arrangement (per site)
-- **Search Filter**: Active search terms (per site)
-- **Logger State**: Shown/hidden and position
-- **Member States**: Status change tracking baselines (per site)
-- **DNS Cache**: Hostname resolution cache (per site)
 
 ## Dashboard Logger
 
@@ -370,14 +356,6 @@ The integrated logger provides near real-time activity tracking and debugging in
 - **Free Positioning**: Place anywhere on screen
 - **Boundaries**: Constrained to browser window
 
-#### Resize Controls
-
-- **Bottom Edge**: Drag to adjust height
-- **Right Edge**: Drag to adjust width
-- **Corner Handle**: Drag corner for proportional resize
-- **Minimum Size**: 50% screen width, 15% screen height
-- **Maximum Size**: 95% screen width, 80% screen height
-
 ### Log Entry Format
 
 Each log entry contains:
@@ -404,7 +382,7 @@ MACRO view shows detailed member information for troubleshooting. MICRO view sho
 
 **Q: Can I monitor multiple sites simultaneously?**
 
-No, the dashboard displays one site at a time. Use the site selector to switch between sites. Each site maintains its own settings, view mode, and pool order.
+Yes, the dashboard supports multi-instance operation as of version 1.6.
 
 **Q: What's the difference between pool names and aliases?**
 
