@@ -1041,7 +1041,7 @@ The search filter supports Boolean operators for advanced filtering:
 
 **Cannot connect to API Host"**
 - Verify API Host `datagroup-dashboard-trusted-frontends` contains the correct Front-end Self-IPs
-- Verify that teh API Host iRule has been applied to the API Host virtualserver
+- Verify that the API Host iRule has been applied to the API Host virtualserver
 
 **API authentication failure when selecting a backend site**
 - Verify API keys match between frontend and backend
