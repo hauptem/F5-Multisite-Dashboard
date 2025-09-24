@@ -52,7 +52,7 @@ when CLIENT_ACCEPTED {
     # Dashboard DNS Resolver Name - Update this pool name variable to match your environment
     set dashboard_dns_resolver "/Common/dashboard-DNS"
 
-# END USER CONFIGURATION VARIABLES - Do not modify any variables below this line
+# Do not modify any variables below this line
 # ======================================================================================================
     # Restrict access to authorized dashboard front-ends Self-IPs
     if { ![class match [IP::client_addr] equals datagroup-dashboard-trusted-frontends] } {
