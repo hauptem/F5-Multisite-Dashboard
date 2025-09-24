@@ -809,19 +809,6 @@ quit
 
 Copy the complete frontend iRule code (from `LTM_Dashboard-API-Host_v1.7_irule.txt`) into the **Definition** field.
 
-### Key Configuration Points in iRule
-
-**Debug Configuration**
-
-Locate lines 30-31 to enable/disable debug logging:
-```tcl
-set debug_enabled 0
-set dns_enabled 1
-```
-- Set `debug_enabled` to `1` to enable debug logging (recommended during setup)
-- Set `dns_enabled` to `1` to enable DNS hostname resolution
-- Set to `0` to disable features
-
 ### Save iRule
 
 1. Click **Finished**
