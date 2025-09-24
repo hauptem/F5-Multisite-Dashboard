@@ -423,4 +423,4 @@ Data usage is minimal. Each refresh fetches only JSON data (typically just a few
 
 **Q: Is there a maximum number of pools the dashboard can display?**
 
-There's no hard limit, but performance may decrease with very large numbers of pools (1000+). Use search filtering and MICRO view to manage large pool sets effectively.
+There's no hard limit, but performance may decrease with very large numbers of pools (1000+). Use search filtering and MICRO view to manage large pool sets effectively. Dashboard 1.x has been tested with 600 pools and 800+ nodes on a Lab license VE without issue. 
