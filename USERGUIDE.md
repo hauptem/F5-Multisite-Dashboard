@@ -179,9 +179,9 @@ The search function examines:
 ### Reorder Behavior
 
 - **Swap Logic**: Dragging Pool A onto Pool B swaps their positions
-- **Persistence**: New order is automatically saved and persists across sessions
+- **Persistence**: New order is automatically saved and persists for session duration only
 - **Site-Specific**: Each site maintains its own custom pool order
-- **Fallback**: If no custom order exists, pools use their configured sort order
+- **Fallback**: If no custom order exists, pools use their configured sort order or, if no sort order was configured, the pools will display in the order they are listed in the pools datagroup
 
 ## Status Change Tracking
 
