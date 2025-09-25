@@ -294,6 +294,8 @@ If you wish to use custom names for dashboard specific pools or the resolver, ma
  
 `dashboard_logo.png` any 51px by 53px png logo image
 
+---
+
 # Multisite Dashboard Front-end Configuration
 
 ## Create Data Groups
