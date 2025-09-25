@@ -396,7 +396,6 @@ Each log entry contains:
 - **Status Symbol**: Colored symbol indicating final status ▲ UP, ▼ DOWN, ■ DISABLED
 - **Timestamp**: HH:MM:SS format
 - **Site Name**: Source site identifier
-- **Hostname**: Source Big-IP hostname
 - **Status Change**: FROM status → TO status
 - **Member**: Affected pool member hostname:port or IP:port
 - **Pool**: Pool name
