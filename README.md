@@ -1007,7 +1007,7 @@ This iRule should be applied to the GTM listener to restrict DNS queries:
 
 ## Troubleshooting
 
-**Cannot connect to Front-end"**
+**Cannot connect to Front-end**
 - Verify that the Front-end iRule has been applied to the Front-end virtualserver
 - Verify `datagroup-dashboard-clients` contains client IP addresses or client subnets
 - Verify that APM is setting variable `session.custom.dashboard.auth` to `1` upon successful authentication
