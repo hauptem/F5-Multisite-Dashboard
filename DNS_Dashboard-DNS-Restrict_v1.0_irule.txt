@@ -17,8 +17,8 @@
 #  Note that trying to restrict UDP/DNS using drop or reject does not fully work in GTM. It appears
 #  to function and you will even see logs that clients are being dropped, but the front end and API host
 #  DNS monitors will remain unaffected. It seems DNS is processed before client IP checks.
-#  For UDP we need to use a DNS response of REFUSED to get the end state functions restriction function 
-#  that is desired. The Dashboard only requires/uses PTR records, however LTM's DNS monitor can only function 
+#  For UDP we need to use a DNS response of REFUSED to get the end state restriction function that is desired. 
+#  The Dashboard only requires/uses PTR records, however LTM's DNS monitor can only function 
 #  using A or AAAA records, therefore we need to permit both PTR records and A records for the dashboard and 
 #  monitor to function, but we will scope them to allowed hostnames specific for the dashboard.
 #
@@ -72,4 +72,5 @@ when DNS_REQUEST {
     }
 
 }
+
 
