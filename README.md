@@ -1133,7 +1133,7 @@ This iRule should be applied to the GTM listener to restrict DNS queries:
 - Verify `datagroup-dashboard-clients` contains client IP addresses or client subnets
 - Verify that APM is setting variable `session.custom.dashboard.auth` to `1` upon successful authentication
 
-- **Site selection shows no sites**
+**Site selection shows no sites**
 - Check the `datagroup-dashboard-sites` configuration on the Front-end
 
 **Dashboard shows "No pools configured"**
