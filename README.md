@@ -1,6 +1,5 @@
 # F5 Multisite Dashboard
 
-![Dashboard Version](https://img.shields.io/badge/version-1.7-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![F5 Compatible](https://img.shields.io/badge/F5%20BIG--IP-compatible-orange)
 ![TMOS Version](https://img.shields.io/badge/TMOS-15.0%2B-red)
