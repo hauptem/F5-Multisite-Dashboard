@@ -107,7 +107,7 @@ The dashboard consists of two main components:
 
 ---
 
-# Scoped Request Optimization
+## Scoped Request Optimization
 
 The dashboard implements intelligent request scoping to minimize dataplane impact on F5 Big-IP systems while maximizing efficiency through targeted pool monitoring and on-demand DNS resolution.
 
@@ -134,7 +134,7 @@ Performance Gain: 96% reduction in backend processing
 - Pool filtering is based on actual pool names (not aliases) for backend processing
 - Optimization is transparent to users - filtered pools remain cached and displayed
 
-## DNS Resolution Optimization
+## DNS Request Optimization
 
 ### On-Demand Resolution Model
 DNS resolution operates independently from regular polling cycles and is triggered only by explicit user action via the **Resolve** button.
@@ -237,10 +237,10 @@ X-Need-DNS-IPs-2: 192.168.2.1,192.168.2.2
 3. **Cache Integration**: Check existing DNS cache before resolution
 4. **Response Generation**: Return scoped data with hostname information
 
-This optimization system ensures the dashboard scales efficiently while respecting infrastructure limitations and providing responsive user experiences.
 ---
 
 ## Multisite Dashboard Front-end 
+
 ### Critical Dependencies:
 
 Note: All datagroups, pools and DNS resolver must exist in LTM and match the item names in the iRule.
