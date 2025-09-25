@@ -189,7 +189,6 @@ Cache Hit: Display cached hostname immediately
 Each site can independently:
 - Enable/disable DNS resolution capability
 - Configure DNS resolver endpoints
-- Set DNS timeout parameters
 
 #### Recommended Architecture
 - **Site-Specific DNS**: Each site handles its own DNS resolution
