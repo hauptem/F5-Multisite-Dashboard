@@ -450,6 +450,10 @@ The dashboard uses DNS resolution when configured. If a hostname can be resolved
 
 Press Alt+R or click the "Resolve" button to force fresh DNS resolution. Press Alt+F or click "Flush" to clear the DNS cache completely.
 
+**Q: What does the Reset button do?**
+
+The reset button clears member state information for a site. This can be useful if many objects are alarmed and you prefer not to click each one. Note that a reset does not set a baseline, the new baseline will be set during the next poll following a reset action.
+
 **Q: How much data does the dashboard use?**
 
 Data usage is minimal. Each refresh fetches only JSON data (typically just a few KB per site). The amount depends on the number of pools and members configured for the site you are monitoring.
