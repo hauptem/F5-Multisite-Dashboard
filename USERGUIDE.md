@@ -52,9 +52,9 @@ The F5 Multi-Site Pool Status Dashboard provides centralized monitoring of LTM l
 
 ### Member-Level Status Badges
 
-- 🟢 **UP (Green)**: Member is available and passing health checks
-- 🔴 **DOWN (Red)**: Member is unavailable or failing health checks
-- 🔘 **DISABLED (Gray)**: Member is administratively disabled
+- <img width="133" height="45" alt="Image" src="https://github.com/user-attachments/assets/10ebd251-826b-4685-8bc8-8ff764f7a339" /> **UP (Green)**: Member is available and passing health checks
+- <img width="132" height="44" alt="Image" src="https://github.com/user-attachments/assets/a5d753d6-6e40-4032-a7cd-c670c0c19e11" /> **DOWN (Red)**: Member is unavailable or failing health checks
+- <img width="131" height="44" alt="Image" src="https://github.com/user-attachments/assets/5bcc5af9-a902-46fe-8239-7a50c529e2ba" /> **DISABLED (Gray)**: Member is administratively disabled
 
 ## Understanding Member Information
 
