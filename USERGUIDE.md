@@ -24,7 +24,7 @@ The F5 Multi-Site Pool Status Dashboard provides centralized monitoring of LTM l
 
 ### Main Content Area
 
-- **Top Controls Bar**: Search, filtering, view mode, and management controls
+- **Top Controls Bar**: Search field with savable searches via right-click, Pool Reorder button, Site data Reset button
 - **Pool Grid**: Displays pool status cards in a responsive grid layout
 - **Loading/Error States**: Informational messages when appropriate
 
@@ -36,7 +36,7 @@ The F5 Multi-Site Pool Status Dashboard provides centralized monitoring of LTM l
 
 - **Auto-Refresh Timer**: Shows countdown and allows interval adjustment
 - **Site Selector**: Dropdown to choose monitoring site
-- **Feature Controls**: Theme toggle, View mode, Alias mode, Logger toggle, DNS Flush and DNS Resolve buttons
+- **Feature Controls**: Alias mode, View mode, Logger toggle, DNS Flush, DNS Resolve, Theme toggle buttons
 
 <img width="1513" height="74" alt="Image" src="https://github.com/user-attachments/assets/8ef5bddb-8bbd-4577-b679-01b6316c48f8" />
 
