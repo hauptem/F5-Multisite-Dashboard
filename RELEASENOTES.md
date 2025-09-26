@@ -11,7 +11,7 @@
 
 • **v1.6** - InstanceID added and all functions reworked to operate per-instance for multi-tab or multi-window operation (September 2025)
 
-• **v1.7** - "The CSS Update" CSS reworked and optimized; 5 CSS ifiles into 1 CSS with three themes, DNS Scoping
+• **v1.7** - "The CSS Update" CSS reworked and optimized; 5 CSS ifiles into 1 CSS with three themes, DNS Scoping - Added to Github
 
 • ...
 
