@@ -996,6 +996,7 @@ Test the health endpoint without authentication:
      "pools_configured": 37,
      "message": "API endpoint is operational with 37 pools configured"
    }
+  ```
 
 ### Authentication Test
 
