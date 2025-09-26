@@ -427,7 +427,7 @@ The default refresh interval is 30 seconds, but you can change it to 10, 60, or 
 
 **Q: What's the difference between MACRO and MICRO view modes?**
 
-MACRO view shows detailed member information for troubleshooting. MICRO view shows pool-level summaries for monitoring many pools at once. MICRO view displays pool-level alarms when any member has unacknowledged status changes.
+MACRO view shows detailed member information for troubleshooting. MICRO view shows pool-level summaries for monitoring many pools at once. MICRO view displays pool-level alarms when any member has unacknowledged status changes. You cannot acknowledge MICRO mode pool header badges, you must enter MACRO mode and acknowledge the alarmed members, or use the Reset function.
 
 **Q: Can I monitor multiple sites simultaneously?**
 
@@ -459,7 +459,7 @@ The pulsing will continue until you either click to acknowledge, use the "Reset"
 
 **Q: Can I see a history of status changes?**
 
-Yes, enable the logger (Alt+L) to see real-time status changes with timestamps. The logger maintains a history of changes for your current session. 5000 event FIFO buffer.
+Yes, enable the logger (Alt+L) to see real-time status changes with timestamps. The logger maintains a history of changes for your current session in a 5000 event FIFO buffer. The logger listens to each site even when not displayed.
 
 **Q: Why do some pools show hostnames and others show IP addresses?**
 
