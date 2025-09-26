@@ -1025,26 +1025,32 @@ Test API key authentication:
 **Example Pool Data Response:**
 ```json
 {
-  "hostname": "bigip-01.example.com",
+  "hostname": "CHICAGO-bigip.lab.local",
   "timestamp": "2025-01-15 14:30:45",
   "debug_enabled": "disabled",
   "instanceId": "inst_abc123",
   "pools": [
     {
       "name": "web_pool",
-      "alias": "Web Servers",
-      "sort_order": 1,
-      "status": "UP",
-      "up_members": 2,
-      "down_members": 0,
-      "disabled_members": 0,
+      "alias": "Chicago Web Servers",
+      "sort_order": 150,
+      "status": "DOWN",
+      "up_members": 0,
+      "down_members": 1,
+      "disabled_members": 1,
       "total_members": 2,
       "members": [
         {
           "ip": "192.168.1.10",
           "port": "80",
-          "status": "up",
-          "hostname": "web01.example.com"
+          "status": "down",
+          "hostname": "Web01-Chicago.lab.local"
+        },
+        {
+          "ip": "192.168.1.11",
+          "port": "80",
+          "status": "disabled",
+          "hostname": "Web02-Chicago.lab.local"
         }
       ]
     }
