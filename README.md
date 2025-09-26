@@ -323,7 +323,6 @@ When contributing:
 4. Verify browser compatibility across supported platforms
 5. Update version numbers consistently across all files
 6. Add debug logging for new features
-7. Consider TMOS version compatibility for new iRule features
 
 ## License
 
