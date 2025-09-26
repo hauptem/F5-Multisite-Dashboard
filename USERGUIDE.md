@@ -249,6 +249,7 @@ In MICRO view mode:
 - **Use Case**: Clear stale DNS cache entries
 - **Button Location**: "Flush" button in bottom bar
 
+---
 
 ## Keyboard Shortcuts Reference
 
