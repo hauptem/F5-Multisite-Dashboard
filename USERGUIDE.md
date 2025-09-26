@@ -481,4 +481,6 @@ There's no hard limit, but performance may decrease with very large numbers of p
 
 **Q: How do I enable "NOC mode"?**
 
-Switch to micro mode, enable the logger across the bottom of the screen, hide the bottom bar (ALT-H) and press F11 to shift the browser to fullscreen.
+Switch to micro mode, enable the logger across the bottom of the screen and increase text size, hide the bottom bar (ALT-H) and press F11 to shift the browser to fullscreen.
+
+<img width="1280" height="720" alt="Image" src="https://github.com/user-attachments/assets/c7569fe1-bcef-42cc-bd97-e691bee6a546" />
