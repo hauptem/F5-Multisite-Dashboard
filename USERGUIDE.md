@@ -471,7 +471,7 @@ Press Alt+R or click the "Resolve" button to force fresh DNS resolution. Press A
 
 **Q: What does the Reset button do?**
 
-The reset button clears member state information for a site. This can be useful if many objects are alarmed and you prefer not to click each one. Note that a reset does not set a baseline, the new baseline will be set during the next poll following a reset action.
+The reset button clears member state information for a site. This can be useful if many objects are alarmed and you prefer not to click each one. Note that a reset does not set a new baseline, the new baseline will be set during the next poll following a reset action.
 
 **Q: How much data does the dashboard use?**
 
