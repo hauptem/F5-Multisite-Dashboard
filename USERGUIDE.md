@@ -4,16 +4,20 @@
 
 The F5 Multi-Site Pool Status Dashboard provides centralized monitoring of LTM load balancer pools across multiple Big-IP sites. This web-based interface offers near real-time visibility into pool health, member status, and provides advanced features for tracking status changes and managing your monitoring experience.
 
-## First Time Setup
+## Quick Start
+
+### Initial Setup Steps
 
 1. **Select a Site**: Use the site selector in the bottom bar to choose your initial monitoring site
 2. **Configure Refresh Rate**: Set your preferred auto-refresh interval (10s, 30s, 60s, or 90s)
 3. **Choose Theme**: Select a visual theme that suits your preference and environment
 4. **Select View Mode**: Choose between MACRO (detailed) or MICRO (summary) view
 
-## Dashboard Interface Overview
+## Dashboard Interface
 
 ### Header Section
+
+The header provides essential navigation and site information:
 
 - **Logo and Title**: F5 logo (links to Big-IP Front-end management interface if DNS record exists)
 - **Site Information Bar**: Displays current site hostname and last update timestamp (when a site is selected)
@@ -21,8 +25,9 @@ The F5 Multi-Site Pool Status Dashboard provides centralized monitoring of LTM l
 
 <img width="1499" height="68" alt="Image" src="https://github.com/user-attachments/assets/3966e266-1b74-43ab-aa72-fefa2742733a" />
 
-
 ### Main Content Area
+
+The central monitoring interface includes:
 
 - **Top Controls Bar**: Search field with savable searches via right-click, Pool Reorder button, Site data Reset button
 - **Pool Grid**: Displays pool status cards in a responsive grid layout
@@ -32,7 +37,9 @@ The F5 Multi-Site Pool Status Dashboard provides centralized monitoring of LTM l
 
 <img width="1492" height="332" alt="Image" src="https://github.com/user-attachments/assets/a4a6c807-cabb-401e-8d57-7321ec0833d6" />
 
-### Bottom Bar
+### Bottom Bar Controls
+
+The bottom bar contains all primary dashboard controls:
 
 - **Auto-Refresh Timer**: Shows countdown and allows interval adjustment
 - **Site Selector**: Dropdown to choose monitoring site
@@ -42,7 +49,9 @@ The F5 Multi-Site Pool Status Dashboard provides centralized monitoring of LTM l
 
 ## Pool Status Monitoring
 
-### Pool-Level Status Badges
+### Understanding Status Indicators
+
+#### Pool-Level Status Badges
 
 - <img width="134" height="40" alt="Image" src="https://github.com/user-attachments/assets/5a38e036-36cb-443b-99f8-19752ec80fad" /> **UP (Green)**: Pool has available members and is operational
 - <img width="131" height="39" alt="Image" src="https://github.com/user-attachments/assets/a42c617c-df81-47fa-a730-3e50c43a51a6" /> **DOWN (Red)**: All pool members are unavailable
@@ -50,63 +59,72 @@ The F5 Multi-Site Pool Status Dashboard provides centralized monitoring of LTM l
 - <img width="132" height="40" alt="Image" src="https://github.com/user-attachments/assets/ab20c940-ed4d-4848-bdad-e64972281bac" /> **UNKNOWN (Orange)**: Pool status cannot be determined or pool not found
 - <img width="133" height="42" alt="Image" src="https://github.com/user-attachments/assets/196dadee-068b-4c13-b306-9980bb7c5a40" /> **EMPTY (Orange)**: Pool exists but has no configured members
 
-### Member-Level Status Badges
+#### Member-Level Status Badges
 
 - <img width="133" height="45" alt="Image" src="https://github.com/user-attachments/assets/10ebd251-826b-4685-8bc8-8ff764f7a339" /> **UP (Green)**: Member is available and passing health checks
 - <img width="132" height="44" alt="Image" src="https://github.com/user-attachments/assets/a5d753d6-6e40-4032-a7cd-c670c0c19e11" /> **DOWN (Red)**: Member is unavailable or failing health checks
 - <img width="131" height="44" alt="Image" src="https://github.com/user-attachments/assets/5bcc5af9-a902-46fe-8239-7a50c529e2ba" /> **DISABLED (Gray)**: Member is administratively disabled
 
-**Note that any pools that are unmonitored will always show all pool members as "UP".
+**Note**: Pools that are unmonitored will always show all pool members as "UP".
 
-## Understanding Member Information
+### Member Information Display
 
 - **Display Format**: Shows hostname:port when DNS is enabled, otherwise IP:port
-- **Tooltip Information**: Hover over hostnames to see IP address
+- **Tooltip Information**: Hover over hostnames to see IP address details
 
 ## View Modes
 
-### MACRO View 
+### MACRO View (Detailed Monitoring)
 
 - **Detail Level**: Full member details with individual status indicators
-- **Use Case**: Detailed monitoring and troubleshooting
+- **Use Case**: Detailed monitoring and troubleshooting individual members
 - **Pool Display**: Complete member lists with scrollable tables
-- **Status Changes**: Individual member change indicators
+- **Status Changes**: Individual member change indicators with click-to-acknowledge
 
-### MICRO View (Default)
+### MICRO View (Summary Monitoring)
 
 - **Detail Level**: Pool-level summary with alarm indicators
-- **Use Case**: High-level overview monitoring
+- **Use Case**: High-level overview monitoring across many pools
 - **Pool Display**: Condensed pool status with aggregate information
 - **Status Changes**: Pool-level alarm indicators when any member has unacknowledged changes
 
-### Switching View Modes
+### Managing View Modes
 
 - **Button Location**: "Mode" button in bottom bar
 - **Keyboard Shortcut**: Alt+M
-- **Per-Site Setting**: Each site remembers its preferred view mode
+- **Per-Site Memory**: Each site remembers its preferred view mode
 
-## Alias Display Mode
+## Alias Display System
+
+### Understanding Aliases
+
+Pool aliases provide user-friendly names as alternatives to technical LTM pool names.
+
+#### Display Modes
 
 - **Alias Mode ON (Default)**: Shows pool alias names when available
 - **Alias Mode OFF**: Shows actual LTM pool names
-- **Fallback**: If no alias exists, always shows actual LTM pool name
-- **Tooltip**: Hover to see alternate name (actual name when showing alias, alias when showing actual name)
+- **Fallback Behavior**: If no alias exists, always shows actual LTM pool name
+
+#### Managing Alias Display
+
 - **Button Location**: "Alias" button in bottom bar
 - **Button States**:
   - "Alias" (default) = showing alias names
   - "Actual" (highlighted) = showing actual pool names
 - **Keyboard Shortcut**: Alt+A
 - **Per-Site Setting**: Each site remembers its preferred alias mode
-- **Search Compatibility**: Search works with both actual names and aliases
+- **Tooltip Support**: Hover to see alternate name (actual name when showing alias, alias when showing actual name)
+- **Search Compatibility**: Search functionality works with both actual names and aliases
 
-## Site Selection and Management
+## Site Management
 
-### Selecting a Site
+### Site Selection Process
 
-- Locate the Site Selector dropdown in the bottom bar
-- Click the dropdown to view available sites
-- Select your desired site from the list
-- The dashboard will immediately load data from the selected site
+1. Locate the Site Selector dropdown in the bottom bar
+2. Click the dropdown to view available sites
+3. Select your desired site from the list
+4. The dashboard will immediately load data from the selected site
 
 ### Site States
 
@@ -117,7 +135,7 @@ The F5 Multi-Site Pool Status Dashboard provides centralized monitoring of LTM l
 
 ### Site Information Display
 
-When a site is selected, the header shows:
+When a site is selected, the header displays:
 
 - **Hostname**: The source Big-IP hostname providing the data
 - **Last Updated**: Timestamp of the most recent client data fetch
@@ -125,62 +143,76 @@ When a site is selected, the header shows:
 
 ## Advanced Search and Filtering
 
-### Search Input Field
+### Search Interface
 
 - **Location**: Central search box in the top controls
-- **Placeholder**: "Search... BOOLEAN OR (default), AND, NOT..."
-- **Real-Time**: Results update as you type (300ms delay)
-- **Quick Buttons**: "Changed" and "Clear" buttons for common filters
+- **Placeholder Text**: "Search... BOOLEAN OR (default), AND, NOT..."
+- **Real-Time Updates**: Results update as you type (300ms delay)
+- **Quick Actions**: "Changed" and "Clear" buttons for common filters
 
 ### Boolean Search Operators
 
 #### Basic Search (OR Logic - Default)
+```
+web database        → Shows pools containing "web" or "database"
+192.168.10 10.20.1  → Shows pools with "192.168.10" or "10.20.1" IP addresses
+```
 
-- `web database` → Shows pools containing "web" or "database"
-- `192.168.10 10.20.1` → Shows pools with "192.168.10" or "10.20.1" IP addresses
+#### AND Operator - All terms must match
+```
+centos AND app01    → Pools with "centos" members and "app01" in pool name
+web AND 192.168     → Pools with "web" and "192.168" IP addresses
+```
 
-#### AND - All terms must match
-
-- `centos AND app01` → Pools with "centos" members and "app01" in pool name
-- `web AND 192.168` → Pools with "web" and "192.168" IP addresses
-
-#### NOT - Exclude terms
-
-- `NOT down` → All pools except those with "down" members
-- `windows NOT disabled` → Pools with "windows" but not "disabled" members
-- `NOT down AND Cisco` → Pools with "Cisco" but no "down" members
+#### NOT Operator - Exclude terms
+```
+NOT down            → All pools except those with "down" members
+windows NOT disabled → Pools with "windows" but not "disabled" members
+NOT down AND Cisco  → Pools with "Cisco" but no "down" members
+```
 
 #### Special Keywords
+```
+changed             → Only pools with pulsing status badges (unacknowledged state changes)
+```
 
-- **changed - Find Alarms**
-- `changed` → Only pools with pulsing status badges (unacknowledged state changes)
+### Advanced Search Examples
 
-### Search Examples
+```
+"web server" AND up                 → Pools with exact phrase "web server" and "up" status
+centos AND changed NOT disabled     → Changed centos servers (not disabled)
+up NOT down                         → Show pools that are fully available
+down NOT up                         → Show pools that are fully unavailable
+```
 
-- `"web server" AND up` → Pools with exact phrase "web server" and "up" status
-- `centos AND changed NOT disabled` → Changed centos servers (not disabled)
-- `up NOT down` → Show pools that are fully available
-- `down NOT up` → Show pools that are fully unavailable
-
-### Search Capabilities
+### Search Scope
 
 The search function examines:
-
 - Pool names and alias names
 - Pool status (UP, DOWN, DISABLED, UNKNOWN, EMPTY)
 - Member IP addresses and hostnames
 - Member ports and status
 - Case-insensitive matching with partial word support
 
+### Saved Search System
+
+#### Saving Searches
+- **Right-click** on search input to access context menu
+- **Alt+Shift+1** through **Alt+Shift+5** to save to numbered slots
+
+#### Loading Searches
+- **Right-click** on search input and select from saved searches
+- **Alt+1** through **Alt+5** to load from numbered slots
+
 ## Pool Reordering
 
-### Enabling Reorder Mode
+### Activating Reorder Mode
 
 1. Click the "Reorder" button in the top-left of the controls bar
 2. Button changes to "Disable" and highlights in yellow
 3. Pool tables become draggable with move cursors
 
-### Reordering Pools
+### Reordering Process
 
 1. **Drag Source**: Click and hold on any pool table
 2. **Visual Feedback**: Dragged pool becomes semi-transparent and slightly smaller
@@ -190,55 +222,58 @@ The search function examines:
 ### Reorder Behavior
 
 - **Swap Logic**: Dragging Pool A onto Pool B swaps their positions
-- **Persistence**: New order is automatically saved and persists for session duration only
+- **Persistence**: New order is automatically saved for session duration
 - **Site-Specific**: Each site maintains its own custom pool order
-- **Fallback**: If no custom order exists, pools use their configured sort order or, if no sort order was configured, the pools will display in the order they are listed in the pools datagroup
+- **Fallback**: Without custom order, pools use configured sort order or datagroup listing order
 
 ## Status Change Tracking
 
-### Overview
+### Change Detection System
 
-The dashboard tracks when pool member statuses change from their baseline state and provides visual indicators when member states change.
+The dashboard automatically tracks when pool member statuses change from their baseline state and provides visual indicators.
 
-### Visual Change Indicators
-
-#### Pulsing Animation
-
-- **Effect**: Status badges pulse with a golden glow
-- **Trigger**: When a member's status differs from its established baseline
-- **Duration**: Continues until manually acknowledged
-
-#### Clickable Status Badges
-
-- **Appearance**: Changed status badges become clickable (cursor changes to pointer)
-- **Border**: Border indicates acknowledgment is available
-- **Tooltip**: Enhanced tooltip shows previous status and change time
-
-### Baseline Status Concept
+#### Baseline Status Concept
 
 - **Initial State**: When first seen, a member's polled status becomes its "baseline"
 - **Change Detection**: Any deviation from the recorded baseline triggers change tracking
 - **Auto-Return**: If status returns to recorded baseline, change indicator automatically clears
 
+### Visual Change Indicators
+
+#### Pulsing Animation
+- **Effect**: Status badges pulse with a golden glow
+- **Trigger**: When a member's status differs from its established baseline
+- **Duration**: Continues until manually acknowledged
+
+#### Enhanced Tooltips
+- **Content**: Shows previous status and change time
+- **Clickable Indication**: Cursor changes to pointer for changed badges
+
 ### Acknowledging Changes
 
-- **Identify Changed Member**: Look for pulsing status badges
-- **Click Status Badge**: Single click on the pulsing badge
-- **Immediate Effect**: Pulsing stops, badge returns to normal appearance
-- **New Baseline**: Current status becomes the new baseline for future comparisons
+#### Individual Acknowledgment
+1. **Identify Changed Member**: Look for pulsing status badges
+2. **Click Status Badge**: Single click on the pulsing badge
+3. **Immediate Effect**: Pulsing stops, badge returns to normal appearance
+4. **New Baseline**: Current status becomes the new baseline for future comparisons
+
+#### Bulk Reset
+- Use the "Reset" button in top controls to clear all member state information for the current site
+- Note: Reset does not set new baselines; new baselines are established during the next poll
 
 ### MICRO View Alarm Logic
 
 In MICRO view mode:
-
 - **Pool-Level Alarms**: Entire pool status badge shows alarm state if any member has unacknowledged changes
 - **Tooltip Enhancement**: Pool tooltips indicate "Members need attention - switch to MACRO Mode"
 - **Quick Identification**: Easily spot pools with issues across large deployments
+- **Acknowledgment**: Must switch to MACRO view to acknowledge individual members, or use Reset function
 
 ## DNS Integration and Optimization
 
-### DNS Hostname Display
+### Hostname Display System
 
+#### Display Logic
 - **Automatic Resolution**: Backend resolves IP addresses to hostnames when configured
 - **Display Priority**: Shows hostname:port when available, otherwise IP:port
 - **Caching**: Intelligent client-side caching reduces backend DNS lookups
@@ -247,127 +282,22 @@ In MICRO view mode:
 ### DNS Management Functions
 
 #### Resolve DNS
-
 - **Function**: Forces fresh DNS resolution for all current pool members
 - **Use Case**: Update hostnames after DNS changes
 - **Button Location**: "Resolve" button in bottom bar
+- **Keyboard Shortcut**: Alt+R
 - **Optimization**: Only resolves IPs not already cached with valid hostnames
 
 #### Flush DNS Cache
-
 - **Function**: Clears all cached DNS entries for current site
 - **Effect**: Immediate UI update showing IP addresses instead of hostnames
 - **Use Case**: Clear stale DNS cache entries
 - **Button Location**: "Flush" button in bottom bar
-
----
-
-## Keyboard Shortcuts Reference
-
-## Search & Filter Controls
-
-| Shortcut | Action | Description |
-|----------|--------|-------------|
-| `Ctrl+F` / `Cmd+F` | **Focus Search** | Opens search input and selects all text |
-| `Alt+C` | **Filter Changed** | Sets search filter to "changed" to show only pools with member changes |
-| `Alt+X` | **Clear Search** | Clears the search filter and focuses search input |
-| `Escape` | **Clear Filter** | Clears search filter when search input is focused |
-
-## View & Display Controls
-
-| Shortcut | Action | Description |
-|----------|--------|-------------|
-| `Alt+M` | **Toggle View Mode** | Switches between MACRO and Micro view modes |
-| `Alt+T` | **Toggle Theme** | Cycles through available themes (theme1, theme2, theme3) |
-| `Alt+A` | **Toggle Alias Mode** | Switches between showing pool aliases or actual pool names |
-| `Alt+H` | **Toggle Bottom Bar** | Shows/hides the bottom control bar |
-
-## Site & Refresh Controls
-
-| Shortcut | Action | Description |
-|----------|--------|-------------|
-| `Alt+S` | **Cycle Sites** | Cycles through available sites in the dropdown |
-| `Alt+P` | **Cycle Polling Interval** | Cycles through Polling intervals (10s, 30s, 60s, 90s) |
-
-## DNS & Network Controls
-
-| Shortcut | Action | Description |
-|----------|--------|-------------|
-| `Alt+R` | **Resolve DNS** | Initiates a poll with DNS resolution requested for unknown member hostnames |
-| `Alt+F` | **Flush DNS Cache** | Clears the dashboard DNS hostname cache |
-
-## Logger Controls
-
-| Shortcut | Action | Description |
-|----------|--------|-------------|
-| `Alt+L` | **Toggle Logger** | Shows/hides the logger window |
-
-## Saved Searches
-
-| Shortcut | Action | Description |
-|----------|--------|-------------|
-| `Alt+1` through `Alt+5` | **Load Saved Search** | Loads saved search from slots 1-5 |
-| `Alt+Shift+1` through `Alt+Shift+5` | **Save Current Search** | Saves current search term to slots 1-5 |
-
-## Additional Features
-
-### Context Menu Options
-- **Right-click on search input**: Opens context menu for loading/saving searches to numbered slots
-
-### Search Input Behavior
-- **Enter in search input**: Immediately applies the search filter 
-
-## Search Filter Syntax
-
-The search filter supports Boolean operators for advanced filtering:
-
-| Operator | Usage | Example |
-|----------|-------|---------|
-| `OR` | Default behavior (space-separated) | `pool1 pool2` (shows pools containing either term) |
-| `AND` | Requires all terms | `pool1 AND up` (shows pools containing pool1 in the name with up members) |
-| `NOT` | Excludes terms | `web NOT down` (shows pools with "web" but no down members) |
-| `changed` | Special keyword | Shows only pools with unacknowledged member status changes |
-
-## Theme Selection
-
-### Changing Themes
-
-- "Theme" button in bottom-right controls or Alt+T
-
-## Settings and Preferences
-
-### Auto-Refresh Configuration
-
-#### Available Intervals
-
-- **10 seconds**: High-frequency polling
-- **30 seconds**: Balanced polling (default)
-- **60 seconds**: Standard polling
-- **90 seconds**: Low-frequency polling
-
-#### Changing Refresh Rate
-
-- **Dropdown Method**: Use dropdown next to countdown timer in bottom bar
-- **Keyboard Method**: Alt+P to cycle through intervals
-
-#### Refresh Behavior
-
-- **Visual Countdown**: Shows seconds remaining until next refresh
-- Timer resets after each data fetch
-
-### Data Persistence
-
-Settings and preferences stored include:
-
-- **Theme Selection**: Current visual theme
-- **View Mode**: MACRO/MICRO mode per site
-- **Alias Mode**: Pool name display preference per site
-
----
+- **Keyboard Shortcut**: Alt+F
 
 ## Dashboard Logger
 
-### Overview
+### Logger Overview
 
 The integrated logger provides near real-time activity tracking and debugging information in a resizable, movable text-based window interface. The logger is optional and the dashboard will function if this module is not deployed.
 
@@ -378,10 +308,9 @@ The integrated logger provides near real-time activity tracking and debugging in
 - **Keyboard Shortcut**: Alt+L
 - **Persistence**: Logger state (shown/hidden) persists across sites
 
-### Logger Interface
+### Logger Interface Features
 
 #### Header Controls
-
 - **Title**: "Dashboard Logs"
 - **Font Size**: + and - buttons to adjust text size
 - **Expand**: Toggle between normal and full-width view
@@ -389,8 +318,7 @@ The integrated logger provides near real-time activity tracking and debugging in
 - **Clear**: Remove all log entries
 - **Close (X)**: Close the logger window
 
-#### Content Area
-
+#### Content Display
 - **Background**: Black terminal-style background
 - **Text Format**: Monospace font with color coded events
 - **Auto-Scroll**: Automatically scrolls to show newest entries
@@ -398,17 +326,20 @@ The integrated logger provides near real-time activity tracking and debugging in
 
 ### Logger Functionality
 
-#### Drag and Move
-
+#### Repositioning
 - **Drag Handle**: Click and drag the header to reposition the logger
 - **Free Positioning**: Place anywhere on screen
 - **Boundaries**: Constrained to browser window
 
+#### Resizing
+- **Resize Handles**: Bottom, right, and corner resize handles
+- **Dynamic Sizing**: Adjust width and height independently
+- **State Persistence**: Size and position remembered
+
 ### Log Entry Format
 
 Each log entry contains:
-
-- **Status Symbol**: Colored symbol indicating final status ▲ UP, ▼ DOWN, ■ DISABLED
+- **Status Symbol**: Colored symbol indicating final status (▲ UP, ▼ DOWN, ■ DISABLED)
 - **Timestamp**: HH:MM:SS format
 - **Site Name**: Source site identifier
 - **Status Change**: FROM status → TO status
@@ -417,25 +348,150 @@ Each log entry contains:
 
 <img width="1494" height="394" alt="Image" src="https://github.com/user-attachments/assets/b35bc2b5-bb60-456c-838d-c77cb9531534" />
 
----
+## Settings and Preferences
 
-## FAQ
+### Auto-Refresh Configuration
+
+#### Available Intervals
+- **10 seconds**: High-frequency polling
+- **30 seconds**: Balanced polling (default)
+- **60 seconds**: Standard polling
+- **90 seconds**: Low-frequency polling
+
+#### Changing Refresh Rate
+- **Dropdown Method**: Use dropdown next to countdown timer in bottom bar
+- **Keyboard Method**: Alt+P to cycle through intervals
+
+#### Refresh Behavior
+- **Visual Countdown**: Shows seconds remaining until next refresh
+- **Timer Reset**: Resets after each data fetch
+
+### Data Persistence
+
+Settings automatically stored include:
+- **Theme Selection**: Current visual theme
+- **View Mode**: MACRO/MICRO mode per site
+- **Alias Mode**: Pool name display preference per site
+- **Search Filters**: Active search terms per site
+- **Logger State**: Window position and visibility
+- **Custom Pool Order**: Drag-and-drop arrangements per site
+
+## NOC Mode Setup
+
+For large-screen monitoring displays, configure "NOC mode" for optimal visibility:
+
+### Configuration Steps
+
+1. **Switch to MICRO View**: Press Alt+M or click Mode button
+2. **Enable Logger**: Press Alt+L to show logger at bottom of screen
+3. **Adjust Logger Text**: Use + button to increase font size for distance viewing
+4. **Hide Bottom Bar**: Press Alt+H to remove bottom controls for cleaner view
+5. **Enter Fullscreen**: Press F11 to maximize browser window
+
+### NOC Mode Benefits
+
+- **Maximum Screen Usage**: Removes all non-essential UI elements
+- **High Visibility**: Large text and clear status indicators
+- **Real-Time Activity**: Logger shows immediate status changes
+- **Alarm Identification**: MICRO view highlights problematic pools
+
+<img width="1280" height="720" alt="Image" src="https://github.com/user-attachments/assets/c7569fe1-bcef-42cc-bd97-e691bee6a546" />
+
+## Keyboard Shortcuts Reference
+
+### Search & Filter Controls
+
+| Shortcut | Action | Description |
+|----------|--------|-------------|
+| `Ctrl+F` / `Cmd+F` | **Focus Search** | Opens search input and selects all text |
+| `Alt+C` | **Filter Changed** | Sets search filter to "changed" to show only pools with member changes |
+| `Alt+X` | **Clear Search** | Clears the search filter and focuses search input |
+| `Escape` | **Clear Filter** | Clears search filter when search input is focused |
+
+### View & Display Controls
+
+| Shortcut | Action | Description |
+|----------|--------|-------------|
+| `Alt+M` | **Toggle View Mode** | Switches between MACRO and MICRO view modes |
+| `Alt+T` | **Toggle Theme** | Cycles through available themes (theme1, theme2, theme3) |
+| `Alt+A` | **Toggle Alias Mode** | Switches between showing pool aliases or actual pool names |
+| `Alt+H` | **Toggle Bottom Bar** | Shows/hides the bottom control bar |
+
+### Site & Refresh Controls
+
+| Shortcut | Action | Description |
+|----------|--------|-------------|
+| `Alt+S` | **Cycle Sites** | Cycles through available sites in the dropdown |
+| `Alt+P` | **Cycle Polling Interval** | Cycles through polling intervals (10s, 30s, 60s, 90s) |
+
+### DNS & Network Controls
+
+| Shortcut | Action | Description |
+|----------|--------|-------------|
+| `Alt+R` | **Resolve DNS** | Forces fresh DNS resolution for unknown member hostnames |
+| `Alt+F` | **Flush DNS Cache** | Clears the dashboard DNS hostname cache |
+
+### Logger Controls
+
+| Shortcut | Action | Description |
+|----------|--------|-------------|
+| `Alt+L` | **Toggle Logger** | Shows/hides the logger window |
+
+### Saved Searches
+
+| Shortcut | Action | Description |
+|----------|--------|-------------|
+| `Alt+1` through `Alt+5` | **Load Saved Search** | Loads saved search from slots 1-5 |
+| `Alt+Shift+1` through `Alt+Shift+5` | **Save Current Search** | Saves current search term to slots 1-5 |
+
+### Additional Features
+
+- **Right-click on search input**: Opens context menu for loading/saving searches to numbered slots
+- **Enter in search input**: Immediately applies the search filter
+
+## Theme Selection
+
+### Available Themes
+
+The dashboard includes three distinct visual themes:
+
+1. **Theme 1 (AGLight)**: Light theme with professional appearance
+2. **Theme 2 (Monochrome Grey)**: Dark theme with high contrast
+3. **Theme 3 (Amber Terminal)**: Terminal-style theme with amber accents
+
+### Changing Themes
+
+- **Button Method**: Click "Theme" button in bottom-right controls
+- **Keyboard Method**: Press Alt+T to cycle through themes
+- **Persistence**: Theme selection is remembered across sessions
+
+## Frequently Asked Questions
+
+### General Operation
 
 **Q: How often does the dashboard refresh data?**
 
-The default refresh interval is 30 seconds, but you can change it to 10, 60, or 90 seconds using the dropdown next to the countdown timer or by pressing Alt+P to cycle through options. The "Resolve" action will force an out of cycle poll (with NEED-DNS headers).
-
-**Q: What's the difference between MACRO and MICRO view modes?**
-
-MACRO view shows detailed member information for troubleshooting. MICRO view shows pool-level summaries for monitoring many pools at once. MICRO view displays pool-level alarms when any member has unacknowledged status changes. You cannot acknowledge MICRO mode pool header badges, you must enter MACRO mode and acknowledge the alarmed members, or use the Reset function.
+The default refresh interval is 30 seconds, but you can change it to 10, 60, or 90 seconds using the dropdown next to the countdown timer or by pressing Alt+P to cycle through options. The "Resolve" action will force an out-of-cycle poll with DNS resolution.
 
 **Q: Can I monitor multiple sites simultaneously?**
 
-Yes, the dashboard supports multi-instance operation as of version 1.6.
+Yes, the dashboard supports multi-instance operation. Open multiple browser tabs or windows to monitor different sites concurrently.
+
+**Q: How much network bandwidth does the dashboard use?**
+
+Data usage is minimal. Each refresh fetches only JSON data (typically just a few KB per site). The amount depends on the number of pools and members configured for the site you are monitoring.
+
+### View Modes and Display
+
+**Q: What's the difference between MACRO and MICRO view modes?**
+
+MACRO view shows detailed member information for troubleshooting individual components. MICRO view shows pool-level summaries for monitoring many pools at once. MICRO view displays pool-level alarms when any member has unacknowledged status changes. You cannot acknowledge MICRO mode pool header badges directly; you must enter MACRO mode and acknowledge the alarmed members, or use the Reset function.
 
 **Q: What's the difference between pool names and aliases?**
 
 Pool names are the actual F5 LTM identifiers. Aliases are user-friendly names configured for easier identification. Use Alt+A to toggle between displaying actual names and aliases.
+
+### Search and Filtering
 
 **Q: How do I search for pools with any DOWN members?**
 
@@ -449,6 +505,8 @@ Type "changed" in the search box, click the "Changed" button, or press Alt+C. Th
 
 "web app" (without quotes) searches for pools containing "web" OR "app". "web AND app" requires both terms to be present. Use quotes for exact phrases: "web app".
 
+### Status Change Management
+
 **Q: Why are some status badges pulsing?**
 
 Pulsing indicates that a pool member's status has changed from its initially recorded baseline state. Click the pulsing badge to acknowledge the change and stop the pulsing.
@@ -459,7 +517,13 @@ The pulsing will continue until you either click to acknowledge, use the "Reset"
 
 **Q: Can I see a history of status changes?**
 
-Yes, enable the logger (Alt+L) to see real-time status changes with timestamps. The logger maintains a history of changes for your current session in a 5000 event FIFO buffer. The logger listens to each site even when not displayed.
+Yes, enable the logger (Alt+L) to see real-time status changes with timestamps. The logger maintains a history of changes for your current session in a 5000 event FIFO buffer. The logger monitors all sites even when not displayed.
+
+**Q: What does the Reset button do?**
+
+The reset button clears member state information for a site. This can be useful if many objects are alarmed and you prefer not to click each one individually. Note that a reset does not set a new baseline; the new baseline will be established during the next poll following a reset action.
+
+### DNS and Network Features
 
 **Q: Why do some pools show hostnames and others show IP addresses?**
 
@@ -469,20 +533,16 @@ The dashboard uses DNS resolution when configured. If a hostname can be resolved
 
 Press Alt+R or click the "Resolve" button to force fresh DNS resolution. Press Alt+F or click "Flush" to clear the DNS cache completely.
 
-**Q: What does the Reset button do?**
-
-The reset button clears member state information for a site. This can be useful if many objects are alarmed and you prefer not to click each one. Note that a reset does not set a new baseline, the new baseline will be set during the next poll following a reset action.
-
-**Q: How much data does the dashboard use?**
-
-Data usage is minimal. Each refresh fetches only JSON data (typically just a few KB per site). The amount depends on the number of pools and members configured for the site you are monitoring.
+### Performance and Limits
 
 **Q: Is there a maximum number of pools the dashboard can display?**
 
-There's no hard limit, but performance may decrease with very large numbers of pools (1000+). Use search filtering and MICRO view to manage large pool sets effectively. Dashboard 1.x has been tested with 600 pools and 800+ nodes on a Lab license VE without issue. 
+There's no hard limit, but performance may decrease with very large numbers of pools (1000+). Use search filtering and MICRO view to manage large pool sets effectively. Dashboard 1.x has been tested with 600 pools and 800+ nodes on a Lab license VE without issue.
 
-**Q: How do I enable "NOC mode"?**
+**Q: What's the monitored pool limitation?**
 
-Switch to micro mode, enable the logger across the bottom of the screen and increase text size, hide the bottom bar (ALT-H) and press F11 to shift the browser to fullscreen.
+Pools that are unmonitored will always show all pool members as "UP" regardless of their actual status. This is a limitation of the F5 system when health monitors are not configured.
 
-<img width="1280" height="720" alt="Image" src="https://github.com/user-attachments/assets/c7569fe1-bcef-42cc-bd97-e691bee6a546" />
+---
+
+*For installation instructions and technical setup information, refer to the separate Installation Guide.*
