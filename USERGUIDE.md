@@ -489,7 +489,7 @@ MACRO view shows detailed member information for troubleshooting individual comp
 
 **Q: What's the difference between pool names and aliases?**
 
-Pool names are the actual F5 LTM identifiers. Aliases are user-friendly names configured for easier identification. Use Alt+A to toggle between displaying actual names and aliases.
+Pool names are the actual F5 LTM pool name identifiers. Aliases are optional user-friendly names configured for easier identification by operations or application teams. Use Alt+A to toggle between displaying actual names and aliases.
 
 ### Search and Filtering
 
