@@ -44,7 +44,7 @@ The F5 Multi-Site Pool Status Dashboard provides centralized monitoring of LTM l
 
 ### Pool-Level Status Badges
 
-- 🟢 **UP (Green)**: Pool has available members and is operational
+- <img width="134" height="40" alt="Image" src="https://github.com/user-attachments/assets/5a38e036-36cb-443b-99f8-19752ec80fad" /> **UP (Green)**: Pool has available members and is operational
 - 🔴 **DOWN (Red)**: All pool members are unavailable
 - 🔘 **DISABLED (Gray)**: All active members are administratively disabled
 - 🟡 **UNKNOWN (Yellow)**: Pool status cannot be determined or pool not found
