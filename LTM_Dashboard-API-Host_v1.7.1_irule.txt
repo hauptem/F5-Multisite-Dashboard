@@ -49,9 +49,6 @@ when CLIENT_ACCEPTED {
     # Dashboard Pool Name - Update this pool name variable to match your environment
     set dashboard_dns_pool "dashboard-dns_udp53_pool"
     
-    # Dashboard DNS Resolver Name - Update this pool name variable to match your environment
-    set dashboard_dns_resolver "/Common/dashboard-DNS"
-
 # Do not modify any variables below this line
 # ======================================================================================================
     # Restrict access to authorized dashboard front-ends Self-IPs
@@ -525,7 +522,7 @@ proc resolve_hostname_for_json { ip dns_enabled dns_available need_dns_lookup cl
             } else {
                 # Perform a PTR lookup on the IP address with timeout protection
                 if { [catch {
-                    set dns_response [RESOLVER::name_lookup $dashboard_dns_resolver "$d.$c.$b.$a.in-addr.arpa" PTR]
+                    set dns_response [RESOLVER::name_lookup "/Common/dashboard-DNS" "$d.$c.$b.$a.in-addr.arpa" PTR]
                     set answer_section [DNSMSG::section $dns_response answer]
                     set first_answer [lindex $answer_section 0]
                     if { $first_answer eq "" } {
