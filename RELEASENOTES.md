@@ -1,4 +1,4 @@
-## F5 Multisite Dashboard - Minor Version Release Notes
+## F5 Multisite Dashboard - Version Release Notes
 
 • **v1.0** - Initial production release (July 2025)
 
