@@ -19,6 +19,9 @@ The F5 Multi-Site Pool Status Dashboard provides centralized monitoring of LTM l
 - **Site Information Bar**: Displays current site hostname and last update timestamp (when a site is selected)
 - **Logout Button**: Ends your dashboard session and logs you out of APM
 
+<img width="1499" height="68" alt="Image" src="https://github.com/user-attachments/assets/3966e266-1b74-43ab-aa72-fefa2742733a" />
+
+
 ### Main Content Area
 
 - **Top Controls Bar**: Search, filtering, view mode, and management controls
