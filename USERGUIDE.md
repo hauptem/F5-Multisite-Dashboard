@@ -413,6 +413,8 @@ Each log entry contains:
 - **Member**: Affected pool member hostname:port or IP:port
 - **Pool**: Pool name
 
+<img width="1494" height="394" alt="Image" src="https://github.com/user-attachments/assets/b35bc2b5-bb60-456c-838d-c77cb9531534" />
+
 ---
 
 ## FAQ
