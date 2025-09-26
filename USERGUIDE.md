@@ -352,6 +352,8 @@ Settings and preferences stored include:
 - **View Mode**: MACRO/MICRO mode per site
 - **Alias Mode**: Pool name display preference per site
 
+---
+
 ## Dashboard Logger
 
 ### Overview
