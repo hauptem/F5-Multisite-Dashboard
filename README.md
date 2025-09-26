@@ -675,7 +675,7 @@ Change `"CHICAGO"` to match your frontend site name from the sites data group. O
 ### iRule Assignment
 
 1. In **Resources** section, find **iRules**
-2. Move `LTM_Dashboard-Frontend_v1.7_irule` from Available to Enabled
+2. Move `LTM_Dashboard-Frontend_v1.7.1_irule` from Available to Enabled
 
 ### Default Pool Assignment
 
