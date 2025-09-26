@@ -48,10 +48,10 @@ when CLIENT_ACCEPTED {
     # Dashboard DNS toggle - set to 1 to enable Dashboard DNS, 0 to disable
     set dns_enabled 1
 
-    # Dashboard Pool Name - Update this pool name variable to match your environment
+    # Dashboard DNS Pool - Update this variable to match your environment
     set dashboard_dns_pool "dashboard-dns_udp53_pool"
     
-    # Dashboard DNS Resolver Name - Update this pool name variable to match your environment
+    # Dashboard DNS Resolver Name - Update this variable to match your environment
     set dashboard_dns_resolver "/Common/dashboard-DNS"
 
 # ======================================================================================================
