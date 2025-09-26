@@ -61,7 +61,7 @@ when CLIENT_ACCEPTED {
 # USER CONFIGURATION VARIABLES - Set Debug, DNS, Dashboard pool names, Resolver name, and Front-End Name
 
     # Dashboard Debug toggle - set to 1 to enable Dashboard debug, 0 to disable
-    set debug_enabled 1
+    set debug_enabled 0
 
     # Dashboard DNS toggle - set to 1 to enable Dashboard DNS, 0 to disable
     set dns_enabled 1
