@@ -28,11 +28,17 @@ The F5 Multi-Site Pool Status Dashboard provides centralized monitoring of LTM l
 - **Pool Grid**: Displays pool status cards in a responsive grid layout
 - **Loading/Error States**: Informational messages when appropriate
 
+<img width="1497" height="353" alt="Image" src="https://github.com/user-attachments/assets/ec7d7cd5-b0fe-4df7-b2f6-4ad6821f015f" />
+
+<img width="1492" height="332" alt="Image" src="https://github.com/user-attachments/assets/a4a6c807-cabb-401e-8d57-7321ec0833d6" />
+
 ### Bottom Bar
 
 - **Auto-Refresh Timer**: Shows countdown and allows interval adjustment
 - **Site Selector**: Dropdown to choose monitoring site
 - **Theme Controls**: Theme toggle, view mode, alias mode, and logger access buttons
+
+<img width="1513" height="74" alt="Image" src="https://github.com/user-attachments/assets/8ef5bddb-8bbd-4577-b679-01b6316c48f8" />
 
 ## Pool Status Monitoring
 
