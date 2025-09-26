@@ -409,7 +409,7 @@ Each log entry contains:
 
 **Q: How often does the dashboard refresh data?**
 
-The default refresh interval is 30 seconds, but you can change it to 10, 60, or 90 seconds using the dropdown next to the countdown timer or by pressing Alt+P to cycle through options.
+The default refresh interval is 30 seconds, but you can change it to 10, 60, or 90 seconds using the dropdown next to the countdown timer or by pressing Alt+P to cycle through options. The "Resolve" action will force and out of cycle poll (with NEED-DNS headers).
 
 **Q: What's the difference between MACRO and MICRO view modes?**
 
@@ -466,3 +466,7 @@ Data usage is minimal. Each refresh fetches only JSON data (typically just a few
 **Q: Is there a maximum number of pools the dashboard can display?**
 
 There's no hard limit, but performance may decrease with very large numbers of pools (1000+). Use search filtering and MICRO view to manage large pool sets effectively. Dashboard 1.x has been tested with 600 pools and 800+ nodes on a Lab license VE without issue. 
+
+**Q: How do I enable "NOC mode"?**
+
+Switch to micro mode, enable the logger across the bottom of the screen, hide the bottom bar (ALT-H) and press F11 to shift the browser to fullscreen.
