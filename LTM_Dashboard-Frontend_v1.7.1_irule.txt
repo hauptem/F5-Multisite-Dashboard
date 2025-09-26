@@ -59,9 +59,9 @@
 when CLIENT_ACCEPTED {
 # ======================================================================================================
 # USER CONFIGURATION VARIABLES - Set Debug, DNS, Dashboard pool names, Resolver name, and Front-End Name
-   
+
     # Dashboard Debug toggle - set to 1 to enable Dashboard debug, 0 to disable
-    set debug_enabled 0
+    set debug_enabled 1
 
     # Dashboard DNS toggle - set to 1 to enable Dashboard DNS, 0 to disable
     set dns_enabled 1
@@ -70,13 +70,10 @@ when CLIENT_ACCEPTED {
     set dashboard_api_hosts_pool "dashboard-api-hosts_https_pool"
     set dashboard_dns_pool "dashboard-dns_udp53_pool"
     
-    # Dashboard DNS Resolver Name - Update this pool name variable to match your environment
-    set dashboard_dns_resolver "/Common/dashboard-DNS"
-
     # Dashboard Front-End Site Name - This must match your site name desired for the Front-end
     set local_site_name "CHICAGO"
 
-# Do not modify any variables below this line
+# END USER CONFIGURATION VARIABLES - Do not modify any variables below this line
 # ======================================================================================================
     # Validate client authorization for debug logging 
     set client_debug_enabled 0
@@ -190,7 +187,7 @@ when HTTP_REQUEST {
                 # Check if backend VIP is UP
                 if { ![catch {LB::status pool $dashboard_api_hosts_pool member $backend_vip 443} member_status] && $member_status eq "up" } {
                     if { $client_debug_enabled } {
-                        log local0. "DEBUG: Member $backend_vip:443 is UP - proxy to backend"
+                        log local0. "DEBUG: Member $backend_vip:443 is UP - proxy to backend (backend handles DNS)"
                     }
                     # Configure backend authentication - read API key fresh each time
                     set api_keys_list [class names datagroup-dashboard-api-keys]
@@ -770,7 +767,7 @@ proc resolve_hostname_for_json { ip dns_enabled dns_available need_dns_lookup cl
             } else {
                 # Perform a PTR lookup on the IP address with timeout protection
                 if { [catch {
-                    set dns_response [RESOLVER::name_lookup $dashboard_dns_resolver "$d.$c.$b.$a.in-addr.arpa" PTR]
+                    set dns_response [RESOLVER::name_lookup "/Common/dashboard-DNS" "$d.$c.$b.$a.in-addr.arpa" PTR]
                     set answer_section [DNSMSG::section $dns_response answer]
                     set first_answer [lindex $answer_section 0]
                     if { $first_answer eq "" } {
