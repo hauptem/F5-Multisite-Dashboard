@@ -374,7 +374,8 @@ The integrated logger provides near real-time activity tracking and debugging in
 - **Title**: "Dashboard Logs"
 - **Font Size**: + and - buttons to adjust text size
 - **Expand**: Toggle between normal and full-width view
-- **Clear**: Remove all current log entries
+- **Copy**: Copy all logger text to clipboard
+- **Clear**: Remove all log entries
 - **Close (X)**: Close the logger window
 
 #### Content Area
