@@ -1,4 +1,4 @@
-## F5 Multisite Dashboard - Minor Version Release Notes
+F5 Multisite Dashboard - Minor Version Release Notes
 
 • **v1.0** - Initial production release (July 2025)
 • **v1.1** - Alias feature added (customer request)
@@ -11,4 +11,4 @@
 • ...
 • **v2.0** - Multi-partition functionality planned (No ETA)
 
----
+
