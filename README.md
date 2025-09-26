@@ -313,7 +313,7 @@ DNS resolution only supports IPv4 PTR lookups at this time
 
 This project uses:
 - **iRules (Tcl)** for F5 BIG-IP integration
-- **Vanilla JavaScript** for frontend (no frameworks)
+- **Vanilla JavaScript** (no frameworks)
 - **CSS** for responsive layout
 
 When contributing:
