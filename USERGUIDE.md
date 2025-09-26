@@ -1,4 +1,4 @@
-# F5 Multi-Site Dashboard - User Guide
+# F5 Multisite Dashboard - User Guide
 
 ## Introduction
 
