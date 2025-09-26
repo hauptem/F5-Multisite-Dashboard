@@ -56,6 +56,8 @@ The F5 Multi-Site Pool Status Dashboard provides centralized monitoring of LTM l
 - <img width="132" height="44" alt="Image" src="https://github.com/user-attachments/assets/a5d753d6-6e40-4032-a7cd-c670c0c19e11" /> **DOWN (Red)**: Member is unavailable or failing health checks
 - <img width="131" height="44" alt="Image" src="https://github.com/user-attachments/assets/5bcc5af9-a902-46fe-8239-7a50c529e2ba" /> **DISABLED (Gray)**: Member is administratively disabled
 
+**Note that any pools that are unmonitored will always show all pool members as "UP".
+
 ## Understanding Member Information
 
 - **Display Format**: Shows hostname:port when DNS is enabled, otherwise IP:port
