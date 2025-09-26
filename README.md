@@ -986,17 +986,16 @@ Test the health endpoint without authentication:
    ```
 
 2. **Expected Response** (HTTP 200):
-   ```json
-{
-  "status": "healthy",
-  "hostname": "CHICAGO-bigip.lab.local",
-  "timestamp": "2025-09-25 14:30:15",
-  "uptime_seconds": 2678400,
-  "version": "1.7",
-  "pools_configured": 37,
-  "message": "API endpoint is operational with 37 pools configured"
-}
-   ```
+```json
+   {
+     "status": "healthy",
+     "hostname": "CHICAGO-bigip.lab.local",
+     "timestamp": "2025-09-25 14:30:15",
+     "uptime_seconds": 2678400,
+     "version": "1.7",
+     "pools_configured": 37,
+     "message": "API endpoint is operational with 37 pools configured"
+   }
 
 ### Authentication Test
 
