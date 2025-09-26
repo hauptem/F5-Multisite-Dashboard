@@ -400,6 +400,8 @@ Each log entry contains:
 - **Member**: Affected pool member hostname:port or IP:port
 - **Pool**: Pool name
 
+---
+
 ## FAQ
 
 **Q: How often does the dashboard refresh data?**
