@@ -36,9 +36,11 @@
 #    /api/proxy/pools - Returns JSON array of pool status and member data (requires API key)
 #    /api/health - Returns health status of the API endpoint (no auth)
 #
+
 when CLIENT_ACCEPTED {
 # ======================================================================================================
 # USER CONFIGURATION VARIABLES - Set Debug enable, DNS enable, Dashboard pool name, and Resolver name 
+# ======================================================================================================
    
     # Dashboard Debug toggle - set to 1 to enable Dashboard debug, 0 to disable
     set debug_enabled 0
@@ -49,7 +51,11 @@ when CLIENT_ACCEPTED {
     # Dashboard Pool Name - Update this pool name variable to match your environment
     set dashboard_dns_pool "dashboard-dns_udp53_pool"
     
-# Do not modify any variables below this line
+    # Dashboard DNS Resolver Name - Update this pool name variable to match your environment
+    set dashboard_dns_resolver "/Common/dashboard-DNS"
+
+# ======================================================================================================
+# END CONFIGURATION VARIABLES - Do not modify any variables below this line
 # ======================================================================================================
     # Restrict access to authorized dashboard front-ends Self-IPs
     if { ![class match [IP::client_addr] equals datagroup-dashboard-trusted-frontends] } {
@@ -181,7 +187,7 @@ when HTTP_REQUEST {
             log local0. "DEBUG: Starting pool data collection - [llength $available_pools] pools configured"
         }
         # Use memory-optimized procedure for pool processing with filtering support
-        set pools_data [call collect_all_pool_data $available_pools $dns_enabled $dns_available $need_dns_lookup $client_debug_enabled $filtered_pools dns_request_cache]
+        set pools_data [call collect_all_pool_data $available_pools $dns_enabled $dns_available $need_dns_lookup $client_debug_enabled $filtered_pools dns_request_cache $dashboard_dns_resolver]
         # Build final JSON response
         set pools_json "\{\"hostname\":\"$bigip_hostname_escaped\",\"timestamp\":\"$current_timestamp\",\"debug_enabled\":\"[expr {($debug_enabled && $client_debug_enabled) ? "enabled" : "disabled"}]\",\"instanceId\":\"$instance_id\",\"pools\":\[$pools_data\]\}"
         if { $client_debug_enabled } {
@@ -338,8 +344,9 @@ proc process_headers { client_debug_enabled header_type {dns_enabled 0} {dns_ava
 # @param available_pools - List of pool names to process
 # @param need_dns_lookup - Space-padded string of IPs needing DNS resolution
 # @param filtered_pools - List of pool names from X-Need-Pools headers
+# @param resolver_name - DNS resolver name to use for DNS lookups
 # @returns JSON string containing all processed pools data
-proc collect_all_pool_data { available_pools dns_enabled dns_available need_dns_lookup client_debug_enabled filtered_pools cache_var } {
+proc collect_all_pool_data { available_pools dns_enabled dns_available need_dns_lookup client_debug_enabled filtered_pools cache_var resolver_name } {
     # Access the cache from the calling scope
     upvar $cache_var dns_request_cache
     # Use filtered pools if headers present, otherwise use all available pools
@@ -366,7 +373,7 @@ proc collect_all_pool_data { available_pools dns_enabled dns_available need_dns_
     set pool_json_list {}
     # Process each pool
     foreach pool_name $pools_to_process {
-        set pool_json [call process_single_pool $pool_name $dns_enabled $dns_available $need_dns_lookup $client_debug_enabled $cache_var]
+        set pool_json [call process_single_pool $pool_name $dns_enabled $dns_available $need_dns_lookup $client_debug_enabled $cache_var $resolver_name]
         lappend pool_json_list $pool_json
     }
     if { $client_debug_enabled } {
@@ -379,8 +386,9 @@ proc collect_all_pool_data { available_pools dns_enabled dns_available need_dns_
 # ======================================================================================================
 # @param pool_name - Name of the pool to process
 # @param need_dns_lookup - Space-padded string of IPs needing DNS resolution
+# @param resolver_name - DNS resolver name to use for DNS lookups
 # @returns JSON string for this pool with automatic variable cleanup
-proc process_single_pool { pool_name dns_enabled dns_available need_dns_lookup client_debug_enabled cache_var } {
+proc process_single_pool { pool_name dns_enabled dns_available need_dns_lookup client_debug_enabled cache_var resolver_name } {
     # Access the cache from the calling scope
     upvar $cache_var dns_request_cache
     # Get sort order with fallback
@@ -428,7 +436,7 @@ proc process_single_pool { pool_name dns_enabled dns_available need_dns_lookup c
                 set hostname_result "null"
             } else {
                 # IPv4 address - proceed with DNS resolution
-                set hostname_result [call resolve_hostname_for_json $ip $dns_enabled $dns_available $need_dns_lookup $client_debug_enabled]
+                set hostname_result [call resolve_hostname_for_json $ip $dns_enabled $dns_available $need_dns_lookup $client_debug_enabled $resolver_name]
             }
             # Build member JSON object
             regsub -all {"} $ip {\"} ip_escaped
@@ -468,11 +476,11 @@ proc process_single_pool { pool_name dns_enabled dns_available need_dns_lookup c
 # ======================================================================================================
 # @param ip - IP address to resolve
 # @param need_dns_lookup - Space-padded string of IPs needing DNS
+# @param resolver_name - DNS resolver name to use for DNS lookups
 # @returns JSON-ready hostname result: "null" or "\"hostname\""
-proc resolve_hostname_for_json { ip dns_enabled dns_available need_dns_lookup client_debug_enabled } {
+proc resolve_hostname_for_json { ip dns_enabled dns_available need_dns_lookup client_debug_enabled resolver_name } {
     # Access the per-request DNS cache from parent scope
     upvar dns_request_cache dns_request_cache
-    upvar dashboard_dns_resolver dashboard_dns_resolver
     set hostname_result "null"
     set should_resolve_dns 0
     # Validate IP address before any processing - filter out invalid IPv6 addresses
@@ -522,7 +530,7 @@ proc resolve_hostname_for_json { ip dns_enabled dns_available need_dns_lookup cl
             } else {
                 # Perform a PTR lookup on the IP address with timeout protection
                 if { [catch {
-                    set dns_response [RESOLVER::name_lookup "/Common/dashboard-DNS" "$d.$c.$b.$a.in-addr.arpa" PTR]
+                    set dns_response [RESOLVER::name_lookup $resolver_name "$d.$c.$b.$a.in-addr.arpa" PTR]
                     set answer_section [DNSMSG::section $dns_response answer]
                     set first_answer [lindex $answer_section 0]
                     if { $first_answer eq "" } {
