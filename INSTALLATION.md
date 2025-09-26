@@ -1,4 +1,4 @@
-# F5 Multisite Dashboard Installation Guide
+# F5 Multisite Dashboard - Installation Guide
 
 This guide provides complete step-by-step installation procedures for both Frontend and API-Host components of the F5 Multisite Dashboard.
 
