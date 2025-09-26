@@ -68,11 +68,11 @@ when CLIENT_ACCEPTED {
     # Dashboard DNS toggle - set to 1 to enable Dashboard DNS, 0 to disable
     set dns_enabled 1
 
-    # Dashboard Pool Names - Update these pool name variables to match your environment
+    # Dashboard Pool Names - Update these variables to match your environment
     set dashboard_api_hosts_pool "dashboard-api-hosts_https_pool"
     set dashboard_dns_pool "dashboard-dns_udp53_pool"
     
-    # Dashboard DNS Resolver Name - Update this pool name variable to match your environment
+    # Dashboard DNS Resolver Name - Update this variable to match your environment
     set dashboard_dns_resolver "/Common/dashboard-DNS"
 
     # Dashboard Front-End Site Name - This must match your site name desired for the Front-end
