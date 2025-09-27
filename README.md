@@ -152,7 +152,6 @@ The dashboard consists of two main components:
 The dashboard implements intelligent request scoping to minimize dataplane impact on F5 Big-IP systems while maximizing efficiency through targeted pool monitoring and on-demand DNS resolution.
 
 ### Pool Request Optimization
-
 #### How It Works
 The dashboard uses **X-Need-Pools** headers to request only visible pool data during each polling cycle, rather than processing all configured pools.
 
@@ -172,10 +171,8 @@ Performance Gain: 96% reduction in backend processing
 #### Important Notes
 - To update all pools at a site, ensure no search filter is active
 - Pool filtering is based on actual pool names (not aliases) for backend processing
-- Optimization is transparent to users - filtered pools remain cached and displayed
 
 ### DNS Request Optimization
-
 #### On-Demand Resolution Model
 DNS resolution operates independently from regular polling cycles and is triggered only by explicit user action via the **Resolve** button.
 
