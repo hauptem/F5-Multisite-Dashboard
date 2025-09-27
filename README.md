@@ -303,6 +303,8 @@ DNS resolution only supports IPv4 PTR lookups at this time
 - ~1KB/pool in session storage
 - 0% GPU Browser pipeline usage when in an unalarmed state
 
+---
+
 ## Contributing
 
 This project uses:
