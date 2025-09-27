@@ -53,15 +53,12 @@ The entire Dashboard system is fundamentally a sophisticated wrapper around one 
 LB::status pool $pool_name member $ip $port
 ```
 
-**Core Function:**
 - Executes this command across pools and members at each poll
 - Returns basic status and IP address
 
-### The Reality
-
 All JavaScript modules, CSS themes, and iRules exist to make that single status command operationally useful by adding visual presentation, change tracking, and user experience features.
 
-At its core: query member status → detect changes → display nicely → repeat.
+At its core: query member status → detect changes → display nicely → repeat
 
 ### Big-IP Dataplane Impact
 
