@@ -81,20 +81,6 @@ At its core it's a pool status iRule on steroids: query member status → detect
 
 ---
 
-### Core Functionality
-- **Near Real-time Pool Monitoring** - Live status updates for pool members across multiple sites
-- **Multi-Site Architecture** - Frontend/backend separation supporting large distributed F5 deployments
-- **DNS Hostname Resolution** - Automatic PTR lookups with intelligent caching
-- **Member State Tracking** - Persistent monitoring of status changes with acknowledgment system
-- **Advanced Search & Filtering** - Boolean search with saved search functionality
-
-### User Interface
-- **Three Visual Themes** - AGLight, Monochrome Grey, and Amber
-- **MACRO/MICRO View Modes** - Toggle between detailed member view and compact pool overview
-- **Drag & Drop Pool Reordering** - Custom pool arrangement with persistence and an administratively controlled pool sort order
-- **Keyboard Shortcuts** - Full keyboard navigation and control via ALT key combinations
-- **Text-based Event Logger** - 5000 event (FIFO buffer) logger to capture and display event history in text format
-
 ## Architecture
 
 The dashboard consists of two main components:
