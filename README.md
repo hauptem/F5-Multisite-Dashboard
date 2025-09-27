@@ -54,28 +54,18 @@ LB::status pool $pool_name member $ip $port
 ```
 
 **Core Function:**
-- Polls this command repeatedly across pools and members
-- Returns basic status: UP, DOWN, DISABLED
-
-**Everything Else:**
-- Multi-site architecture
-- DNS hostname resolution  
-- Search and filtering
-- Change detection and alerts
-- Themes and responsive design
-- Session persistence
-- Drag-and-drop reordering
-- Logger and state management
+- Executes this command across pools and members at each poll
+- Returns basic status and IP address
 
 ### The Reality
 
-All 8 JavaScript modules, CSS themes, and backend iRules exist to make that single status command operationally useful by adding visual presentation, change tracking, and user experience features.
+All JavaScript modules, CSS themes, and iRules exist to make that single status command operationally useful by adding visual presentation, change tracking, and user experience features.
 
 At its core: query member status → detect changes → display nicely → repeat.
 
 ### Big-IP Dataplane Impact
 
-### Performance Impact: Near Zero
+### Performance Impact: Nearly Zero
 
 **What Hits the Big-IP (Initial Request):**
 - Front-End serving static JavaScript/CSS files
@@ -90,7 +80,7 @@ At its core: query member status → detect changes → display nicely → repea
 **What Doesn't Hit the Big-IP:**
 - UI rendering, search, filtering (client-side)
 - State persistence (browser sessionStorage)
-- All complex dashboard logic
+- All complex dashboard logic leverages the client machine
 
 ---
 
