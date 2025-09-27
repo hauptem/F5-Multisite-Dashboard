@@ -6,35 +6,12 @@
 # License: MIT
 # Copyright (c) 2025 Eric Haupt
 # Released under the MIT License. See LICENSE file for details.
+# https://github.com/hauptem/F5-Multisite-Dashboard
 #
 # Description:
 #   This iRule provides a JSON-enabled backend API endpoint for the multi-site dashboard.  
 #   Note that dashboard v1.7 is not multi-partition compatible. 
 #   
-# Dashboard API Hosts Critical Dependencies:
-#
-#    1. API Host LTM datagroup: datagroup-dashboard-trusted-frontends
-#        Datagroup type: Address
-#
-#    2. API Host LTM datagroup: datagroup-dashboard-api-keys
-#		Type: String, Used to authenticate Front-end to API host
-#
-#    3. API Host LTM datagroup: datagroup-dashboard-pools
-#		Type: String, Used to provide a list of pools to display
-#
-#    4. API Host LTM datagroup: datagroup-dashboard-pool-alias
-#		Type: String, Used to create alias names for actual pool names
-#
-#    5. API Host LTM Pool: dashboard-dns_udp53_pool
-#       This pool contains the DNS listener for monitoring
-#
-#    6. API Host LTM dns-resolver: /Common/dashboard-DNS 
-#       This resolver should map to a GTM listener dedicated for dashboard and scoped for in-addr.arpa
-#
-# API Endpoints:
-#   
-#    /api/proxy/pools - Returns JSON array of pool status and member data (requires API key)
-#    /api/health - Returns health status of the API endpoint (no auth)
 #
 
 when CLIENT_ACCEPTED {
