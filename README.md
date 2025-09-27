@@ -81,8 +81,6 @@ At its core: query member status → detect changes → display nicely → repea
 
 ---
 
-## Features
-
 ### Core Functionality
 - **Near Real-time Pool Monitoring** - Live status updates for pool members across multiple sites
 - **Multi-Site Architecture** - Frontend/backend separation supporting large distributed F5 deployments
@@ -120,7 +118,7 @@ The dashboard consists of two main components:
 - DNS resolver configured for PTR lookups (optional)
 - **Note:** Version 1.7.x is not multi-partition compatible; Partition compatibility is planned for version 2.0.
 
-## Dashboard Screenshots
+## Screenshots
 
 **Theme1 - AGLight in MACRO mode**
 <img width="2560" height="1400" alt="Image" src="https://github.com/user-attachments/assets/ef0294cf-8c74-45fd-849e-a2dbe34f44ce" />
