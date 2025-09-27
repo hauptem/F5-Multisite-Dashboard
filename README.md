@@ -280,7 +280,7 @@ X-Need-DNS-IPs-2: 192.168.2.1,192.168.2.2
 ## Dashboard Current Limitations
 
 **Dashboard v1.7.x is not multi-partition compatible.** 
-All BIG-IP objects (pools, data groups, virtual servers, iRules, etc.) must reside in the `/Common` partition. 
+All BIG-IP objects (pools, data groups, virtual servers, iRules, etc.) must reside in the `/Common` partition. Multi-partition support is planned for v2.0 and is in development and testing.
 DNS resolution only supports IPv4 PTR lookups at this time
 
 ### TMOS Version Compatibility
