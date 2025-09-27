@@ -193,9 +193,9 @@ when HTTP_REQUEST {
                 # Check if backend VIP is UP
                 if { ![catch {LB::status pool $dashboard_api_hosts_pool member $backend_vip 443} member_status] && $member_status eq "up" } {
                     if { $client_debug_enabled } {
-                        log local0. "DEBUG: Member $backend_vip:443 is UP - proxy to backend (backend handles DNS)"
+                        log local0. "DEBUG: Member $backend_vip:443 is UP - proxy to backend"
                     }
-                    # Configure backend authentication - read API key fresh each time
+                    # Configure backend authentication 
                     set api_keys_list [class names datagroup-dashboard-api-keys]
                     if { [llength $api_keys_list] > 0 } {
                         set fresh_api_key [lindex $api_keys_list 0]
