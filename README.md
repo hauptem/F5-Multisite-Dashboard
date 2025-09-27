@@ -230,6 +230,8 @@ X-Need-DNS-IPs-2: 192.168.2.1,192.168.2.2
 3. **Cache Integration**: Check existing DNS cache before resolution
 4. **Response Generation**: Return scoped data with hostname information
 
+---
+
 ## JSON Schema v1.7.x
 
 ```bash
@@ -274,7 +276,7 @@ X-Need-DNS-IPs-2: 192.168.2.1,192.168.2.2
      "message": "status description"
    }
 ```
-
+---
 ## Dashboard Current Limitations
 
 **Dashboard v1.7.x is not multi-partition compatible.** 
