@@ -65,7 +65,7 @@ LB::status pool $pool_name member $ip $port
 - Drag-and-drop reordering
 - Logger and state management
 
-## The Reality
+### The Reality
 
 All 8 JavaScript modules, CSS themes, and backend iRules exist to make that single status command operationally useful by adding visual presentation, change tracking, and user experience features.
 
@@ -73,7 +73,7 @@ At its core: query member status → detect changes → display nicely → repea
 
 ### Big-IP Dataplane Impact
 
-## Performance Impact: Near Zero
+### Performance Impact: Near Zero
 
 **What Hits the Big-IP (Initial Request):**
 - Front-End serving static JavaScript/CSS files
