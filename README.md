@@ -45,7 +45,7 @@ All dashboard sites inherit the high-availability capabilities of their host BIG
 
 ---
 
-### Core Function Analysis
+### Core Function 
 
 The entire Dashboard system is fundamentally a sophisticated wrapper around one F5 command:
 
@@ -80,23 +80,6 @@ At its core: query member status → detect changes → display nicely → repea
 - All complex dashboard logic leverages the client machine
 
 ---
-
-## Screenshots
-
-**Theme1 - AGLight in MACRO mode**
-<img width="2560" height="1400" alt="Image" src="https://github.com/user-attachments/assets/ef0294cf-8c74-45fd-849e-a2dbe34f44ce" />
-
-**Theme2 - Monochrome Grey in micro mode with logger active, alarmed pools, an active search, and actual pool name mode enabled**
-<img width="2560" height="1400" alt="Image" src="https://github.com/user-attachments/assets/4c037655-ea14-43b2-9cda-46575cc7c20f" />
-
-**Theme3 - Amber in MACRO mode with alarmed pool members**
-<img width="2560" height="1400" alt="Image" src="https://github.com/user-attachments/assets/72a7a8dd-bc03-48ca-b12d-e81258b69e11" />
-
-**3 instances of Dashboard showing 3 sites in 3 tabs of Microsoft Edge with instance site table data isolation**
-<img width="2497" height="1186" alt="Image" src="https://github.com/user-attachments/assets/980ad18f-fa62-431b-b6ac-38dbb86cc6ea" />
-
-**Notional layout of the multi-site topology. Supports multiple Front-ends; scales horizontally as needed**
-<img width="2026" height="1130" alt="Image" src="https://github.com/user-attachments/assets/d629864e-4614-4e6b-8886-553c0b720f2c" />
 
 ## Features
 
@@ -136,6 +119,25 @@ The dashboard consists of two main components:
 - TMOS Version: 15.0 or higher (tested on 15.x, 16.x, 17.x)
 - DNS resolver configured for PTR lookups (optional)
 - **Note:** Version 1.7.x is not multi-partition compatible; Partition compatibility is planned for version 2.0.
+
+## Dashboard Screenshots
+
+**Theme1 - AGLight in MACRO mode**
+<img width="2560" height="1400" alt="Image" src="https://github.com/user-attachments/assets/ef0294cf-8c74-45fd-849e-a2dbe34f44ce" />
+
+**Theme2 - Monochrome Grey in micro mode with logger active, alarmed pools, an active search, and actual pool name mode enabled**
+<img width="2560" height="1400" alt="Image" src="https://github.com/user-attachments/assets/4c037655-ea14-43b2-9cda-46575cc7c20f" />
+
+**Theme3 - Amber in MACRO mode with alarmed pool members**
+<img width="2560" height="1400" alt="Image" src="https://github.com/user-attachments/assets/72a7a8dd-bc03-48ca-b12d-e81258b69e11" />
+
+**3 instances of Dashboard showing 3 sites in 3 tabs of Microsoft Edge with instance site table data isolation**
+<img width="2497" height="1186" alt="Image" src="https://github.com/user-attachments/assets/980ad18f-fa62-431b-b6ac-38dbb86cc6ea" />
+
+**Notional layout of the multi-site topology. Supports multiple Front-ends; scales horizontally as needed**
+<img width="2026" height="1130" alt="Image" src="https://github.com/user-attachments/assets/d629864e-4614-4e6b-8886-553c0b720f2c" />
+
+---
 
 ## Getting Started
 
