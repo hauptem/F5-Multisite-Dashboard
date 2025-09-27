@@ -388,13 +388,6 @@ For large-screen monitoring displays, configure "NOC mode" for optimal visibilit
 4. **Hide Bottom Bar**: Press Alt+H to remove bottom controls for cleaner view
 5. **Enter Fullscreen**: Press F11 to maximize browser window
 
-### NOC Mode Benefits
-
-- **Maximum Screen Usage**: Removes all non-essential UI elements
-- **High Visibility**: Large text and clear status indicators
-- **Real-Time Activity**: Logger shows immediate status changes
-- **Alarm Identification**: MICRO view highlights problematic pools
-
 <img width="1280" height="720" alt="Image" src="https://github.com/user-attachments/assets/c7569fe1-bcef-42cc-bd97-e691bee6a546" />
 
 ## Keyboard Shortcuts Reference
