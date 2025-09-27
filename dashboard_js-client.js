@@ -7,6 +7,7 @@
 //
 // Copyright (c) 2025 Eric Haupt
 // Released under the MIT License. See LICENSE file for details.
+// https://github.com/hauptem/F5-Multisite-Dashboard
 //
 // Description: HTTP communication layer for external API calls, settings persistence,
 // DNS operations, and request lifecycle management
