@@ -6,55 +6,12 @@
 # License: MIT
 # Copyright (c) 2025 Eric Haupt
 # Released under the MIT License. See LICENSE file for details.
+# https://github.com/hauptem/F5-Multisite-Dashboard
 #
 # Description:
-#   This iRule provides a multi-site pool monitoring dashboard frontend meant to work with
-#   Dashboard API hosts as remote back-end sites serving pool data and DNS.
+#   This iRule provides a multisite pool monitoring Dashboard Front-end meant to work with
+#   Dashboard API hosts as remote back-end sites serving their own pool data and DNS.
 #   Dashboard v1.7 is not multi-partition compatible. 
-#   
-# Dashboard Front-End Critical Dependencies:
-#
-#    1. Front-end LTM datagroup: datagroup-dashboard-clients
-#		Type: Address, Used to restrict dashboard access
-#
-#    2. Front-end LTM datagroup: datagroup-dashboard-debug
-#		Type: Address, Used to limit dashboard debug
-#
-#    3. Front-end LTM datagroup: datagroup-dashboard-sites
-#		Type: String, Used to define dashboard site list
-#
-#    4. Front-end LTM datagroup: datagroup-dashboard-api-host
-#		Type: String, Used to map remote Site name to IP address
-#
-#    5. Front-end LTM datagroup: datagroup-dashboard-pools
-#		Type: String, Used to provide a list of pools to display
-#
-#    6. Front-end LTM datagroup: datagroup-dashboard-pool-alias
-#		Type: String, Used to create alias names for actual pool names
-#
-#    7. Front-end LTM datagroup: datagroup-dashboard-api-keys
-#		Type: String, Used to authenticate Front-end to API host.
-#
-#    8. Front-end LTM pool: dashboard-api-hosts_https_pool
-#       This pool contains the API Host IPs for monitoring
-#
-#    9. Front-end LTM Pool: dashboard-dns_udp53_pool
-#       This pool contains the DNS listener for monitoring
-#
-#   10. LTM dns-resolver: /Common/dashboard-DNS
-#       This resolver should map to a GTM listener dedicated for dashboard and scoped for in-addr.arpa.
-#
-#   11. Front-end LTM APM session variable: session.custom.dashboard.auth
-#       This variable must be equal to 1 for this irule to trigger
-#
-#   12. iFiles: 
-#        dashboard_js-core.js   - Javascript Core Module
-#        dashboard_js-client.js - Javascript Client Module
-#        dashboard_js-data.js   - Javascript Data Module
-#        dashboard_js-ui.js     - Javascript UI Module
-#        dashboard_js-logger.js - Javascript Logs Module
-#        dashboard_logo.png     - logo image file
-#        dashboard_themes.css  	- Dashboard CSS with themes
 #
 
 when CLIENT_ACCEPTED {
