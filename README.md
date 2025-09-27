@@ -43,6 +43,34 @@ A 170KB modular JavaScript application runs entirely in your browser, served dir
 
 All dashboard sites inherit the high-availability capabilities of their host BIG-IP cluster. Think of it as an extension of the F5 GUI: near real-time state tracking, DNS hostname resolution (if configured), advanced search/filtering, and the ability to see exactly what changed and when. It gives application teams and operations teams direct visibility into application state without needing to wait for answers from F5 engineers, eliminating the organizational bottleneck that slows down troubleshooting when every minute counts. F5-Multisite-Dashboard is an ultra-performant, near real-time looking glass directly into application pool state. It doesn't replace Network Management Systems - it complements them by providing instant visibility that NMS platforms can't match.
 
+### Core Function Analysis
+
+The entire Dashboard system is fundamentally a sophisticated wrapper around one F5 command:
+
+```tcl
+LB::status pool $pool_name member $ip $port
+```
+
+**Core Function:**
+- Polls this command repeatedly across pools and members
+- Returns basic status: UP, DOWN, DISABLED
+
+**Everything Else:**
+- Multi-site architecture
+- DNS hostname resolution  
+- Search and filtering
+- Change detection and alerts
+- Themes and responsive design
+- Session persistence
+- Drag-and-drop reordering
+- Logger and state management
+
+## The Reality
+
+All 8 JavaScript modules, CSS themes, and backend iRules exist to make that single status command operationally useful by adding visual presentation, change tracking, and user experience features.
+
+At its core: query member status → detect changes → display nicely → repeat.
+
 ## Screenshots
 
 **Theme1 - AGLight in MACRO mode**
