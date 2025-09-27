@@ -141,11 +141,7 @@ The dashboard consists of two main components:
 
 📋 **[Complete Installation Guide](INSTALLATION.md)** - Step-by-step setup instructions for both Frontend and API-Host components
 
-## Quick Setup Overview
-
-1. **Frontend Setup**: Configure data groups, upload static files, create iRule and virtual server
-2. **API-Host Setup**: Configure data groups, create iRule and virtual server for each remote site
-3. **Testing**: Validate API endpoints and dashboard functionality
+---
 
 ## Scoped Request Optimization
 
