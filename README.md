@@ -43,6 +43,8 @@ A 170KB modular JavaScript application runs entirely in your browser, served dir
 
 All dashboard sites inherit the high-availability capabilities of their host BIG-IP cluster. Think of it as an extension of the F5 GUI: near real-time state tracking, DNS hostname resolution (if configured), advanced search/filtering, and the ability to see exactly what changed and when. It gives application teams and operations teams direct visibility into application state without needing to wait for answers from F5 engineers, eliminating the organizational bottleneck that slows down troubleshooting when every minute counts. F5-Multisite-Dashboard is an ultra-performant, near real-time looking glass directly into application pool state. It doesn't replace Network Management Systems - it complements them by providing instant visibility that NMS platforms can't match.
 
+---
+
 ### Core Function Analysis
 
 The entire Dashboard system is fundamentally a sophisticated wrapper around one F5 command:
