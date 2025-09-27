@@ -1,4 +1,6 @@
-These CSS files contain modified Theme 1 variants for customers who have "classified" levels of networks. Green, Red, and Yellow.
+These CSS files contain modified Theme 1 variants for customers who have "classified" levels of networks and wish to have theme 1 display the network classification via a color header. 
+
+Green, Red, and Yellow Theme 1 options. Theme 2 and Theme 3 remain unmodified from the default css.
 
 <img width="1745" height="1183" alt="Image" src="https://github.com/user-attachments/assets/d47b862b-c802-4c2a-a358-ae8a5f5c485e" />
 
