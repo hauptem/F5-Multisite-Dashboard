@@ -60,25 +60,6 @@ All JavaScript modules, CSS themes, and iRules exist to make that single status 
 
 At its core it's a pool status iRule on steroids: query member status → detect changes → display nicely → repeat
 
-### Big-IP Dataplane Impact
-
-### Performance Impact: Nearly Zero
-
-**What Hits the Big-IP (Initial Request):**
-- Front-End serving static JavaScript/CSS files
-
-**What Hits the Big-IP (Per Poll Cycle):**
-- Read-only `LB::status` queries (existing TMM memory)
-- JSON response generation
-
-**What Hits the Big-IP (User-Initiated):**
-- DNS PTR lookups via RESOLVER (when user clicks "Resolve")
-
-**What Doesn't Hit the Big-IP:**
-- UI rendering, search, filtering (client-side)
-- State persistence (browser sessionStorage)
-- All complex dashboard logic leverages the client machine
-
 ---
 
 ## Architecture
