@@ -7,6 +7,7 @@
 //
 // Copyright (c) 2025 Eric Haupt
 // Released under the MIT License. See LICENSE file for details.
+// https://github.com/hauptem/F5-Multisite-Dashboard
 //
 // Description: Dedicated logger functionality with resizable UI, state 
 // persistence, memory management, wake lock integration, session storage and copy
