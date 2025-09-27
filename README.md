@@ -79,13 +79,6 @@ The dashboard consists of two main components:
 - Supports pool filtering optimization headers
 - Provides health monitoring endpoints
 
-## Prerequisites
-
-- F5 BIG-IP with LTM and APM modules provisioned
-- TMOS Version: 15.0 or higher (tested on 15.x, 16.x, 17.x)
-- DNS resolver configured for PTR lookups (optional)
-- **Note:** Version 1.7.x is not multi-partition compatible; Partition compatibility is planned for version 2.0.
-
 ## Screenshots
 
 **Theme1 - AGLight in MACRO mode**
