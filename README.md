@@ -37,6 +37,7 @@ Your enterprise monitoring tools excel at historical trends and alerting, but wh
 ### What This Actually Is
 
 This isn't another static pool status page. 
+
 **It's the F5 serving a sophisticated dashboard application interface directly from the BIG-IP itself.**
 
 A 170KB modular JavaScript application runs entirely in your browser, served directly from the F5's high-speed operational dataplane. One or more sites operate as Dashboard Front-Ends serving the dashboard interface (HTML, JavaScript, CSS) via iFiles, while other sites operate as API Hosts providing pool data through optimized JSON-based dashboard API calls. This provides unified visibility across multiple sites from a single interface without requiring even a read-only account on any of the BIG-IPs, allowing you to switch between locations and see consistent pool, member, and health status data with almost no latency and very little overhead.  Unlike "pool status" iRules, this solution is entirely out-of-band of any production application virtualservers. 
