@@ -4,7 +4,7 @@
 
 • **v1.1** - Alias feature added (customer request)
 
-• **v1.3** - DNS optimizations (switch from per-poll to per-user-request), iRule DNS cache
+• **v1.2-1.3** - DNS optimizations (switch from per-poll to per-user-request), iRule DNS cache
 
 • **v1.4** - New themes
 
