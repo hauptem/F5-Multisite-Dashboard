@@ -59,7 +59,7 @@ LB::status pool $pool_name member $ip $port
 
 All JavaScript modules, CSS themes, and iRules exist to make that single status command operationally useful by adding visual presentation, change tracking, and user experience features. Great care was taken to limit the impact of the dashboard on the Big-IP operational dataplane. No static/global variables, or state tracking of any kind occurs on the Big-IP's. All dashboard state tracking complexity occurs on the client.
 
-At its core it's a pool status iRule on steroids: **query member status → detect changes → display nicely → repeat**
+At its core it's a pool status iRule on steroids:    **query member status → detect changes → display nicely → repeat**
 
 ---
 
