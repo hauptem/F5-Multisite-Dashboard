@@ -104,7 +104,7 @@ The dashboard consists of two main components:
 
 ---
 
-## Feature Overview - Dataplane protection
+## Architecture Overview - Dataplane protection via poll optimization
 
 The dashboard implements intelligent request scoping to minimize dataplane impact on F5 Big-IP systems while maximizing efficiency through targeted pool monitoring and on-demand DNS resolution.
 
@@ -232,11 +232,9 @@ X-Need-DNS-IPs-2: 192.168.2.1,192.168.2.2
 
 ---
 
-## Architecture Overview
+## Architecture Overview - Call Stack Visualization
 
 The F5 Multisite Dashboard uses a 3-level procedural architecture with automatic memory management and efficient variable scoping. Procedures offer code modularity for easy sharing between Front-end and API-Host to maintain operational parity.
-
-## Call Stack Visualization
 
 ```
 HTTP Request (/api/proxy/pools)
