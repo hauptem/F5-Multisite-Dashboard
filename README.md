@@ -386,6 +386,8 @@ When contributing:
 5. Update version numbers consistently across all files
 6. Add debug logging for new features
 
+---
+
 ## License
 
 MIT License - see [LICENSE](LICENSE) file for details.
