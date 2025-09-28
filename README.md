@@ -232,11 +232,9 @@ X-Need-DNS-IPs-2: 192.168.2.1,192.168.2.2
 
 ---
 
-# F5 iRule Call Stack Summary
-
 ## Architecture Overview
 
-The F5 dashboard uses a 3-level procedural architecture with automatic memory management and efficient variable scoping.
+The F5 Multisite Dashboard uses a 3-level procedural architecture with automatic memory management and efficient variable scoping. Procedures offer code modularity for easy sharing between Front-end and API-Host to maintain operational parity.
 
 ## Call Stack Visualization
 
