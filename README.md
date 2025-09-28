@@ -104,6 +104,34 @@ The dashboard consists of two main components:
 
 ---
 
+## Dashboard Current Limitations
+
+**Dashboard v1.7.x is not multi-partition compatible.** 
+All BIG-IP objects (pools, data groups, virtual servers, iRules, etc.) must reside in the `/Common` partition. Multi-partition support is planned for v2.0 and is in development and testing.
+DNS resolution only supports IPv4 PTR lookups at this time
+
+### TMOS Version Compatibility
+**Minimum Required:** TMOS 15.0
+**Tested Versions:**
+- TMOS 15.x series (15.1.0 and higher recommended)
+- TMOS 16.x series (all versions)
+- TMOS 17.x series (all versions)
+
+## Performance
+
+**Scalability:**
+- Tested with 500+ pools per site on lab grade VE's
+- Tested with 1000+ pool members on lab grade VE's
+- Currently deployed and in operation with various organizations on pre-iSeries appliances, iSeries appliances, and rSeries appliance tenants
+
+**Resource Usage:**
+- ~2MB memory per dashboard instance
+- 5000 entry FIFO buffer for logger
+- ~1KB/pool in session storage
+- 0% GPU Browser pipeline usage when in an unalarmed state
+
+---
+
 ## Architecture Overview - Call Stack Visualization
 
 The F5 Multisite Dashboard uses a 3-level procedural architecture with automatic memory management and efficient variable scoping. Procedures offer code modularity for easy sharing between Front-end and API-Host to maintain operational parity.
@@ -338,33 +366,6 @@ X-Need-DNS-IPs-2: 192.168.2.1,192.168.2.2
      "message": "status description"
    }
 ```
----
-## Dashboard Current Limitations
-
-**Dashboard v1.7.x is not multi-partition compatible.** 
-All BIG-IP objects (pools, data groups, virtual servers, iRules, etc.) must reside in the `/Common` partition. Multi-partition support is planned for v2.0 and is in development and testing.
-DNS resolution only supports IPv4 PTR lookups at this time
-
-### TMOS Version Compatibility
-**Minimum Required:** TMOS 15.0
-**Tested Versions:**
-- TMOS 15.x series (15.1.0 and higher recommended)
-- TMOS 16.x series (all versions)
-- TMOS 17.x series (all versions)
-
-## Performance
-
-**Scalability:**
-- Tested with 500+ pools per site on lab grade VE's
-- Tested with 1000+ pool members on lab grade VE's
-- Currently deployed and in operation with various organizations on pre-iSeries appliances, iSeries appliances, and rSeries appliance tenants
-
-**Resource Usage:**
-- ~2MB memory per dashboard instance
-- 5000 entry FIFO buffer for logger
-- ~1KB/pool in session storage
-- 0% GPU Browser pipeline usage when in an unalarmed state
-
 ---
 
 ## Contributing
