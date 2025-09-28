@@ -53,17 +53,17 @@ The bottom bar contains all primary dashboard controls:
 
 #### Pool-Level Status Badges
 
-- <img width="134" height="40" alt="Image" src="https://github.com/user-attachments/assets/5a38e036-36cb-443b-99f8-19752ec80fad" /> **UP (Green)**: Pool has available members and is operational
-- <img width="131" height="39" alt="Image" src="https://github.com/user-attachments/assets/a42c617c-df81-47fa-a730-3e50c43a51a6" /> **DOWN (Red)**: All pool members are unavailable
-- <img width="131" height="39" alt="Image" src="https://github.com/user-attachments/assets/31565d68-871b-4715-aae8-155df46510c6" /> **DISABLED (Gray)**: All active members are administratively disabled
-- <img width="132" height="40" alt="Image" src="https://github.com/user-attachments/assets/ab20c940-ed4d-4848-bdad-e64972281bac" /> **UNKNOWN (Orange)**: Pool status cannot be determined or pool not found
-- <img width="133" height="42" alt="Image" src="https://github.com/user-attachments/assets/196dadee-068b-4c13-b306-9980bb7c5a40" /> **EMPTY (Orange)**: Pool exists but has no configured members
+ <img width="134" height="40" alt="Image" src="https://github.com/user-attachments/assets/5a38e036-36cb-443b-99f8-19752ec80fad" /> **UP (Green)**: Pool has available members and is operational
+ <img width="131" height="39" alt="Image" src="https://github.com/user-attachments/assets/a42c617c-df81-47fa-a730-3e50c43a51a6" /> **DOWN (Red)**: All pool members are unavailable
+ <img width="131" height="39" alt="Image" src="https://github.com/user-attachments/assets/31565d68-871b-4715-aae8-155df46510c6" /> **DISABLED (Gray)**: All active members are administratively disabled
+ <img width="132" height="40" alt="Image" src="https://github.com/user-attachments/assets/ab20c940-ed4d-4848-bdad-e64972281bac" /> **UNKNOWN (Orange)**: Pool status cannot be determined or pool not found
+ <img width="133" height="42" alt="Image" src="https://github.com/user-attachments/assets/196dadee-068b-4c13-b306-9980bb7c5a40" /> **EMPTY (Orange)**: Pool exists but has no configured members
 
 #### Member-Level Status Badges
 
-- <img width="133" height="45" alt="Image" src="https://github.com/user-attachments/assets/10ebd251-826b-4685-8bc8-8ff764f7a339" /> **UP (Green)**: Member is available and passing health checks
-- <img width="132" height="44" alt="Image" src="https://github.com/user-attachments/assets/a5d753d6-6e40-4032-a7cd-c670c0c19e11" /> **DOWN (Red)**: Member is unavailable or failing health checks
-- <img width="131" height="44" alt="Image" src="https://github.com/user-attachments/assets/5bcc5af9-a902-46fe-8239-7a50c529e2ba" /> **DISABLED (Gray)**: Member is administratively disabled
+ <img width="133" height="45" alt="Image" src="https://github.com/user-attachments/assets/10ebd251-826b-4685-8bc8-8ff764f7a339" /> **UP (Green)**: Member is available and passing health checks
+ <img width="132" height="44" alt="Image" src="https://github.com/user-attachments/assets/a5d753d6-6e40-4032-a7cd-c670c0c19e11" /> **DOWN (Red)**: Member is unavailable or failing health checks
+ <img width="131" height="44" alt="Image" src="https://github.com/user-attachments/assets/5bcc5af9-a902-46fe-8239-7a50c529e2ba" /> **DISABLED (Gray)**: Member is administratively disabled
 
 **Note**: Pools that are unmonitored will always show all pool members as "UP".
 
