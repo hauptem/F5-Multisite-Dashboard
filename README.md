@@ -299,17 +299,6 @@ HTTP Request (/api/proxy/pools)
 - **Efficiency**: Direct JSON string building, no object serialization
 - **Safety**: Bounded stack depth, automatic cleanup, error isolation
 
-## Why This Architecture Works
-
-**For F5 iRules specifically:**
-- Works within TCL constraints and F5 runtime limits
-- Minimal stack depth (never exceeds 3 levels)
-- Efficient for high-throughput network appliance environment
-- Easy to debug and maintain 
-- Frontend and API host maintain identical core logic
-- Test once on Front-end iRule, copy to API Host iRule (feature and operational parity)
-- Clear separation between coordination, processing, and enhancement
-
 ---
 ## JSON Schema v1.7.x
 
