@@ -63,7 +63,7 @@ At its core it's a pool status iRule on steroids: **query member status → dete
 
 ---
 
-## Architecture
+## Architecture Topology
 
 The dashboard consists of two main components:
 
