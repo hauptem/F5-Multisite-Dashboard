@@ -880,8 +880,8 @@ This iRule should be applied to the GTM listener to restrict DNS queries:
 
 ---
 
-### Debug Mode
-# Debug System Operation
+# Debug Mode
+## Debug System Operation
 
 The dashboard implements a two-factor debug activation system designed to prevent accidental debug log generation across multiple F5 devices in production environments. The system requires both a debug flag AND IP-based authorization to activate debug logging, ensuring that if the iRule debug variables are accidentally left enabled, only authorized IPs will trigger debug output. Too many times we have seen iRules with a simple debug toggle that was left on for months or even years - runnig debug across for client request.
 
