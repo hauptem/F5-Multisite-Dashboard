@@ -232,6 +232,85 @@ X-Need-DNS-IPs-2: 192.168.2.1,192.168.2.2
 
 ---
 
+# F5 iRule Call Stack Summary
+
+## Architecture Overview
+
+The F5 dashboard uses a 3-level procedural architecture with automatic memory management and efficient variable scoping.
+
+## Call Stack Visualization
+
+```
+HTTP Request (/api/proxy/pools)
+│
+▼ LEVEL 0: Global Scope (HTTP_REQUEST Event)
+┌─────────────────────────────────────────────────────────
+│ • Parse headers (X-Selected-Site, X-Need-Pools-*, X-Need-DNS-*)
+│ • Initialize variables: dns_request_cache = {}
+│ • Determine pool filtering and DNS optimization needs
+│ • Call main coordinator procedure
+└─────────────────────────────────────────────────────────
+│
+▼ LEVEL 1: collect_all_pool_data (Pool Coordinator)
+┌─────────────────────────────────────────────────────────
+│ • Receives: pool lists, DNS settings, cache reference
+│ • Decides which pools to process (filtered vs all)
+│ • Loops through each selected pool
+│ • upvar dns_request_cache → Global Scope
+│ • Returns: comma-separated JSON string
+└─────────────────────────────────────────────────────────
+│
+▼ LEVEL 2: process_single_pool (Individual Pool Handler)
+┌─────────────────────────────────────────────────────────
+│ • Receives: single pool name + configuration
+│ • Queries F5: members -list, LB::status for each member
+│ • Builds JSON for each pool member
+│ • Counts up/down/disabled members
+│ • upvar dns_request_cache → Level 1 Scope
+│ • Returns: complete pool JSON object
+└─────────────────────────────────────────────────────────
+│
+▼ LEVEL 3: resolve_hostname_for_json (DNS Resolution - Optional)
+┌─────────────────────────────────────────────────────────
+│ • Called only when DNS resolution needed
+│ • Checks cache first, performs PTR lookup if needed
+│ • Handles IPv4 → d.c.b.a.in-addr.arpa conversion
+│ • upvar dns_request_cache → Level 2 Scope
+│ • Returns: "null" or "\"hostname.domain.com\""
+└─────────────────────────────────────────────────────────
+```
+## Stack Execution Flow
+
+**Request Processing:**
+- 2-3 levels deep depending on DNS needs
+- Each level has single, clear responsibility
+- Parameters flow down, results flow up
+- Shared DNS cache via upvar chain
+
+**Memory Management:**
+- Automatic variable cleanup when procedures exit
+- DNS cache persists for request duration via upvar
+- No manual memory management required
+- Predictable resource usage regardless of pool count
+
+**Key Design Principles:**
+- **Modularity**: Each procedure handles one specific task
+- **Reusability**: Same procedures work in frontend and API host iRules
+- **Efficiency**: Direct JSON string building, no object serialization
+- **Safety**: Bounded stack depth, automatic cleanup, error isolation
+
+## Why This Architecture Works
+
+**For F5 iRules specifically:**
+- Works within TCL constraints and F5 runtime limits
+- Minimal stack depth (never exceeds 3 levels)
+- Efficient for high-throughput network appliance environment
+- Easy to debug and maintain 
+- Frontend and API host maintain identical core logic
+- Test once on Front-end iRule, copy to API Host iRule (feature and operational parity)
+- Clear separation between coordination, processing, and enhancement
+
+---
 ## JSON Schema v1.7.x
 
 ```bash
