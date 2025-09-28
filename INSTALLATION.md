@@ -878,12 +878,42 @@ This iRule should be applied to the GTM listener to restrict DNS queries:
 - If DNS irule is used on a GTM listener, ensure the dashboard hosts Self-IPs (Front-End or API Host) exist within the datagroup `dashboard-dns-clients`
 - Debug the dashboard Front-end or Back-end while performing "Resolve" requests
 
+---
+
 ### Debug Mode
-Enable comprehensive logging:
-1. Set `debug_enabled = 1` in iRule
-2. Add client IP to `datagroup-dashboard-debug`
-3. Monitor logs: `tail -f /var/log/ltm`
-4. Note that in order to see console logs in browser devtools, you must enable irule debug and be a client in the debug datagroup. The irule will signal the client that you are a debug_enabled client. This is for the non-minified Javascript only.
+# Debug System Operation
+
+The dashboard implements a two-factor debug activation system designed to prevent accidental debug log generation across multiple F5 devices in production environments. The system requires both a debug flag AND IP-based authorization to activate debug logging, ensuring that if the iRule debug variables are accidentally left enabled, only authorized IPs will trigger debug output. Too many times we have seen iRules with a simple debug toggle that was left on for months or even years - runnig debug across for client request.
+
+## Protection Mechanism
+
+The dashboard debug system uses dual-condition activation to prevent the dashboard system from being left in a debug state. Each iRule (Front-End or API Host) contains a `debug_enabled` variable that acts as the primary switch, but debug logging only occurs when the requesting user's IP address is also present in the Front-end's `datagroup-dashboard-debug` address list. This means that even if `debug_enabled = 1` is accidentally left active on all production F5 devices, regular dashboard users will never trigger debug logging - only pre-authorized IPs will match and generate debug output.
+
+## Operation Flow
+
+When a client HTTP request arrives, the frontend iRule first checks if `debug_enabled = 1`, then validates the client IP against the `datagroup-dashboard-debug` list. Only when both conditions are met does it set `client_debug_enabled = 1` and begin logging debug information. For  API host architectures, the frontend forwards the authorized client's IP via an `X-Forwarded-Debug-Client` header to the relevant backend API Host, allowing the API hosts to perform the same dual validation and maintain consistent debug scope across the entire request chain.
+
+Clientside JavaScript debugging follows a similar pattern. Client browsers will never log Dashboard Javascript events to devtools console unless a debug variable is seen in the received JSON response. The Front-end must contain the requesting client IP address in `datagroup-dashboard-debug` and `debug_enabled = 1` for the Front-end to signal the client Javascript (via the JSON "debug_enabled": "enabled|disabled", element) to begin browser console debug (note that debug is not available in the minified code)
+
+## Configuration
+
+**iRule Debug Flags:**
+```tcl
+# Set to 1 to enable debug capability, 0 to disable completely
+set debug_enabled 0
+```
+
+**IP Authorization:**
+```
+# datagroup-dashboard-debug (Address type)
+# Only these IPs can trigger debug logging; recommended to use host IP addresses and not client subnet identifiers
+10.1.1.100
+192.168.1.50
+```
+
+This design allows safe and targetted debugging in production environments where debug flags might be left accidentally enabled, as the IP-based authorization layer prevents unintended debug activation by dashboard production users while still allowing administrators to troubleshoot when needed and only on the relevant dashboard host.
+
+---
 
 ## License
 
