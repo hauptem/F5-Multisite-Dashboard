@@ -484,6 +484,10 @@ MACRO view shows detailed member information for troubleshooting individual comp
 
 Pool names are the actual F5 LTM pool name identifiers. Aliases are optional user-friendly names configured for easier identification by operations or application teams. Use Alt+A to toggle between displaying actual names and aliases.
 
+**Q: The pool table only shows 5 members, but I have pools with 6+ members?**
+
+In the interest of a consistent grid, visible pool members are limited to 5, when 6 or more pool members exist, the pool table will present a vertical scrollbar. It is recommended to use Micro mode when pools exist that have 6 or more members. The pool status badge will pulse when any member changes. Logger can also help visualize events that occur in large pools where not all members may be visible.
+
 ### Search and Filtering
 
 **Q: How do I search for pools with any DOWN members?**
