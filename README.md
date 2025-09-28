@@ -100,7 +100,7 @@ The dashboard consists of two main components:
 
 ## Getting Started
 
-📋 **[Complete Installation Guide](INSTALLATION.md)** - Step-by-step setup instructions for both Frontend and API-Host components
+📋 **[Complete Installation Guide](INSTALLATION.md)** - Step-by-step setup instructions for both Dashboard Front-end and API-Host components
 
 ---
 
