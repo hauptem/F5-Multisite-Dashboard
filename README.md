@@ -55,7 +55,7 @@ LB::status pool $pool_name member $ip $port
 ```
 
 - Executes this command across pools and members at each poll
-- Returns basic status and IP address
+- Returns status
 
 All JavaScript modules, CSS themes, and iRules exist to make that single status command operationally useful by adding visual presentation, change tracking, and user experience features.
 
