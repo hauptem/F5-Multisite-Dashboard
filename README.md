@@ -57,7 +57,7 @@ LB::status pool $pool_name member $ip $port
 - Executes this command across pools and members at each poll
 - Returns status
 
-All JavaScript modules, CSS themes, and iRules exist to make that single status command operationally useful by adding visual presentation, change tracking, and user experience features. Great care was taken to limit any impact of the dashboard on the operational dataplane. No static or global variables or state tracking of any kind occurs on the Big-IP. All dashboard complexity is pushed to the client.
+All JavaScript modules, CSS themes, and iRules exist to make that single status command operationally useful by adding visual presentation, change tracking, and user experience features. Great care was taken to limit the impact of the dashboard on the Big-IP operational dataplane. No static/global variables, or state tracking of any kind occurs on the Big-IP's. All dashboard complexity is pushed to the client.
 
 At its core it's a pool status iRule on steroids: **query member status → detect changes → display nicely → repeat**
 
