@@ -48,7 +48,7 @@ All dashboard sites inherit the high-availability capabilities of their host BIG
 
 ### Core Function 
 
-The entire Dashboard system is fundamentally a sophisticated wrapper around one F5 command:
+The entire Dashboard system is fundamentally a sophisticated wrapper around one F5 iRule TCL command:
 
 ```tcl
 LB::status pool $pool_name member $ip $port
