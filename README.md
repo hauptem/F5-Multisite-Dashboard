@@ -359,7 +359,7 @@ DNS resolution only supports IPv4 PTR lookups at this time
 **Scalability:**
 - Tested with 500+ pools per site on lab grade VE's
 - Tested with 1000+ pool members on lab grade VE's
-- Currently deployed and in operation with various organizations pre-iSeries appliances, iSeries appliances, and rSeries appliance tenants
+- Currently deployed and in operation with various organizations on pre-iSeries appliances, iSeries appliances, and rSeries appliance tenants
 
 **Resource Usage:**
 - ~2MB memory per dashboard instance
