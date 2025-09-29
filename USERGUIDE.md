@@ -535,7 +535,7 @@ The dashboard uses DNS resolution when configured. If a hostname can be resolved
 
 Press Alt+R or click the "Resolve" button to force fresh DNS resolution. Press Alt+F or click "Flush" to clear the DNS cache completely. Note that if a hostname is cached, pressing "Resolve" will never trigger another request for that IP. You would then be required to "Flush" and initiate a new resolve action.
 
-### Performance and Limits
+### Miscellaneous
 
 **Q: Is there a maximum number of pools the dashboard can display?**
 
