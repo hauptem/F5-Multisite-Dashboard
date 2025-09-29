@@ -79,7 +79,6 @@ The dashboard consists of two main components:
 - Supports pool filtering optimization headers
 - Provides health monitoring endpoints
 
-Note: If you have an NMS or other in-house solution that is scriptable and you simply want to use the pool poll capability to request pool and member state information, simply deploy your topology entirely with API Hosts and make endpoint calls to fetch pool data via /api/proxy/pools. See installation guide for API host technical requirements.
 
 ## Screenshots
 
