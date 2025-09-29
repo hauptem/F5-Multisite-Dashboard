@@ -547,7 +547,7 @@ Simply select "Select a site" (no site) in the site dropdown and leave the brows
 
 **Q: What's the unmonitored pool limitation?**
 
-LTM Pools that are unmonitored will always show all pool members as "UP" regardless of their actual status. This is an intended limitation of the F5 system when health monitors are not configured since the system needs to assume that all members are available for LB processing. In the event that you have unmonitored pools, it is recommended to annotate this in an alias so that user's of the dashboard will know that the UP status might not be indicative of real-world operational status.
+LTM Pools that are unmonitored will always show all pool members as "UP" regardless of their actual status. This is an intended limitation of the F5 system when health monitors are not configured since the system needs to assume that all members are available for LB processing. In the event that you have unmonitored pools, it is recommended to annotate this in an alias so that users of the dashboard will know that the visible UP members might not be indicative of real-world operational status.
 
 **Q: Why does this exist? Why not just use Solarwinds or an inline pool status irule?**
 
