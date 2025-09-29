@@ -467,6 +467,10 @@ The dashboard includes three distinct visual themes:
 
 The default refresh interval is 30 seconds, but you can change it to 10, 60, or 90 seconds using the dropdown next to the countdown timer or by pressing Alt+P to cycle through options. The "Resolve" action will force an out-of-cycle poll with DNS resolution.
 
+**Q: Does the dashboard poll all sites all the time?**
+
+No. The Dashboard Javascript Client Module only polls the currently selected site. If you have visited other sites, you retain their polled status in browser sessionstorage and will detect any changes if those sites are visited again, which causes a new poll event.
+
 **Q: Can I monitor multiple sites simultaneously?**
 
 Yes, the dashboard supports multi-instance operation. Open multiple browser tabs or windows to monitor different sites concurrently.
