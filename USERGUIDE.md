@@ -469,7 +469,7 @@ The default refresh interval is 30 seconds, but you can change it to 10, 60, or 
 
 **Q: Does the dashboard poll all sites all the time?**
 
-No. The Dashboard Javascript Client Module only polls the currently selected site. If you have visited other sites, you retain their polled status in browser sessionstorage and will detect any changes if those sites are visited again, which causes a new poll event.
+No, the Dashboard Javascript Client Module only polls the currently selected site. If you have visited other sites, you retain their polled status in browser sessionstorage and will detect any changes if those sites are visited again, which causes a new poll event.
 
 **Q: Can I monitor multiple sites simultaneously?**
 
