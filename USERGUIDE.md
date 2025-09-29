@@ -487,7 +487,7 @@ Pool names are the actual F5 LTM pool name identifiers. Aliases are optional use
 
 **Q: The pool table only shows 5 members, but I have pools with 6+ members?**
 
-In the interest of a consistent grid, visible pool members are limited to 5, when 6 or more pool members exist, the pool table will present a vertical scrollbar. It is recommended to use Micro mode when pools exist that have 6 or more members. The pool status badge will pulse when any member changes. Logger can also help visualize events that occur in large pools where not all members may be visible.
+In the interest of a consistent grid, visible pool members are limited to 5, when 6 or more pool members exist, the pool table will present a vertical scrollbar. It is recommended to use Micro mode when pools exist that have 6 or more members. The pool status badge will pulse when any member changes. Logger can also help visualize events that occur in large pools where not all members may be visible in the pool table card.
 
 ### Search and Filtering
 
