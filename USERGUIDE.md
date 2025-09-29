@@ -487,11 +487,11 @@ MACRO view shows detailed member information for troubleshooting individual comp
 
 **Q: What's the difference between pool names and aliases?**
 
-Pool names are the actual F5 LTM pool name identifiers. Aliases are optional user-friendly names configured for easier identification by operations or application teams. Use Alt+A to toggle between displaying actual names and aliases if aliases have been configured. 
+Pool names are the actual F5 LTM pool name identifiers. Aliases are optional user-friendly names configured for easier identification by operations or application teams who might not be able to decode LTM pool names. Use Alt+A to toggle between displaying actual names or aliases (if aliases have been configured). 
 
 **Q: The pool table only shows 5 members, but I have pools with 6+ members?**
 
-In the interest of a consistent grid, visible pool members are limited to 5, when 6 or more pool members exist, the pool table will present a vertical scrollbar. It is recommended to use Micro mode when pools exist that have 6 or more members. The pool status badge will pulse when any member changes. Logger can also help visualize events that occur in large pools where not all members may be visible in the pool table card.
+In the interest of maintaining a consistent grid, visible pool members are limited to 5; when 6 or more pool members exist, the pool table will present a vertical scrollbar. It is therefore recommended to use Micro mode when pools exist that have 6 or more members. The pool status badge will pulse when any member changes. The Logger can also help visualize specific events that occur in large pools where not all members may be visible in the Macro mode pool table card.
 
 ### Search and Filtering
 
@@ -511,7 +511,7 @@ Type "changed" in the search box, click the "Changed" button, or press Alt+C. Th
 
 **Q: Why are some status badges pulsing?**
 
-Pulsing indicates that a pool member's status has changed from its initially recorded baseline state. Click the pulsing badge to acknowledge the change and stop the pulsing.
+Pulsing indicates that a pool member's status has changed from its initially recorded polled baseline state. Click the pulsing badge in Macro mode to acknowledge the change and stop the alarm.
 
 **Q: What happens if I don't acknowledge status changes?**
 
@@ -519,7 +519,7 @@ The pulsing will continue until you either click to acknowledge, use the "Reset"
 
 **Q: Can I see a history of status changes?**
 
-Yes, enable the logger (Alt+L) to see real-time status changes with timestamps. The logger maintains a history of changes for your current session in a 5000 event FIFO buffer. The logger monitors all sites even when not displayed.
+Yes, enable the logger (Alt+L) to see real-time status changes with timestamps. The logger maintains a history of changes for your current session in a 5000 event FIFO buffer. The logger monitors each site even when not displayed.
 
 **Q: What does the Reset button do?**
 
@@ -529,25 +529,29 @@ The reset button clears member state information for a site. This can be useful 
 
 **Q: Why do some pools show hostnames and others show IP addresses?**
 
-The dashboard uses DNS resolution when configured. If a hostname can be resolved for a pool member, it displays the hostname. Otherwise, it shows the IP address. You can hover over hostnames to see the underlying IP address.
+The dashboard uses DNS resolution when configured. If a hostname can be resolved for a pool member, it displays the hostname. Otherwise, it shows the IP address. You can hover over hostnames to see the underlying IP address in a tooltip.
 
 **Q: How do I update hostnames after DNS changes?**
 
-Press Alt+R or click the "Resolve" button to force fresh DNS resolution. Press Alt+F or click "Flush" to clear the DNS cache completely.
+Press Alt+R or click the "Resolve" button to force fresh DNS resolution. Press Alt+F or click "Flush" to clear the DNS cache completely. Note that if a hostname is cached, pressing "Resolve" will never trigger another request for that IP. You would then be required to "Flush" and initiate a new resolve action.
 
 ### Performance and Limits
 
 **Q: Is there a maximum number of pools the dashboard can display?**
 
-There's no hard limit, but performance may decrease with very large numbers of pools (1000+). Use search filtering and MICRO view to manage large pool sets effectively. Dashboard 1.x has been tested with 600 pools and 800+ nodes per-site on a Lab license VE without issue.
+There's no hard limit, but performance may decrease with very large numbers of pools (1000+). Use search filtering and MICRO view to manage large pool sets effectively. Dashboard 1.x has been tested with 600 pools and 800+ nodes per-site on a Lab license VE without issue with the JSON response being 200-300k for 600 pools.
 
-**Q: How do I pause polling if I need to step away for a time, but don't want to lose my saved site session data?**
+**Q: How do I pause polling if I need to step away for a time, but don't want to lose my existing saved site session data?**
 
-Simply select "Select a site" (no site) in the site dropdown. The dashboard will return to a default state and stop all polling, but your site data will remain as long as the browser is open.
+Simply select "Select a site" (no site) in the site dropdown and leave the browser open. The dashboard will return to a default state and stop all polling, but your site data will remain in memory.
 
 **Q: What's the unmonitored pool limitation?**
 
-LTM Pools that are unmonitored will always show all pool members as "UP" regardless of their actual status. This is an intended limitation of the F5 system when health monitors are not configured since the system needs to assume that all members are available for LB processing.
+LTM Pools that are unmonitored will always show all pool members as "UP" regardless of their actual status. This is an intended limitation of the F5 system when health monitors are not configured since the system needs to assume that all members are available for LB processing. In the event that you have unmonitored pools, it is recommended to annotate this in an alias so that user's of the dashboard will know that the UP status might not be indicative of real-world operational status.
+
+**Q: Why does this exist? Why not just use Solarwinds or an inline pool status irule?**
+
+This project was born from experience in organizations where NMS solutions such as Solarwinds were not accessible by the Application Delivery or Application Teams. This project presents a 'no addtional infrastructure' option for LTM pool visibility where inline pool status irules are not preferred due to operational concerns or application operation risk aversion.
 
 ---
 
