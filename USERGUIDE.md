@@ -535,7 +535,7 @@ Press Alt+R or click the "Resolve" button to force fresh DNS resolution. Press A
 
 **Q: Is there a maximum number of pools the dashboard can display?**
 
-There's no hard limit, but performance may decrease with very large numbers of pools (1000+). Use search filtering and MICRO view to manage large pool sets effectively. Dashboard 1.x has been tested with 600 pools and 800+ nodes on a Lab license VE without issue.
+There's no hard limit, but performance may decrease with very large numbers of pools (1000+). Use search filtering and MICRO view to manage large pool sets effectively. Dashboard 1.x has been tested with 600 pools and 800+ nodes per-site on a Lab license VE without issue.
 
 **Q: What's the unmonitored pool limitation?**
 
