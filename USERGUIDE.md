@@ -383,12 +383,13 @@ For large-screen monitoring displays, configure "NOC mode" for optimal visibilit
 ### Configuration Steps
 
 1. **Switch to MICRO View**: Press Alt+M or click Mode button
-2. **Enable Logger**: Press Alt+L to show logger at bottom of screen
-3. **Adjust Logger Text**: Use + button to increase font size for distance viewing
-4. **Hide Bottom Bar**: Press Alt+H to remove bottom controls for cleaner view
-5. **Enter Fullscreen**: Press F11 to maximize browser window
+2. **Increase Page Zoom**: Increase browser page zoom 
+3. **Enable Logger**: Press Alt+L to show logger at bottom of screen
+4. **Adjust Logger Text**: Use + button to increase font size for distance viewing
+5. **Hide Bottom Bar**: Press Alt+H to remove bottom controls for cleaner view
+6. **Enter Fullscreen**: Press F11 to maximize browser window
 
-<img width="1280" height="720" alt="Image" src="https://github.com/user-attachments/assets/c7569fe1-bcef-42cc-bd97-e691bee6a546" />
+<img width="2560" height="1440" alt="Image" src="https://github.com/user-attachments/assets/5f14c472-c2cb-4f8e-a67c-3f08069faf3e" />
 
 ## Keyboard Shortcuts Reference
 
