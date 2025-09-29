@@ -181,13 +181,10 @@ HTTP Request (/api/proxy/pools)
 - 2-3 levels deep depending on DNS needs
 - Each level has single, clear responsibility
 - Parameters flow down, results flow up
-- Shared DNS cache via upvar chain
 
 **Memory Management:**
 - Automatic variable cleanup when procedures exit
-- DNS cache persists for request duration via upvar
 - No manual memory management required
-- Predictable resource usage regardless of pool count
 
 **Key Design Principles:**
 - **Modularity**: Each procedure handles one specific task
