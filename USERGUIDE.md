@@ -537,6 +537,10 @@ Press Alt+R or click the "Resolve" button to force fresh DNS resolution. Press A
 
 There's no hard limit, but performance may decrease with very large numbers of pools (1000+). Use search filtering and MICRO view to manage large pool sets effectively. Dashboard 1.x has been tested with 600 pools and 800+ nodes per-site on a Lab license VE without issue.
 
+**Q: How do I pause polling if I need to step away for a time, but don't want to lose my saved site session data?**
+
+Simply select "Select a site" (no site) in the site dropdown. The dashboard will return to a default state and stop all polling, but your site data will remain as long as the browser is open.
+
 **Q: What's the unmonitored pool limitation?**
 
 LTM Pools that are unmonitored will always show all pool members as "UP" regardless of their actual status. This is an intended limitation of the F5 system when health monitors are not configured since the system needs to assume that all members are available for LB processing.
