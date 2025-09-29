@@ -477,7 +477,7 @@ Yes, the dashboard supports multi-instance operation. Open multiple browser tabs
 
 **Q: How much network bandwidth does the dashboard use?**
 
-Data usage is minimal. Each refresh fetches only JSON data (typically just a few KB per site). The amount depends on the number of pools and members configured for the site you are monitoring.
+Data usage is minimal. Each refresh fetches only JSON data (typically just a few KB per site). The amount depends on the number of pools and members configured for the site you are monitoring. A single pool is typically 400-600 bytes depending on the number of pool members. 600 pools with 3-5 members each is approximately 200kb.
 
 ### View Modes and Display
 
