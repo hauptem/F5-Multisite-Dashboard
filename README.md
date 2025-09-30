@@ -286,13 +286,6 @@ Each site can independently:
 | 100 pools | 5 visible | 5% | 95% reduction |
 | 200 pools | 10 visible | 5% | 95% reduction |
 
-#### DNS Resolution Benefits
-| Member Count | Cache Hit Rate | DNS Queries | Infrastructure Impact |
-|--------------|----------------|-------------|---------------------|
-| 1000 members | 0% (first run) | 1000 | Initial load |
-| 1000 members | 80% (typical) | 200 | 80% reduction |
-| 1000 members | 95% (mature) | 50 | 95% reduction |
-
 ### Technical Implementation
 
 #### Request Header Examples
