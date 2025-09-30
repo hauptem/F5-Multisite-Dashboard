@@ -307,8 +307,7 @@ X-Need-DNS-IPs-2: 192.168.2.1,192.168.2.2
 #### Backend Processing Flow
 1. **Header Detection**: iRule detects optimization headers
 2. **Scope Determination**: Process only requested pools/IPs
-3. **Cache Integration**: Check existing DNS cache before resolution
-4. **Response Generation**: Return scoped data with hostname information
+3. **Response Generation**: Return scoped pool data with hostname information
 
 ---
 ## JSON Schema v1.7.x
