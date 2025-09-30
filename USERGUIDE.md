@@ -2,7 +2,7 @@
 
 ## Introduction
 
-The F5 Multisite Dashboard provides centralized monitoring of LTM load balancer pools across multiple Big-IP clusters. This web-based interface offers near real-time visibility into pool health, member status, and provides advanced features for tracking status changes and managing your monitoring experience.
+The F5 Multisite Dashboard provides centralized monitoring of LTM pools across multiple Big-IP clusters. This web-based interface offers near real-time visibility into pool health, member status, and provides advanced features for tracking status changes and managing your monitoring experience.
 
 ## Quick Start
 
