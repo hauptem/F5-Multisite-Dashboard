@@ -215,7 +215,6 @@ Performance Gain: 96% reduction in backend processing
 
 #### Important Notes
 - To update all pools at a site, ensure no search filter is active
-- Pool filtering is based on actual pool names (not aliases) for backend processing
 
 ### DNS Request Optimization
 #### On-Demand Resolution Model
