@@ -112,7 +112,6 @@ All BIG-IP objects (pools, data groups, virtual servers, iRules, etc.) must resi
 DNS resolution only supports IPv4 PTR lookups at this time
 
 ### TMOS Version Compatibility
-**Minimum Required:** TMOS 15.0
 **Tested Versions:**
 - TMOS 15.x series (15.1.0 and higher recommended)
 - TMOS 16.x series (all versions)
