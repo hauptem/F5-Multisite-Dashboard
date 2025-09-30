@@ -69,7 +69,7 @@ If you wish to use custom names for dashboard specific pools or the resolver, ma
 
 `dashboard_themes.css` **Dashboard CSS with 3 themes** AGLight (theme1) which is reminiscent of AdminGUI, Monochrome Grey (theme2), and Amber (theme3)
  
-`dashboard_logo.png` any 51px by 53px png logo image
+`dashboard_logo.png` any 53px by 53px png logo image
 
 ### Create Data Groups
 
