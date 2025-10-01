@@ -525,7 +525,6 @@ For the Frontend profile, apply these settings:
 | JavaScript Modules | application/javascript | 170 KB (total) | 90-110 KB | 75-80% |
 | CSS Themes | text/css | 50 KB | 10-12 KB | 75-80% |
 | JSON Pool Data (100 pools) | application/json | 150 KB | 30-40 KB | 70-75% |
-| JSON Pool Data (500 pools) | application/json | 750 KB | 150-200 KB | 70-75% |
 | Error Pages | text/html | 2-3 KB | ~1 KB | 60% |
 
 ---
@@ -870,7 +869,6 @@ For the API Host profile, apply these settings:
 |-----------|--------------|----------------------------|---------------------------|---------|
 | **API Host** | | | | |
 | JSON Pool Data (100 pools) | application/json | 150 KB | 30-40 KB | 70-75% |
-| JSON Pool Data (500 pools) | application/json | 750 KB | 150-200 KB | 70-75% |
 | JSON Health Check | application/json | 1 KB | ~500 bytes | 50% |
 | Error Pages | text/html | 2-3 KB | ~1 KB | 60% |
 
