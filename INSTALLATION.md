@@ -785,6 +785,67 @@ Copy the complete frontend iRule code (from `LTM_Dashboard-API-Host_v1.7.1_irule
 1. Click **Finished**
 2. Verify virtual server shows as **Available (Enabled)**
 
+## Creating the HTTP Compression Profile
+
+### API-Host Compression Profile
+
+#### Step 1: Create Profile
+
+1. Log in to the F5 Configuration utility
+2. Navigate to **Local Traffic > Profiles > Services > HTTP Compression**
+3. Click **Create**
+4. In the **Name** field, enter: `dashboard-apihost-compression`
+5. From the **Parent Profile** list, select `httpcompression`
+
+#### Step 2: Configure Frontend Content Types
+
+1. In the **Settings** section, locate **Content List**
+2. For the **Content Type Include** setting, check the **Custom** box
+3. Click **Add** and add each of the following content types:
+   - `text/html`
+   - `application/json`
+
+#### Step 3: Configure Compression Settings 
+
+For the API Host profile, apply these settings:
+
+1. In the **Compression Settings** section:
+   - For **GZIP Compression Level**, check **Custom** and select **6**
+   - For **GZIP Memory Level**, check **Custom** and select **16k**
+   - For **GZIP Window Size**, check **Custom** and select **16k**
+
+2. In the **CPU Saver** section:
+   - For **CPU Saver**, check **Custom** and select **Enabled**
+   - For **CPU Saver High Threshold**, check **Custom** and enter **90**
+   - For **CPU Saver Low Threshold**, check **Custom** and enter **75**
+
+3. In the **Additional Settings** section:
+   - For **Minimum Content Length**, check **Custom** and enter **1024**
+   - For **Buffer Size**, check **Custom** and select **4096**
+
+4. Click **Finished**
+
+## Applying Compression to Dashboard Virtual Servers
+
+### For Dashboard API Host Virtual Server
+
+1. Navigate to **Local Traffic > Virtual Servers > Virtual Server List**
+2. Click on your dashboard API host virtual server `Dashboard-API-Host_https_vs`
+3. In the **Configuration** section, select **Advanced** from the dropdown
+4. Scroll down to the **HTTP Compression Profile** section
+5. From the **HTTP Compression Profile** dropdown, select `dashboard-apihost-compression`
+6. Click **Update**
+
+### Expected Compression Ratios
+
+| Component | Content Type | Typical Size (Uncompressed) | Typical Size (Compressed) | Savings |
+|-----------|--------------|----------------------------|---------------------------|---------|
+| **API Host** | | | | |
+| JSON Pool Data (100 pools) | application/json | 150 KB | 30-40 KB | 70-75% |
+| JSON Pool Data (500 pools) | application/json | 750 KB | 150-200 KB | 70-75% |
+| JSON Health Check | application/json | 1 KB | ~500 bytes | 50% |
+| Error Pages | text/html | 2-3 KB | ~1 KB | 60% |
+
 ---
 
 ## Testing and Validation
