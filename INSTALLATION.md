@@ -251,7 +251,7 @@ This pool monitors DNS resolver availability. The Frontend iRule will check memb
    - Click **Add**
 5. Click **Finished**
 
-#### Create a Custom HTTPS Monitor
+#### Create a Custom Front-End HTTPS Monitor
 
 For health checking of backend APIs:
 
@@ -399,11 +399,11 @@ ltm ifile dashboard_themes.css {
 1. Navigate to **Local Traffic → iRules → iRule List**
 2. Click **Create**
 3. Configure iRule:
-   - **Name**: `LTM_Dashboard-Frontend_v1.7.1_irule`
+   - **Name**: `LTM_Dashboard-Frontend_vx.x_irule`
 
 #### Add iRule Content
 
-Copy the complete Frontend iRule code (from `LTM_Dashboard-Frontend_v1.7.1_irule.txt`) into the **Definition** field.
+Copy the complete Frontend iRule code (from `LTM_Dashboard-Frontend_vx.x_irule.txt`) into the **Definition** field.
 
 #### Key Configuration Points in iRule
 
@@ -444,7 +444,7 @@ Change `"CHICAGO"` to match your Frontend site name from the sites data group. O
 #### Protocol Configuration
 
 - **HTTP Profile (Client)**: `http`
-- **SSL Profile (Client)**: Select appropriate SSL profile for HTTPS
+- **SSL Profile (Client)**: Select appropriate clientSSL profile 
 - **SSL Profile (Server)**: `serverssl`
 
 #### Advanced Configuration
@@ -455,12 +455,12 @@ Change `"CHICAGO"` to match your Frontend site name from the sites data group. O
 
 #### Access Policy Assignment
 
-- **Access Profile**: Select your configured APM access policy
+- **Access Profile**: Select your configured APM access policy (when configured)
 
 #### iRule Assignment
 
 1. In **Resources** section, find **iRules**
-2. Move `LTM_Dashboard-Frontend_v1.7.1_irule` from Available to Enabled
+2. Move `LTM_Dashboard-Frontend_vx.x_irule` from Available to Enabled
 
 #### Default Pool Assignment
 
@@ -473,7 +473,7 @@ Change `"CHICAGO"` to match your Frontend site name from the sites data group. O
 
 ---
 
-### Configure HTTP Compression (Frontend)
+### Configure Front-End HTTP compression profile
 
 #### Create Frontend Compression Profile
 
@@ -507,7 +507,7 @@ For the Frontend profile, apply these settings:
 
 3. Click **Finished**
 
-#### Apply Compression to Frontend Virtual Server
+#### Apply profile to Frontend Virtual Server
 
 1. Navigate to **Local Traffic > Virtual Servers > Virtual Server List**
 2. Click on your dashboard Frontend virtual server `Dashboard-Frontend_https_vs`
@@ -618,6 +618,7 @@ The dashboard requires several data groups for configuration and access control.
 4. Add Frontend IPs:
    - **Address**: `192.168.1.50` (Primary Frontend BIG-IP self-IP)
    - **Address**: `192.168.1.51` (Secondary Frontend BIG-IP self-IP)
+   - Add additional Self-IPs as needed for Front-end monitors 
 5. Click **Finished**
 
 #### Data Group - datagroup-dashboard-pools
@@ -783,11 +784,11 @@ quit
 1. Navigate to **Local Traffic → iRules → iRule List**
 2. Click **Create**
 3. Configure iRule:
-   - **Name**: `LTM_Dashboard-API-Host_v1.7.1_irule`
+   - **Name**: `LTM_Dashboard-API-Host_vx.x_irule`
 
 #### Add iRule Content
 
-Copy the complete API Host iRule code (from `LTM_Dashboard-API-Host_v1.7.1_irule.txt`) into the **Definition** field.
+Copy the complete API Host iRule code (from `LTM_Dashboard-API-Host_vx.x_irule.txt`) into the **Definition** field.
 
 #### Save iRule
 
@@ -821,7 +822,7 @@ Copy the complete API Host iRule code (from `LTM_Dashboard-API-Host_v1.7.1_irule
 #### iRule Assignment
 
 1. In **Resources** section, find **iRules**
-2. Move `LTM_Dashboard-API-Host_v1.7.1_irule` from Available to Enabled
+2. Move `LTM_Dashboard-API-Host_vx.x_irule` from Available to Enabled
 
 #### Default Pool Assignment
 
