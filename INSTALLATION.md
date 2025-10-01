@@ -635,12 +635,6 @@ The dashboard requires several data groups for configuration and access control.
    - **String**: `api2_pool`, **Value**: `40`
 4. Click **Finished**
 
-**Important Notes:**
-- Pool names must match exactly (case-sensitive)
-- Sort order determines display sequence in dashboard
-- Use increments of 10 to allow for future insertions
-- Only pools in this data group will be available via API Calls
-
 #### Data Group - datagroup-dashboard-pool-alias
 
 1. Click **Create** (new data group)
@@ -665,11 +659,6 @@ The dashboard requires several data groups for configuration and access control.
 3. Add API key:
    - **String**: `dashboard-api-key-2025-v17`, **Value**: `Production API Key - Issued 2025-09 - Shared with Frontend`
 4. Click **Finished**
-
-**Security recommendations:**
-- Use strong, randomly generated API keys (minimum 32 characters)
-- Same key must be configured on all dashboard hosts
-- Periodically change key in accordance with organization requirements
 
 #### Automated Pool Discovery
 
@@ -955,7 +944,7 @@ Note: It is recommended to also implement a transparent cache for the dashboard 
 
 #### Health Endpoint Test
 
-Test the health endpoint without authentication:
+Test the health endpoint:
 
 1. **From authorized IP** (Frontend or any authorized client):
    ```bash
