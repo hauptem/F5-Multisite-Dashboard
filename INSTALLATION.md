@@ -447,6 +447,60 @@ Change `"CHICAGO"` to match your frontend site name from the sites data group. O
 1. Click **Finished**
 2. Verify virtual server shows as **Available (Enabled)**
 
+## Creating the HTTP Compression Profile
+
+#### Step 1: Create Frontend Profile
+
+1. Log in to the F5 Configuration utility
+2. Navigate to **Local Traffic > Profiles > Services > HTTP Compression**
+3. Click **Create**
+4. In the **Name** field, enter: `dashboard-frontend-compression`
+5. From the **Parent Profile** list, select `httpcompression`
+
+#### Step 2: Configure Frontend Content Types
+
+1. In the **Settings** section, locate **Content List**
+2. For the **Content Type Include** setting, check the **Custom** box
+3. Click **Add** and add each of the following content types:
+   - `text/html`
+   - `text/css`
+   - `application/javascript`
+   - `application/json`
+   - `text/javascript`
+
+#### Step 3: Configure Compression Settings 
+
+For the Frontend profile, apply these settings:
+
+1. In the **Compression Settings** section:
+   - For **GZIP Compression Level**, check **Custom** and select **6**
+   - For **GZIP Memory Level**, check **Custom** and select **16k**
+   - For **GZIP Window Size**, check **Custom** and select **16k**
+
+2. In the **CPU Saver** section:
+   - For **CPU Saver**, check **Custom** and select **Enabled**
+   - For **CPU Saver High Threshold**, check **Custom** and enter **90**
+   - For **CPU Saver Low Threshold**, check **Custom** and enter **75**
+
+3. In the **Additional Settings** section:
+   - For **Minimum Content Length**, check **Custom** and enter **1024**
+   - For **Buffer Size**, check **Custom** and select **4096**
+
+4. Click **Finished**
+
+## Applying Compression to Dashboard Virtual Server
+
+### For Dashboard Frontend Virtual Server
+
+1. Navigate to **Local Traffic > Virtual Servers > Virtual Server List**
+2. Click on your dashboard frontend virtual server `Dashboard-Front-end_https_vs`
+3. In the **Configuration** section, select **Advanced** from the dropdown
+4. Scroll down to the **HTTP Compression Profile** section
+5. From the **HTTP Compression Profile** dropdown, select `dashboard-frontend-compression`
+6. Click **Update**
+
+---
+
 ### APM Configuration
 
 #### Access APM Configuration
