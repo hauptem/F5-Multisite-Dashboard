@@ -489,19 +489,12 @@ For the Frontend profile, apply these settings:
 
 1. In the **Compression Settings** section:
    - For **GZIP Compression Level**, check **Custom** and select **6**
-   - For **GZIP Memory Level**, check **Custom** and select **16k**
-   - For **GZIP Window Size**, check **Custom** and select **16k**
 
-2. In the **CPU Saver** section:
-   - For **CPU Saver**, check **Custom** and select **Enabled**
-   - For **CPU Saver High Threshold**, check **Custom** and enter **90**
-   - For **CPU Saver Low Threshold**, check **Custom** and enter **75**
-
-3. In the **Additional Settings** section:
+2. In the **Additional Settings** section:
    - For **Minimum Content Length**, check **Custom** and enter **1024**
    - For **Buffer Size**, check **Custom** and select **4096**
 
-4. Click **Finished**
+3. Click **Finished**
 
 ---
 
@@ -856,19 +849,12 @@ For the API Host profile, apply these settings:
 
 1. In the **Compression Settings** section:
    - For **GZIP Compression Level**, check **Custom** and select **6**
-   - For **GZIP Memory Level**, check **Custom** and select **16k**
-   - For **GZIP Window Size**, check **Custom** and select **16k**
 
-2. In the **CPU Saver** section:
-   - For **CPU Saver**, check **Custom** and select **Enabled**
-   - For **CPU Saver High Threshold**, check **Custom** and enter **90**
-   - For **CPU Saver Low Threshold**, check **Custom** and enter **75**
-
-3. In the **Additional Settings** section:
+2. In the **Additional Settings** section:
    - For **Minimum Content Length**, check **Custom** and enter **1024**
    - For **Buffer Size**, check **Custom** and select **4096**
 
-4. Click **Finished**
+3. Click **Finished**
 
 ---
 
