@@ -483,7 +483,7 @@ The dashboard includes three distinct visual themes:
 
 ### General Operation
 
-### How often does the dashboard refresh data?
+#### How often does the dashboard refresh data?
 
 The default refresh interval is 30 seconds, but you can change it to 10, 60, or 90 seconds using the dropdown next to the countdown timer or by pressing Alt+P to cycle through options. The "Resolve" action will force an out-of-cycle poll with DNS resolution.
 
