@@ -187,10 +187,9 @@ HTTP Request (/api/proxy/pools)
 - No manual memory management required
 
 **Key Design Principles:**
-- **Modularity**: Each procedure handles one specific task
 - **Reusability**: Same procedures work in frontend and API host iRules
 - **Efficiency**: Direct JSON string building, no object serialization
-- **Safety**: Bounded stack depth, automatic cleanup, error isolation
+- **Safety**: Bounded stack depth, automatic variable cleanup, error isolation
 
 ## Architecture Overview - Dataplane protection via poll optimization
 
