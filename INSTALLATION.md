@@ -480,7 +480,7 @@ Change `"CHICAGO"` to match your Frontend site name from the sites data group. O
 1. Log in to the F5 Configuration utility
 2. Navigate to **Local Traffic > Profiles > Services > HTTP Compression**
 3. Click **Create**
-4. In the **Name** field, enter: `dashboard-frontend-compression`
+4. In the **Name** field, enter: `dashboard-httpcompression`
 5. From the **Parent Profile** list, select `httpcompression`
 
 #### Configure Frontend Content Types
@@ -513,7 +513,7 @@ For the Frontend profile, apply these settings:
 2. Click on your dashboard Frontend virtual server `Dashboard-Frontend_https_vs`
 3. In the **Configuration** section, select **Advanced** from the dropdown
 4. Scroll down to the **HTTP Compression Profile** section
-5. From the **HTTP Compression Profile** dropdown, select `dashboard-frontend-compression`
+5. From the **HTTP Compression Profile** dropdown, select `dashboard-httpcompression`
 6. Click **Update**
 
 #### Expected Compression Ratios
@@ -842,7 +842,7 @@ Copy the complete API Host iRule code (from `LTM_Dashboard-API-Host_vx.x_irule.t
 1. Log in to the F5 Configuration utility
 2. Navigate to **Local Traffic > Profiles > Services > HTTP Compression**
 3. Click **Create**
-4. In the **Name** field, enter: `dashboard-apihost-compression`
+4. In the **Name** field, enter: `dashboard-httpcompression`
 5. From the **Parent Profile** list, select `httpcompression`
 
 #### Configure API Host Content Types
@@ -872,7 +872,7 @@ For the API Host profile, apply these settings:
 2. Click on your dashboard API host virtual server `Dashboard-API-Host_https_vs`
 3. In the **Configuration** section, select **Advanced** from the dropdown
 4. Scroll down to the **HTTP Compression Profile** section
-5. From the **HTTP Compression Profile** dropdown, select `dashboard-apihost-compression`
+5. From the **HTTP Compression Profile** dropdown, select `dashboard-httpcompression`
 6. Click **Update**
 
 #### Expected Compression Ratios
