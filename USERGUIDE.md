@@ -302,16 +302,14 @@ In MICRO view mode:
 ### DNS Management Functions
 
 #### Resolve DNS
-- **Function**: Forces fresh DNS resolution for all current pool members
-- **Use Case**: Update hostnames after DNS changes
+- **Function**: Forces fresh DNS resolution for pool members without a hostname in cache
 - **Button Location**: "Resolve" button in bottom bar
+- **Optimization**: Only requests IPs not already cached
 - **Keyboard Shortcut**: Alt+R
-- **Optimization**: Only resolves IPs not already cached with valid hostnames
 
 #### Flush DNS Cache
 - **Function**: Clears all cached DNS entries for current site
 - **Effect**: Immediate UI update showing IP addresses instead of hostnames
-- **Use Case**: Clear stale DNS cache entries
 - **Button Location**: "Flush" button in bottom bar
 - **Keyboard Shortcut**: Alt+F
 
@@ -319,14 +317,14 @@ In MICRO view mode:
 
 ### Logger Overview
 
-The integrated logger provides near real-time activity tracking and debugging information in a resizable, movable text-based window interface. The logger is optional and the dashboard will function if this module is not deployed.
+The integrated text-based logger provides near real-time activity tracking and debugging information in a resizable, movable window. The logger is optional and the dashboard will function if this module is not deployed.
 
 ### Accessing the Logger
 
 - **Location**: "Logs" button in bottom-right theme controls
 - **Toggle**: Click to show/hide the logger window
-- **Keyboard Shortcut**: Alt+L
 - **Persistence**: Logger state (shown/hidden) persists across sites
+- **Keyboard Shortcut**: Alt+L
 
 ### Logger Interface Features
 
