@@ -488,9 +488,7 @@ For the Frontend profile, apply these settings:
 
 4. Click **Finished**
 
-## Applying Compression to Dashboard Virtual Server
-
-### For Dashboard Frontend Virtual Server
+## Applying Compression to Front-End Virtualserver
 
 1. Navigate to **Local Traffic > Virtual Servers > Virtual Server List**
 2. Click on your dashboard frontend virtual server `Dashboard-Front-end_https_vs`
@@ -799,8 +797,6 @@ Copy the complete frontend iRule code (from `LTM_Dashboard-API-Host_v1.7.1_irule
 
 ## Creating the HTTP Compression Profile
 
-### API-Host Compression Profile
-
 #### Step 1: Create Profile
 
 1. Log in to the F5 Configuration utility
@@ -809,7 +805,7 @@ Copy the complete frontend iRule code (from `LTM_Dashboard-API-Host_v1.7.1_irule
 4. In the **Name** field, enter: `dashboard-apihost-compression`
 5. From the **Parent Profile** list, select `httpcompression`
 
-#### Step 2: Configure Frontend Content Types
+#### Step 2: Configure APi-Host Content Types
 
 1. In the **Settings** section, locate **Content List**
 2. For the **Content Type Include** setting, check the **Custom** box
@@ -837,9 +833,7 @@ For the API Host profile, apply these settings:
 
 4. Click **Finished**
 
-## Applying Compression to Dashboard Virtual Servers
-
-### For Dashboard API Host Virtual Server
+## Applying Compression to API-Host Virtualserver
 
 1. Navigate to **Local Traffic > Virtual Servers > Virtual Server List**
 2. Click on your dashboard API host virtual server `Dashboard-API-Host_https_vs`
