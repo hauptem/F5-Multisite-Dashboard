@@ -1,6 +1,18 @@
 # F5 Multisite Dashboard - Installation Guide
 
-This guide provides complete step-by-step installation procedures for both Frontend and API-Host components of the F5 Multisite Dashboard.
+This guide provides complete step-by-step installation procedures for both Frontend and API Host components of the F5 Multisite Dashboard.
+
+## Table of Contents
+
+- [Prerequisites](#prerequisites)
+- [Frontend Installation](#frontend-installation)
+- [API Host Installation](#api-host-installation)
+- [GTM/DNS Listener Configuration](#gtmdns-listener-configuration)
+- [Testing and Validation](#testing-and-validation)
+- [Debug System Operation](#debug-system-operation)
+- [Troubleshooting](#troubleshooting)
+- [License](#license)
+- [Disclaimer](#disclaimer)
 
 ---
 
@@ -19,8 +31,7 @@ The Frontend serves the web interface and handles user authentication via APM.
 
 ### Critical Dependencies
 
-**Note:** All datagroups, pools and DNS resolver must exist in LTM and match the item names in the iRule.
-If you wish to use custom names for dashboard specific pools or the resolver, make sure to edit the relevant iRule references.
+**Note:** All data groups, pools and DNS resolver must exist in LTM and match the item names in the iRule. If you wish to use custom names for dashboard-specific pools or the resolver, make sure to edit the relevant iRule references.
 
 **1. `datagroup-dashboard-clients` (Address)**  
 Used to restrict dashboard access via Client IP or Client Subnet
@@ -29,22 +40,22 @@ Used to restrict dashboard access via Client IP or Client Subnet
 Used to limit dashboard debug via Client IP or Client Subnet
 
 **3. `datagroup-dashboard-sites` (String)**  
-Used to define dashboard site list in the dropdown control - the Front-End is typically the first site defined with the lowest sort order e.g. "CHICAGO = 10".
+Used to define dashboard site list in the dropdown control - the Frontend is typically the first site defined with the lowest sort order e.g. "CHICAGO = 10".
 
 **4. `datagroup-dashboard-api-host` (String)**  
-Used to map remote Site names to API Host Virtualserver IP addresses. e.g. "NEWYORK = 192.168.4.33". It is this mapping that the Front-end uses to proxy JSON fetch requests to the API hosts.
+Used to map remote Site names to API Host Virtual Server IP addresses. e.g. "NEWYORK = 192.168.4.33". It is this mapping that the Frontend uses to proxy JSON fetch requests to the API hosts.
 
 **5. `datagroup-dashboard-pools` (String)**  
-Used to provide a list of pools to display. **This is an essential step.** LTM does not permit an iRule to determine general elements of TMOS configuration. Therefore we **must** administratively provide configuration attributes in the form of a list of LTM pool names that the dashboard will be permitted to process via LB::status events and subsequently display. This is the one datagroup that will require management of pools as new pools are implemented or pools are removed from LTM. A script has been provided to assist with the initial population of this datagroup. It is possible to use a script with a cron job, or an iCall script to manage this group automatically, but that technique is not provided as part of this solution at this time.
+Used to provide a list of pools to display. **This is an essential step.** LTM does not permit an iRule to determine general elements of TMOS configuration. Therefore we **must** administratively provide configuration attributes in the form of a list of LTM pool names that the dashboard will be permitted to process via LB::status events and subsequently display. This is the one data group that will require management of pools as new pools are implemented or pools are removed from LTM. A script has been provided to assist with the initial population of this data group. It is possible to use a script with a cron job, or an iCall script to manage this group automatically, but that technique is not provided as part of this solution at this time.
 
 **6. `datagroup-dashboard-pool-alias` (String)**  
-Used to create alias names for actual pool names. This feature is optional, but the datagroup itself must exist. This is to permit 'Aliases' or user friendly names to be displayed instead of the actual LTM pool names. This is for environments where a pool name might not provide the best indicator of what the pool actually supports.
+Used to create alias names for actual pool names. This feature is optional, but the data group itself must exist. This is to permit 'Aliases' or user friendly names to be displayed instead of the actual LTM pool names. This is for environments where a pool name might not provide the best indicator of what the pool actually supports.
 
 **7. `datagroup-dashboard-api-keys` (String)**  
-Used to authenticate Front-end to API hosts. This key can be the same across the entire topology but must exist or the Front-End will have no access to the api endpoint /api/proxy/pools. This is an application-level control for security.
+Used to authenticate Frontend to API hosts. This key can be the same across the entire topology but must exist or the Frontend will have no access to the api endpoint /api/proxy/pools. This is an application-level control for security.
 
 **8. `dashboard-api-hosts_https_pool` (LTM Pool)**  
-This pool contains the API Host IPs for monitoring. The pool is not used for front-end proxy LB determination, it is used simply to make the Front-end aware of API host operation via LTM pool monitor status.
+This pool contains the API Host IPs for monitoring. The pool is not used for Frontend proxy LB determination, it is used simply to make the Frontend aware of API host operation via LTM pool monitor status.
 
 **9. `dashboard-dns_udp53_pool` (LTM Pool)**  
 This pool contains the DNS listener used for monitoring purposes only. If the listener is detected down by the monitor attached to this pool, the iRule will fail back to IP-only mode gracefully.
@@ -52,8 +63,8 @@ This pool contains the DNS listener used for monitoring purposes only. If the li
 **10. `/Common/dashboard-DNS` (LTM dns-resolver)**  
 This LTM resolver is recommended to map to a GTM listener dedicated for dashboard use with the provided DNS iRule applied and scoped for in-addr.arpa. In current deployments, each API host uses a local GTM listener, but any reachable DNS server that can provide responses to PTR queries will work.
 
-**11. `session.custom.dashboard.auth` (Front-end LTM APM session variable)**  
-This variable must be equal to 1 for the Front-end irule to trigger and needs to be set by the APM Policy that is placed on the Front-End virtualserver. Use any authentication methods appropriate for your organization or use no authentication, but APM must set this variable for the Front-End iRule to trigger. This is primarily done to ensure APM completes before the iRule starts processing client HTTP requests - It's an APM / LTM interoperability control. If you do not desire APM controls, simply set the variable in the LTM iRule or remove the variable check.
+**11. `session.custom.dashboard.auth` (Frontend LTM APM session variable)**  
+This variable must be equal to 1 for the Frontend iRule to trigger and needs to be set by the APM Policy that is placed on the Frontend virtual server. Use any authentication methods appropriate for your organization or use no authentication, but APM must set this variable for the Frontend iRule to trigger. This is primarily done to ensure APM completes before the iRule starts processing client HTTP requests - It's an APM / LTM interoperability control. If you do not desire APM controls, simply set the variable in the LTM iRule or remove the variable check.
 
 **12. iFiles:**
 
@@ -103,7 +114,7 @@ The dashboard requires several data groups for configuration and access control.
    - **Name**: `datagroup-dashboard-sites`
    - **Type**: `String`
    - **Description**: `Available monitoring sites with display order`
-3. Add sites; note that the Front-end itself should have the lowest sort order which will cause it to appear first in the list:
+3. Add sites; note that the Frontend itself should have the lowest sort order which will cause it to appear first in the list:
    - **String**: `CHICAGO`, **Value**: `10`
    - **String**: `NEW_YORK`, **Value**: `20`
    - **String**: `LONDON`, **Value**: `30`
@@ -123,7 +134,7 @@ The dashboard requires several data groups for configuration and access control.
    - **String**: `TOKYO`, **Value**: `192.168.4.100`
 4. Click **Finished**
 
-**Note:** Do not include the frontend site (CHICAGO) in this data group.
+**Note:** Do not include the Frontend site (CHICAGO) in this data group.
 
 #### Data Group - datagroup-dashboard-pools
 
@@ -132,7 +143,7 @@ The dashboard requires several data groups for configuration and access control.
    - **Name**: `datagroup-dashboard-pools`
    - **Type**: `String`
    - **Description**: `Local pools to display with sort order`
-3. Add local pools. You can also add a sort order; the Javascript UI will show pools from lowest to highest. If no sort order is configured the pools will be displayed in the order they appear within the pools datagroup. (It is recommended to use sort order increments of 10 for later re-adjustments):
+3. Add local pools. You can also add a sort order; the Javascript UI will show pools from lowest to highest. If no sort order is configured the pools will be displayed in the order they appear within the pools data group. (It is recommended to use sort order increments of 10 for later re-adjustments):
    - **String**: `web_servers_pool`, **Value**: `10`
    - **String**: `app_servers_pool`, **Value**: `20`
    - **String**: `database_pool`, **Value**: `30`
@@ -202,11 +213,11 @@ echo "Total pools configured: $(echo $POOLS | wc -w)"
 
 ### Create Required Pools
 
-The frontend requires specific pools for health monitoring and backend communication.
+The Frontend requires specific pools for health monitoring and backend communication.
 
 #### Pool 1 - dashboard-api-hosts_https_pool
 
-This pool is used only for monitoring and detection of API host reachability and operation. The Front-end uses the datagroup 'datagroup-dashboard-api-host' to actually map client requests for specific sites to back-end virtualserver IPs. This pool enables dashboard to present intelligence about the state of the API host instead of failing silently.
+This pool is used only for monitoring and detection of API host reachability and operation. The Frontend uses the data group 'datagroup-dashboard-api-host' to actually map client requests for specific sites to backend virtual server IPs. This pool enables dashboard to present intelligence about the state of the API host instead of failing silently.
 
 1. Navigate to **Local Traffic → Pools → Pool List**
 2. Click **Create**
@@ -224,7 +235,7 @@ This pool is used only for monitoring and detection of API host reachability and
 
 #### Pool 2 - dashboard-dns_udp53_pool
 
-This pool monitors DNS resolver availability. The Front-end iRule will check member state for this pool and fail back gracefully to IP-only mode if all members in this pool are down.
+This pool monitors DNS resolver availability. The Frontend iRule will check member state for this pool and fail back gracefully to IP-only mode if all members in this pool are down.
 
 1. Navigate to **Local Traffic → Pools → Pool List**
 2. Click **Create**
@@ -252,7 +263,7 @@ For health checking of backend APIs:
    - **Interval**: `5` seconds
    - **Timeout**: `16` seconds
    - **Send String**:
-     ```
+     ```text
      GET /api/health HTTP/1.1\r\nConnection: Close\r\n\r\n
      ```
    - **Receive String**: `(healthy|unhealthy)`
@@ -271,7 +282,7 @@ The DNS resolver enables hostname display for pool members in dashboard response
 
 1. SSH to your Frontend BIG-IP as an administrative user
 2. Access the tmsh shell:
-   ```
+   ```bash
    tmsh
    ```
 
@@ -381,7 +392,7 @@ ltm ifile dashboard_themes.css {
 
 ---
 
-### Create and Configure the Front-end iRule
+### Create and Configure the Frontend iRule
 
 #### Create the iRule
 
@@ -392,7 +403,7 @@ ltm ifile dashboard_themes.css {
 
 #### Add iRule Content
 
-Copy the complete frontend iRule code (from `LTM_Dashboard-Frontend_v1.7.1_irule.txt`) into the **Definition** field.
+Copy the complete Frontend iRule code (from `LTM_Dashboard-Frontend_v1.7.1_irule.txt`) into the **Definition** field.
 
 #### Key Configuration Points in iRule
 
@@ -404,7 +415,7 @@ Locate the variable "local_site_name" and modify for your environment:
 set local_site_name "CHICAGO"
 ```
 
-Change `"CHICAGO"` to match your frontend site name from the sites data group. Only the front-end needs to be made site-aware. The API hosts simply process requests received and do not require site awareness.
+Change `"CHICAGO"` to match your Frontend site name from the sites data group. Only the Frontend needs to be made site-aware. The API hosts simply process requests received and do not require site awareness.
 
 #### Save iRule
 
@@ -414,7 +425,7 @@ Change `"CHICAGO"` to match your frontend site name from the sites data group. O
 
 ---
 
-### Front-end Virtual Server
+### Create Frontend Virtual Server
 
 #### Create Virtual Server
 
@@ -423,7 +434,7 @@ Change `"CHICAGO"` to match your frontend site name from the sites data group. O
 
 #### Basic Configuration
 
-- **Name**: `Dashboard-Front-end_https_vs`
+- **Name**: `Dashboard-Frontend_https_vs`
 - **Description**: `F5 Multisite Dashboard Frontend`
 - **Type**: `Standard`
 - **Source Address**: `0.0.0.0/0`
@@ -462,9 +473,9 @@ Change `"CHICAGO"` to match your frontend site name from the sites data group. O
 
 ---
 
-## Creating the HTTP Compression Profile
+### Configure HTTP Compression (Frontend)
 
-#### Step 1: Create Frontend Profile
+#### Create Frontend Compression Profile
 
 1. Log in to the F5 Configuration utility
 2. Navigate to **Local Traffic > Profiles > Services > HTTP Compression**
@@ -472,7 +483,7 @@ Change `"CHICAGO"` to match your frontend site name from the sites data group. O
 4. In the **Name** field, enter: `dashboard-frontend-compression`
 5. From the **Parent Profile** list, select `httpcompression`
 
-#### Step 2: Configure Frontend Content Types
+#### Configure Frontend Content Types
 
 1. In the **Settings** section, locate **Content List**
 2. For the **Content Type Include** setting, check the **Custom** box
@@ -483,7 +494,7 @@ Change `"CHICAGO"` to match your frontend site name from the sites data group. O
    - `application/json`
    - `text/javascript`
 
-#### Step 3: Configure Compression Settings
+#### Configure Compression Settings
 
 For the Frontend profile, apply these settings:
 
@@ -496,18 +507,16 @@ For the Frontend profile, apply these settings:
 
 3. Click **Finished**
 
----
-
-## Applying Compression to Front-End Virtualserver
+#### Apply Compression to Frontend Virtual Server
 
 1. Navigate to **Local Traffic > Virtual Servers > Virtual Server List**
-2. Click on your dashboard frontend virtual server `Dashboard-Front-end_https_vs`
+2. Click on your dashboard Frontend virtual server `Dashboard-Frontend_https_vs`
 3. In the **Configuration** section, select **Advanced** from the dropdown
 4. Scroll down to the **HTTP Compression Profile** section
 5. From the **HTTP Compression Profile** dropdown, select `dashboard-frontend-compression`
 6. Click **Update**
 
-### Expected Compression Ratios
+#### Expected Compression Ratios
 
 | Component | Content Type | Typical Size (Uncompressed) | Typical Size (Compressed) | Savings |
 |-----------|--------------|----------------------------|---------------------------|---------|
@@ -568,17 +577,17 @@ If creating a new access policy:
 
 ---
 
-## API-Host Installation
+## API Host Installation
 
-The **Dashboard API Host** provides JSON-based endpoints for remote sites accessible by one or more Front-ends.
+The **Dashboard API Host** provides JSON-based endpoints for remote sites accessible by one or more Frontends.
 
 ### Critical Dependencies:
 
 **1. `datagroup-dashboard-trusted-frontends` (Address)**  
-Used to restrict access to authorized dashboard front-ends Self-IPs to the API Host virtualserver
+Used to restrict access to authorized dashboard Frontend Self-IPs to the API Host virtual server
 
 **2. `datagroup-dashboard-api-keys` (String)**  
-Used to authenticate Front-ends to the API host
+Used to authenticate Frontends to the API host
 
 **3. `datagroup-dashboard-pools` (String)**  
 Used to provide a local list of pools to display
@@ -594,7 +603,7 @@ This resolver should map to a GTM listener dedicated for dashboard and scoped fo
 
 ---
 
-### Create Data Groups
+### Create Data Groups (API Host)
 
 The dashboard requires several data groups for configuration and access control.
 
@@ -605,8 +614,8 @@ The dashboard requires several data groups for configuration and access control.
 3. Configure data group:
    - **Name**: `datagroup-dashboard-trusted-frontends`
    - **Type**: `Address`
-   - **Description**: `Authorized frontend BIG-IP self-IPs for API access`
-4. Add frontend IPs:
+   - **Description**: `Authorized Frontend BIG-IP self-IPs for API access`
+4. Add Frontend IPs:
    - **Address**: `192.168.1.50` (Primary Frontend BIG-IP self-IP)
    - **Address**: `192.168.1.51` (Secondary Frontend BIG-IP self-IP)
 5. Click **Finished**
@@ -656,7 +665,7 @@ The dashboard requires several data groups for configuration and access control.
    - **String**: `dashboard-api-key-2025-v17`, **Value**: `Production API Key - Issued 2025-09 - Shared with Frontend`
 4. Click **Finished**
 
-**Security recommemdations:**
+**Security recommendations:**
 - Use strong, randomly generated API keys (minimum 32 characters)
 - Same key must be configured on all dashboard hosts
 - Periodically change key in accordance with organization requirements
@@ -695,7 +704,7 @@ echo "Total pools configured: $(echo $POOLS | wc -w)"
 
 ---
 
-### Create API Host Required Pools
+### Create Required Pools (API Host)
 
 The API Host requires a single specific pool for health monitoring of the dashboard-DNS resolver
 
@@ -719,16 +728,16 @@ This pool monitors DNS resolver availability. The API Host iRule will check memb
 
 ---
 
-### DNS Resolver Configuration
+### DNS Resolver Configuration (API Host)
 
 (Optional to use but the iRule will require it to exist unless the iRule is edited)
 The DNS resolver enables hostname display for pool members in dashboard responses.
 
 #### Access BIG-IP via SSH
 
-1. SSH to your Frontend BIG-IP as an administrative user
+1. SSH to your API Host BIG-IP as an administrative user
 2. Access the tmsh shell:
-   ```
+   ```bash
    tmsh
    ```
 
@@ -778,7 +787,7 @@ quit
 
 #### Add iRule Content
 
-Copy the complete frontend iRule code (from `LTM_Dashboard-API-Host_v1.7.1_irule.txt`) into the **Definition** field.
+Copy the complete API Host iRule code (from `LTM_Dashboard-API-Host_v1.7.1_irule.txt`) into the **Definition** field.
 
 #### Save iRule
 
@@ -788,7 +797,7 @@ Copy the complete frontend iRule code (from `LTM_Dashboard-API-Host_v1.7.1_irule
 
 ---
 
-### Create Virtual Server
+### Create API Host Virtual Server
 
 #### Create Virtual Server
 
@@ -798,7 +807,7 @@ Copy the complete frontend iRule code (from `LTM_Dashboard-API-Host_v1.7.1_irule
 #### Basic Configuration
 
 - **Name**: `Dashboard-API-Host_https_vs`
-- **Description**: `F5 Multisite Dashboard API-Host`
+- **Description**: `F5 Multisite Dashboard API Host`
 - **Type**: `Standard`
 - **Source Address**: `0.0.0.0/0`
 - **Destination Address**: Choose appropriate IP for dashboard access
@@ -825,9 +834,9 @@ Copy the complete frontend iRule code (from `LTM_Dashboard-API-Host_v1.7.1_irule
 
 ---
 
-## Creating the HTTP Compression Profile
+### Configure HTTP Compression (API Host)
 
-#### Step 1: Create Profile
+#### Create API Host Compression Profile
 
 1. Log in to the F5 Configuration utility
 2. Navigate to **Local Traffic > Profiles > Services > HTTP Compression**
@@ -835,7 +844,7 @@ Copy the complete frontend iRule code (from `LTM_Dashboard-API-Host_v1.7.1_irule
 4. In the **Name** field, enter: `dashboard-apihost-compression`
 5. From the **Parent Profile** list, select `httpcompression`
 
-#### Step 2: Configure APi-Host Content Types
+#### Configure API Host Content Types
 
 1. In the **Settings** section, locate **Content List**
 2. For the **Content Type Include** setting, check the **Custom** box
@@ -843,7 +852,7 @@ Copy the complete frontend iRule code (from `LTM_Dashboard-API-Host_v1.7.1_irule
    - `text/html`
    - `application/json`
 
-#### Step 3: Configure Compression Settings
+#### Configure Compression Settings
 
 For the API Host profile, apply these settings:
 
@@ -856,9 +865,7 @@ For the API Host profile, apply these settings:
 
 3. Click **Finished**
 
----
-
-## Applying Compression to API-Host Virtualserver
+#### Apply Compression to API Host Virtual Server
 
 1. Navigate to **Local Traffic > Virtual Servers > Virtual Server List**
 2. Click on your dashboard API host virtual server `Dashboard-API-Host_https_vs`
@@ -867,7 +874,7 @@ For the API Host profile, apply these settings:
 5. From the **HTTP Compression Profile** dropdown, select `dashboard-apihost-compression`
 6. Click **Update**
 
-### Expected Compression Ratios
+#### Expected Compression Ratios
 
 | Component | Content Type | Typical Size (Uncompressed) | Typical Size (Compressed) | Savings |
 |-----------|--------------|----------------------------|---------------------------|---------|
@@ -879,6 +886,68 @@ For the API Host profile, apply these settings:
 
 ---
 
+## GTM/DNS Listener Configuration
+
+If using GTM for DNS resolution, you can create a dedicated dashboard listener with access restrictions.
+
+### Create DNS Client Data Group
+
+1. Navigate to **Local Traffic → iRules → Data Group List**
+2. Click **Create**
+3. Configure data group:
+   - **Name**: `dashboard-dns-clients`
+   - **Type**: `Address`
+4. Add authorized Self-IPs:
+   - **Address**: `10.1.1.100` (Frontend BIG-IP Self-IP)
+   - **Address**: `10.1.2.100` (Backend BIG-IP Self-IP)
+   - Add additional Self-IPs as needed for monitors 
+5. Click **Finished**
+
+---
+
+### Create DNS Restriction iRule
+
+1. Navigate to **Local Traffic → iRules → iRule List**
+2. Click **Create**
+3. Configure iRule:
+   - **Name**: `DNS_Dashboard-DNS-Restrict_v1.0_irule`
+
+Copy the complete DNS iRule code (from `DNS_Dashboard-DNS-Restrict_v1.0_irule.txt`) into the **Definition** field.
+
+#### Save iRule
+
+1. Click **Finished**
+2. Verify iRule appears in iRule list without syntax errors
+3. If errors exist, review and correct the iRule code
+
+---
+
+### Create GTM Listener
+
+1. Navigate to **DNS → Delivery → Listeners → Listener List**
+2. Click **Create**
+3. Configure listener:
+   - **Name**: `dashboard-dns-listener`
+   - **Description**: `DNS listener for dashboard`
+   - **Destination**: Enter IP address (e.g., `192.168.1.53`)
+   - **Service Port**: `53`
+   - **IP Protocol**: `UDP`
+   - **State**: `Enabled`
+
+4. In the **Configuration** section:
+   - **DNS Profile**: Select `dns` (default DNS profile)
+
+5. In the **Resources** section, find **iRules**:
+   - Move `DNS_Dashboard-DNS-Restrict_v1.0_irule` from **Available** to **Enabled**
+
+6. Click **Finished**
+
+7. Verify listener shows as **Available (Enabled)**
+
+Note: It is recommended to also implement a transparent cache for the dashboard listener in a `dashboard-dns` profile to reduce DNS PTR queries to Infrastructure DNS servers even further.
+
+---
+
 ## Testing and Validation
 
 ### Basic API Testing
@@ -887,7 +956,7 @@ For the API Host profile, apply these settings:
 
 Test the health endpoint without authentication:
 
-1. **From authorized IP** (front-end or any authorized client):
+1. **From authorized IP** (Frontend or any authorized client):
    ```bash
    curl -k https://[api-host-ip]:443/api/health
    ```
@@ -966,117 +1035,23 @@ Test API key authentication:
 }
 ```
 
-## GTM/DNS Listener Configuration
-
-If using GTM for DNS resolution, you can create a dedicated dashboard listener with access restrictions.
-
----
-
-### Create DNS Client Data Group
-
-1. Navigate to **Local Traffic → iRules → Data Group List**
-2. Click **Create**
-3. Configure data group:
-   - **Name**: `dashboard-dns-clients`
-   - **Type**: `Address`
-4. Add authorized Self-IPs:
-   - **Address**: `10.1.1.100` (Frontend BIG-IP Self-IP)
-   - **Address**: `10.1.2.100` (Backend BIG-IP Self-IP)
-   - Add additional Self-IPs as needed for monitors 
-5. Click **Finished**
-
----
-
-### Create DNS Restriction iRule
-
-1. Navigate to **Local Traffic → iRules → iRule List**
-2. Click **Create**
-3. Configure iRule:
-   - **Name**: `DNS_Dashboard-DNS-Restrict_v1.0_irule`
-
-Copy the complete frontend iRule code (from `DNS_Dashboard-DNS-Restrict_v1.0_irule.txt`) into the **Definition** field.
-
-#### Save iRule
-
-1. Click **Finished**
-2. Verify iRule appears in iRule list without syntax errors
-3. If errors exist, review and correct the iRule code
-
----
-
-### Create GTM Listener
-
-1. Navigate to **DNS → Delivery → Listeners → Listener List**
-2. Click **Create**
-3. Configure listener:
-   - **Name**: `dashboard-dns-listener`
-   - **Description**: `DNS listener for dashboard`
-   - **Destination**: Enter IP address (e.g., `192.168.1.53`)
-   - **Service Port**: `53`
-   - **IP Protocol**: `UDP`
-   - **State**: `Enabled`
-
-4. In the **Configuration** section:
-   - **DNS Profile**: Select `dns` (default DNS profile)
-
-5. In the **Resources** section, find **iRules**:
-   - Move `DNS_Dashboard-DNS-Restrict_v1.0_irule` from **Available** to **Enabled**
-
-6. Click **Finished**
-
-7. Verify listener shows as **Available (Enabled)**
-
-Note: It is recommended to also implement a transparent cache for the dashboard listener in a `dashboard-dns` profile to reduce DNS PTR queries to Infrastructure DNS servers even further.
-
----
-
-## Troubleshooting
-
-**Cannot connect to Front-end**
-- Verify that the Front-end iRule has been applied to the Front-end virtualserver
-- Verify `datagroup-dashboard-clients` contains client IP addresses or client subnets
-- Verify that APM is setting variable `session.custom.dashboard.auth` to `1` upon successful authentication
-
-**Site selection shows no sites**
-- Check the `datagroup-dashboard-sites` configuration on the Front-end
-
-**Dashboard shows "No pools configured"**
-- Verify `datagroup-dashboard-pools` contains pool names
-- Check that the datagroup pool names match the actual Front-end LTM pool names (case sensitive!)
-
-**Cannot connect to API Host**
-- Verify API Host `datagroup-dashboard-trusted-frontends` contains the correct Front-end Self-IPs
-- Verify that the API Host iRule has been applied to the API Host virtualserver
-
-**API authentication failure when selecting a backend site**
-- Verify API keys match between frontend and backend
-- Check `datagroup-dashboard-api-keys` configuration on both clusters
-
-**DNS resolution not working**
-- Verify DNS resolver configuration in LTM
-- Check `dashboard-dns_udp53_pool` has at least one active member
-- Set `dns_enabled = 1` in the dashboard iRule configuration
-- Validate LTM resolver using dig from bash
-- If DNS irule is used on a GTM listener, ensure the dashboard hosts Self-IPs (Front-End or API Host) exist within the datagroup `dashboard-dns-clients`
-- Debug the dashboard Front-end or Back-end while performing "Resolve" requests
-
 ---
 
 ## Debug System Operation
 
 The dashboard implements a two-factor debug activation system designed to prevent accidental debug log generation across multiple F5 devices in production environments. The system requires both a debug flag AND IP-based authorization to activate debug logging, ensuring that if the iRule debug variables are accidentally left enabled, only authorized IPs will trigger debug output. Too many times we have seen iRules with a simple debug toggle that was left on for months or even years - generating debug nonstop for all client requests.
 
-## Protection Mechanism
+### Protection Mechanism
 
-The dashboard debug system uses dual-condition activation to prevent the dashboard system from being left in a debug state. Each iRule (Front-End or API Host) contains a `debug_enabled` variable that acts as the primary switch, but debug logging only occurs when the requesting user's IP address is also present in the Front-end's `datagroup-dashboard-debug` address list. This means that even if `debug_enabled = 1` is accidentally left active on all production F5 devices, regular dashboard users will never trigger debug logging - only pre-authorized IPs will match and generate debug output.
+The dashboard debug system uses dual-condition activation to prevent the dashboard system from being left in a debug state. Each iRule (Frontend or API Host) contains a `debug_enabled` variable that acts as the primary switch, but debug logging only occurs when the requesting user's IP address is also present in the Frontend's `datagroup-dashboard-debug` address list. This means that even if `debug_enabled = 1` is accidentally left active on all production F5 devices, regular dashboard users will never trigger debug logging - only pre-authorized IPs will match and generate debug output.
 
-## Operation Flow
+### Operation Flow
 
-When a client HTTP request arrives, the frontend iRule first checks if `debug_enabled = 1`, then validates the client IP against the `datagroup-dashboard-debug` list. Only when both conditions are met does it set `client_debug_enabled = 1` and begin logging debug information. For  API host architectures, the frontend forwards the authorized client's IP via an `X-Forwarded-Debug-Client` header to the relevant backend API Host, allowing the API hosts to perform the same dual validation and maintain consistent debug scope across the entire request chain.
+When a client HTTP request arrives, the Frontend iRule first checks if `debug_enabled = 1`, then validates the client IP against the `datagroup-dashboard-debug` list. Only when both conditions are met does it set `client_debug_enabled = 1` and begin logging debug information. For API host architectures, the Frontend forwards the authorized client's IP via an `X-Forwarded-Debug-Client` header to the relevant backend API Host, allowing the API hosts to perform the same dual validation and maintain consistent debug scope across the entire request chain.
 
-Clientside JavaScript debugging follows a similar pattern. Client browsers will never log Dashboard Javascript events to devtools console unless a debug variable is seen in the received JSON response. The Front-end must contain the requesting client IP address in `datagroup-dashboard-debug` and `debug_enabled = 1` for the Front-end to signal the client Javascript (via the JSON "debug_enabled": "enabled|disabled", element) to begin browser console debug (note that debug is not available in the minified code)
+Clientside JavaScript debugging follows a similar pattern. Client browsers will never log Dashboard Javascript events to devtools console unless a debug variable is seen in the received JSON response. The Frontend must contain the requesting client IP address in `datagroup-dashboard-debug` and `debug_enabled = 1` for the Frontend to signal the client Javascript (via the JSON "debug_enabled": "enabled|disabled", element) to begin browser console debug (note that debug is not available in the minified code)
 
-## Configuration
+### Configuration
 
 **iRule Debug Flags:**
 
@@ -1087,14 +1062,46 @@ set debug_enabled 0
 
 **IP Authorization:**
 
-```
+```text
 # datagroup-dashboard-debug (Address type)
 # Only these IPs can trigger debug logging; recommended to use host IP addresses and not client subnet identifiers
 10.1.1.100
 192.168.1.50
 ```
 
-This design allows safe and targetted debugging in production environments where debug flags might be left accidentally enabled, as the IP-based authorization layer prevents unintended debug activation by dashboard production users while still allowing administrators to troubleshoot when needed and only on the relevant dashboard host.
+This design allows safe and targeted debugging in production environments where debug flags might be left accidentally enabled, as the IP-based authorization layer prevents unintended debug activation by dashboard production users while still allowing administrators to troubleshoot when needed and only on the relevant dashboard host.
+
+---
+
+## Troubleshooting
+
+### Cannot connect to Frontend
+- Verify that the Frontend iRule has been applied to the Frontend virtual server
+- Verify `datagroup-dashboard-clients` contains client IP addresses or client subnets
+- Verify that APM is setting variable `session.custom.dashboard.auth` to `1` upon successful authentication
+
+### Site selection shows no sites
+- Check the `datagroup-dashboard-sites` configuration on the Frontend
+
+### Dashboard shows "No pools configured"
+- Verify `datagroup-dashboard-pools` contains pool names
+- Check that the data group pool names match the actual Frontend LTM pool names (case sensitive!)
+
+### Cannot connect to API Host
+- Verify API Host `datagroup-dashboard-trusted-frontends` contains the correct Frontend Self-IPs
+- Verify that the API Host iRule has been applied to the API Host virtual server
+
+### API authentication failure when selecting a backend site
+- Verify API keys match between Frontend and backend
+- Check `datagroup-dashboard-api-keys` configuration on both clusters
+
+### DNS resolution not working
+- Verify DNS resolver configuration in LTM
+- Check `dashboard-dns_udp53_pool` has at least one active member
+- Set `dns_enabled = 1` in the dashboard iRule configuration
+- Validate LTM resolver using dig from bash
+- If DNS iRule is used on a GTM listener, ensure the dashboard hosts Self-IPs (Frontend or API Host) exist within the data group `dashboard-dns-clients`
+- Debug the dashboard Frontend or Backend while performing "Resolve" requests
 
 ---
 
