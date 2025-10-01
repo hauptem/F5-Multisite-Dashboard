@@ -364,12 +364,12 @@ This project uses:
 - **CSS** for responsive layout
 
 When contributing:
-1. Maintain compatibility with F5 BIG-IP TMOS 15.0+ (test on multiple versions)
-2. All development must target `/Common` partition (v1.7 limitation)
+1. Maintain compatibility with F5 BIG-IP TMOS 
+2. All development must currently target `/Common` partition (v1.x limitation)
 3. Test with multiple themes and view modes
 4. Verify browser compatibility across supported platforms
 5. Update version numbers consistently across all files
-6. Add debug logging for new features
+6. Add reasonable debug logging for new features
 
 ---
 
