@@ -1026,6 +1026,8 @@ Copy the complete frontend iRule code (from `DNS_Dashboard-DNS-Restrict_v1.0_iru
 
 7. Verify listener shows as **Available (Enabled)**
 
+Note: It is recommended to also implement a transparent cache for the dashboard listener in a `dashboard-dns` profile to reduce DNS PTR queries to Infrastructure DNS servers even further.
+
 ---
 
 ## Troubleshooting
