@@ -750,7 +750,7 @@ Test the health endpoint without authentication:
 ```json
    {
      "status": "healthy",
-     "hostname": "CHICAGO-bigip.lab.local",
+     "hostname": "NEWYORK-bigip.lab.local",
      "timestamp": "2025-09-25 14:30:15",
      "uptime_seconds": 2678400,
      "version": "1.7",
