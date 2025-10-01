@@ -267,46 +267,47 @@ For health checking of backend APIs:
 (Optional to use but the iRule will require it to exist unless edited)
 The DNS resolver enables hostname display for pool members in dashboard responses.
 
-#### Access BIG-IP via SSH
+#### Option A: GUI Configuration (Recommended)
+
+1. Navigate to **Network → DNS Resolvers → DNS Resolver List**
+2. Click **Create**
+3. Configure resolver settings:
+   - **Name**: `dashboard-DNS`
+   - **Description**: `Dashboard PTR resolver for hostname display`
+4. In the **Forward Zones** section, click **Add**
+5. Configure forward zone:
+   - **Name**: `in-addr.arpa`
+   - Click **Add** to add nameserver
+   - **Address**: `192.168.1.53` (your DNS server IP)
+   - **Port**: `53`
+6. Click **Finished**
+
+#### Option B: CLI Configuration (Alternative)
 
 1. SSH to your Frontend BIG-IP as an administrative user
 2. Access the tmsh shell:
    ```
    tmsh
    ```
-
-#### Create DNS Resolver
-
-Execute the following command, replacing the DNS server IP with your environment's DNS server.
-Note that the iRule will expect 'dashboard-DNS' to exist unless this reference is edited for a different resolver name.
-
-```tcl
-create net dns-resolver dashboard-DNS forward-zones add { in-addr.arpa { nameservers add { 192.168.1.53:53 } } }
-```
+3. Execute the following command, replacing the DNS server IP with your environment's DNS server:
+   ```tcl
+   create net dns-resolver dashboard-DNS forward-zones add { in-addr.arpa { nameservers add { 192.168.1.53:53 } } }
+   ```
+4. Save configuration:
+   ```tcl
+   save sys config
+   ```
+5. Exit TMSH:
+   ```tcl
+   quit
+   ```
 
 #### Configuration Notes:
 
 - Replace `192.168.1.53` with your DNS server IP address
 - For GTM integration, use your GTM listener IP address
 - Dashboard will only request PTR records so it is recommended to scope the resolver to in-addr-arpa. unless a shared resolver is used for dashboard
-
-#### Verify DNS Resolver Creation
-
-```tcl
-list net dns-resolver dashboard-DNS
-```
-
-#### Save Configuration
-
-```tcl
-save sys config
-```
-
-#### Exit TMSH
-
-```tcl
-quit
-```
+- The iRule expects 'dashboard-DNS' to exist unless this reference is edited for a different resolver name
 
 ---
 
@@ -724,46 +725,47 @@ This pool monitors DNS resolver availability. The API Host iRule will check memb
 (Optional to use but the iRule will require it to exist unless the iRule is edited)
 The DNS resolver enables hostname display for pool members in dashboard responses.
 
-#### Access BIG-IP via SSH
+#### Option A: GUI Configuration (Recommended)
 
-1. SSH to your Frontend BIG-IP as an administrative user
+1. Navigate to **Network → DNS Resolvers → DNS Resolver List**
+2. Click **Create**
+3. Configure resolver settings:
+   - **Name**: `dashboard-DNS`
+   - **Description**: `Dashboard PTR resolver for hostname display`
+4. In the **Forward Zones** section, click **Add**
+5. Configure forward zone:
+   - **Name**: `in-addr.arpa`
+   - Click **Add** to add nameserver
+   - **Address**: `192.168.1.53` (your DNS server IP)
+   - **Port**: `53`
+6. Click **Finished**
+
+#### Option B: CLI Configuration (Alternative)
+
+1. SSH to your API-Host BIG-IP as an administrative user
 2. Access the tmsh shell:
    ```
    tmsh
    ```
-
-#### Create DNS Resolver
-
-Execute the following command, replacing the DNS server IP with your environment's DNS server.
-Note that the iRule will expect 'dashboard-DNS' to exist unless this reference is edited for a different resolver name.
-
-```tcl
-create net dns-resolver dashboard-DNS forward-zones add { in-addr.arpa { nameservers add { 192.168.1.53:53 } } }
-```
+3. Execute the following command, replacing the DNS server IP with your environment's DNS server:
+   ```tcl
+   create net dns-resolver dashboard-DNS forward-zones add { in-addr.arpa { nameservers add { 192.168.1.53:53 } } }
+   ```
+4. Save configuration:
+   ```tcl
+   save sys config
+   ```
+5. Exit TMSH:
+   ```tcl
+   quit
+   ```
 
 #### Configuration Notes:
 
 - Replace `192.168.1.53` with your DNS server IP address
 - For GTM integration, use your GTM listener IP address
 - Dashboard will only request PTR records so it is recommended to scope the resolver to in-addr-arpa. unless a shared resolver is used for dashboard
-
-#### Verify DNS Resolver Creation
-
-```tcl
-list net dns-resolver dashboard-DNS
-```
-
-#### Save Configuration
-
-```tcl
-save sys config
-```
-
-#### Exit TMSH
-
-```tcl
-quit
-```
+- The iRule expects 'dashboard-DNS' to exist unless this reference is edited for a different resolver name
 
 ---
 
