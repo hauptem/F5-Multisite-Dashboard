@@ -567,6 +567,10 @@ Simply select "Select a site" (no site) in the site dropdown and leave the brows
 
 LTM Pools that are unmonitored will always show all pool members as "UP" regardless of their actual status. This is an intended limitation of the F5 system when health monitors are not configured since the system needs to assume that all members are available for LB processing. In the event that you have unmonitored pools, it is recommended to annotate this in an alias so that users of the dashboard will know that the visible UP members might not be indicative of real-world operational status.
 
+#### I work in a place where no one cares about cluster Active/Standby consistency and I'm tired of logging into a Big-IP and finding out it's in Standby and having to log into another box - it wastes my time, how can this help?
+
+You can use Dashboard to always ensure you access the AdminGUI on the Active Big-IP: Simply ensure you have DNS records for your Big-IP FQDN's and click the hostname hyperlink in the header bar at the top of a selected site. You will *always* then hit the Active unit for the site cluster. (for a standard single traffic group cluster)
+
 #### Why does this exist? Why not just use Solarwinds or an inline pool status irule?
 
 This project was born from experience in organizations where NMS solutions such as Solarwinds were not accessible by the Application Delivery or Application Teams. This project presents a 'no addtional infrastructure' option for LTM pool visibility where inline pool status irules are not preferred due to application operational concerns.
