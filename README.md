@@ -107,7 +107,7 @@ The dashboard consists of two main components:
 
 ## Dashboard Current Limitations
 
-**Dashboard v1.7.x is not multi-partition compatible.** 
+**Dashboard v1.x is not multi-partition compatible.** 
 All BIG-IP objects (pools, data groups, virtual servers, iRules, etc.) must reside in the `/Common` partition. Multi-partition support is planned for v2.0 and is in development and testing.
 DNS resolution only supports IPv4 PTR lookups at this time
 
