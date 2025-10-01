@@ -134,7 +134,7 @@ DNS resolution only supports IPv4 PTR lookups at this time
 
 ## Architecture Overview - Call Stack Visualization
 
-The F5 Multisite Dashboard uses a 3-level procedural architecture with automatic memory management and efficient variable scoping. Procedures offer code modularity for easy sharing between Front-end and API-Host to maintain operational parity for Dashboard components. It became very apparent early in development that standard iRule "monolithic blocks of code" would be unsustainable long term if we wanted the Front-end and API-Host to operate identically throughout development and feature tuning.
+The F5 Multisite Dashboard uses a 3-level procedural architecture with automatic memory management and efficient variable scoping. Procedures offer code modularity for easy sharing between Front-end and API-Hosts to maintain operational parity for Dashboard components. It became very apparent early in development that standard iRule "monolithic blocks of code" would be unsustainable long term if we wanted the Front-end and API-Host to operate identically throughout development and feature tuning. Procedures were the logical solution.
 
 ```
 HTTP Request (/api/proxy/pools)
