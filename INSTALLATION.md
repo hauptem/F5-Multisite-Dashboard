@@ -999,7 +999,7 @@ Test API key authentication:
       "name": "web_pool",
       "alias": "Chicago Web Servers",
       "sort_order": 150,
-      "status": "DOWN",
+      "status": "UP",
       "up_members": 0,
       "down_members": 1,
       "disabled_members": 1,
@@ -1014,7 +1014,7 @@ Test API key authentication:
         {
           "ip": "192.168.1.11",
           "port": "80",
-          "status": "disabled",
+          "status": "up",
           "hostname": "Web02-Chicago.lab.local"
         }
       ]
