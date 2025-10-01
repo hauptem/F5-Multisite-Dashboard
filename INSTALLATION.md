@@ -966,34 +966,105 @@ Test API key authentication:
 }
 ```
 
-**GTM/DNS Listener Configuration:**
+## GTM/DNS Listener Configuration (Optional)
 
-If using GTM for DNS resolution, create a dedicated listener with access restrictions:
+If using GTM for DNS resolution, you can create a dedicated listener with access restrictions to improve security.
 
-```bash
-# Create GTM listener for dashboard DNS
-tmsh create gtm listener dashboard-dns-listener {
-    address 192.168.1.53
-    port 53
-    ip-protocol udp
-    profiles add { dns }
-    rules { DNS_Dashboard-DNS-Restrict_v1.0_irule }
-}
+---
 
-# Create data group for authorized DNS clients (LTM Self-IPs)
-tmsh create ltm data-group internal dashboard-dns-clients type ip
-tmsh modify ltm data-group internal dashboard-dns-clients records add { 
-    10.1.1.100/32 { }    # Frontend BIG-IP Self-IP
-    10.1.2.100/32 { }    # Backend BIG-IP Self-IP
+### Create DNS Client Data Group
+
+1. Navigate to **Local Traffic → iRules → Data Group List**
+2. Click **Create**
+3. Configure data group:
+   - **Name**: `dashboard-dns-clients`
+   - **Type**: `Address`
+   - **Description**: `Authorized BIG-IP Self-IPs for dashboard DNS queries`
+4. Add authorized Self-IPs:
+   - **Address**: `10.1.1.100` (Frontend BIG-IP Self-IP)
+   - **Address**: `10.1.2.100` (Backend BIG-IP Self-IP)
+   - Add additional Self-IPs as needed for each dashboard host
+5. Click **Finished**
+
+---
+
+### Create DNS Restriction iRule
+
+1. Navigate to **Local Traffic → iRules → iRule List**
+2. Click **Create**
+3. Configure iRule:
+   - **Name**: `DNS_Dashboard-DNS-Restrict_v1.0_irule`
+   - **Description**: `Restricts DNS queries to authorized dashboard clients`
+
+4. Add the following iRule code to the **Definition** field:
+
+```tcl
+when DNS_REQUEST {
+    # Get client IP
+    set client_ip [IP::client_addr]
+    
+    # Check if client is authorized
+    if { [class match $client_ip equals dashboard-dns-clients] } {
+        
+        # Get query type and name
+        set qtype [DNS::question type]
+        set qname [DNS::question name]
+        
+        # Allow PTR queries (for hostname resolution)
+        if { $qtype equals "PTR" } {
+            # Allow PTR lookups
+            return
+        }
+        
+        # Allow A record queries only for dashboard-specific hostnames
+        if { $qtype equals "A" } {
+            if { [string match "*dashboard*" [string tolower $qname]] } {
+                # Allow dashboard-related A record queries
+                return
+            } else {
+                # Refuse non-dashboard A record queries
+                DNS::return
+                DNS::header rcode REFUSED
+            }
+        }
+        
+        # Refuse all other query types
+        DNS::return
+        DNS::header rcode REFUSED
+        
+    } else {
+        # Client not authorized - refuse query
+        DNS::return
+        DNS::header rcode REFUSED
+    }
 }
 ```
 
-**DNS Restriction iRule (DNS_Dashboard-DNS-Restrict_v1.0_irule):**
+5. Click **Finished**
 
-This iRule should be applied to the GTM listener to restrict DNS queries:
-- Allows PTR queries from authorized clients (for hostname resolution)
-- Restricts A record queries to specific dashboard hostnames
-- Refuses all other query types and unauthorized clients
+---
+
+### Create GTM Listener
+
+1. Navigate to **DNS → Delivery → Listeners → Listener List**
+2. Click **Create**
+3. Configure listener:
+   - **Name**: `dashboard-dns-listener`
+   - **Description**: `DNS listener for dashboard`
+   - **Destination**: Enter IP address (e.g., `192.168.1.53`)
+   - **Service Port**: `53`
+   - **IP Protocol**: `UDP`
+   - **State**: `Enabled`
+
+4. In the **Configuration** section:
+   - **DNS Profile**: Select `dns` (default DNS profile)
+
+5. In the **Resources** section, find **iRules**:
+   - Move `DNS_Dashboard-DNS-Restrict_v1.0_irule` from **Available** to **Enabled**
+
+6. Click **Finished**
+
+7. Verify listener shows as **Available (Enabled)**
 
 ---
 
