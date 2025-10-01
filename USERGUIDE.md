@@ -19,8 +19,6 @@
 - [Keyboard Shortcuts Reference](#keyboard-shortcuts-reference)
 - [Theme Selection](#theme-selection)
 - [Frequently Asked Questions](#frequently-asked-questions)
-- [License](#license)
-- [Disclaimer](#disclaimer)
 
 ## Introduction
 
