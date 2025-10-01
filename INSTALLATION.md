@@ -1000,9 +1000,9 @@ Test API key authentication:
       "alias": "Chicago Web Servers",
       "sort_order": 150,
       "status": "UP",
-      "up_members": 0,
+      "up_members": 1,
       "down_members": 1,
-      "disabled_members": 1,
+      "disabled_members": 0,
       "total_members": 2,
       "members": [
         {
