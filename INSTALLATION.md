@@ -966,9 +966,9 @@ Test API key authentication:
 }
 ```
 
-## GTM/DNS Listener Configuration (Optional)
+## GTM/DNS Listener Configuration
 
-If using GTM for DNS resolution, you can create a dedicated listener with access restrictions to improve security.
+If using GTM for DNS resolution, you can create a dedicated dashboard listener with access restrictions.
 
 ---
 
@@ -979,11 +979,10 @@ If using GTM for DNS resolution, you can create a dedicated listener with access
 3. Configure data group:
    - **Name**: `dashboard-dns-clients`
    - **Type**: `Address`
-   - **Description**: `Authorized BIG-IP Self-IPs for dashboard DNS queries`
 4. Add authorized Self-IPs:
    - **Address**: `10.1.1.100` (Frontend BIG-IP Self-IP)
    - **Address**: `10.1.2.100` (Backend BIG-IP Self-IP)
-   - Add additional Self-IPs as needed for each dashboard host
+   - Add additional Self-IPs as needed for monitors 
 5. Click **Finished**
 
 ---
@@ -994,53 +993,14 @@ If using GTM for DNS resolution, you can create a dedicated listener with access
 2. Click **Create**
 3. Configure iRule:
    - **Name**: `DNS_Dashboard-DNS-Restrict_v1.0_irule`
-   - **Description**: `Restricts DNS queries to authorized dashboard clients`
 
-4. Add the following iRule code to the **Definition** field:
+Copy the complete frontend iRule code (from `DNS_Dashboard-DNS-Restrict_v1.0_irule.txt`) into the **Definition** field.
 
-```tcl
-when DNS_REQUEST {
-    # Get client IP
-    set client_ip [IP::client_addr]
-    
-    # Check if client is authorized
-    if { [class match $client_ip equals dashboard-dns-clients] } {
-        
-        # Get query type and name
-        set qtype [DNS::question type]
-        set qname [DNS::question name]
-        
-        # Allow PTR queries (for hostname resolution)
-        if { $qtype equals "PTR" } {
-            # Allow PTR lookups
-            return
-        }
-        
-        # Allow A record queries only for dashboard-specific hostnames
-        if { $qtype equals "A" } {
-            if { [string match "*dashboard*" [string tolower $qname]] } {
-                # Allow dashboard-related A record queries
-                return
-            } else {
-                # Refuse non-dashboard A record queries
-                DNS::return
-                DNS::header rcode REFUSED
-            }
-        }
-        
-        # Refuse all other query types
-        DNS::return
-        DNS::header rcode REFUSED
-        
-    } else {
-        # Client not authorized - refuse query
-        DNS::return
-        DNS::header rcode REFUSED
-    }
-}
-```
+#### Save iRule
 
-5. Click **Finished**
+1. Click **Finished**
+2. Verify iRule appears in iRule list without syntax errors
+3. If errors exist, review and correct the iRule code
 
 ---
 
