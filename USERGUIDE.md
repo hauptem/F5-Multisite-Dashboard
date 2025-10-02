@@ -513,7 +513,7 @@ In the interest of maintaining a consistent grid, visible pool members are limit
 
 ### Search and Filtering
 
-#### How do I search for pools with any DOWN members?
+#### How do I search for pools with DOWN members?
 
 Type "down" in the search box. This will show pools that either have DOWN status themselves or contain members with DOWN status.
 
@@ -566,10 +566,6 @@ Simply select "Select a site" (no site) in the site dropdown and leave the brows
 #### What's the unmonitored pool limitation?
 
 LTM Pools that are unmonitored will always show all pool members as "UP" regardless of their actual status. This is an intended limitation of the F5 system when health monitors are not configured since the system needs to assume that all members are available for LB processing. In the event that you have unmonitored pools, it is recommended to annotate this in an alias so that users of the dashboard will know that the visible UP members might not be indicative of real-world operational status.
-
-#### I work in a place where no one cares about cluster Active/Standby consistency and I'm tired of logging into a Big-IP and finding out it's in Standby and having to log into another box - it wastes my time, how can this help?
-
-You can use Dashboard to always ensure you access the AdminGUI on the Active Big-IP: Simply create DNS records for your Big-IP hostnames and click the hostname hyperlink in the header bar at the top of a selected site. You will *always* then hit the Active unit for the site cluster. (for a standard single traffic group cluster)
 
 #### Why does this exist? Why not just use Solarwinds or an inline pool status irule?
 
