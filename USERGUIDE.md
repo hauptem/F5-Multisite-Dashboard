@@ -256,7 +256,7 @@ The dashboard automatically tracks when pool member statuses change from their b
 
 - **Initial State**: When first seen, a member's polled status becomes its "baseline"
 - **Change Detection**: Any deviation from the recorded baseline triggers change tracking
-- **Auto-Return**: If status returns to recorded baseline, change indicator automatically clears
+- **Auto-Return**: If status returns to recorded baseline, change indicator automatically clears (e.g. server reboot)
 
 ### Visual Change Indicators
 
