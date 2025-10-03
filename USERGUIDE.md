@@ -263,7 +263,7 @@ The dashboard automatically tracks when pool member statuses change from their b
 #### Pulsing Animation
 - **Effect**: Status badges pulse with a golden glow
 - **Trigger**: When a member's status differs from its established baseline
-- **Duration**: Continues until manually acknowledged
+- **Duration**: Continues until manually acknowledged or when a return to baseline occurs
 
 #### Enhanced Tooltips
 - **Content**: Shows previous status and change time
@@ -275,11 +275,11 @@ The dashboard automatically tracks when pool member statuses change from their b
 1. **Identify Changed Member**: Look for pulsing status badges
 2. **Click Status Badge**: Single click on the pulsing badge
 3. **Immediate Effect**: Pulsing stops, badge returns to normal appearance
-4. **New Baseline**: Current status becomes the new baseline for future comparisons
+4. **New Baseline**: Current status becomes the new baseline for future poll comparisons
 
 #### Bulk Reset
-- Use the "Reset" button in top controls to clear all member state information for the current site
-- Note: Reset does not set new baselines; new baselines are established during the next poll
+- Use the "Reset" button in top controls to clear all member state information for the currently selected site
+- Note: Reset does not set a new baseline; a new baseline is established during the next poll
 
 ### MICRO View Alarm Logic
 
