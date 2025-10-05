@@ -571,7 +571,7 @@ LTM Pools that are unmonitored will always show all pool members as "UP" regardl
 
 #### Why does this exist? Why not just use Solarwinds or an inline pool status irule?
 
-This project was born from experience in organizations where NMS solutions such as Solarwinds were not accessible by the Application Delivery or Application Teams. This project presents a 'no addtional infrastructure' option for LTM pool visibility where inline pool status irules are not preferred due to application operational concerns.
+This project was born from experience in organizations where NMS solutions such as Solarwinds were not accessible by the Application Delivery or Application Teams. This project presents a 'no additional infrastructure' option for multisite LTM pool visibility where inline pool status irules are not preferred due to application operational concerns.
 
 ---
 
