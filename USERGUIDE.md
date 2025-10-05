@@ -35,6 +35,8 @@ The F5 Multisite Dashboard provides centralized monitoring of LTM pools across m
 
 ## Dashboard Interface
 
+<img width="2560" height="1400" alt="Image" src="https://github.com/user-attachments/assets/ef0294cf-8c74-45fd-849e-a2dbe34f44ce" />
+
 ### Header Section
 
 The header provides essential navigation and site information:
