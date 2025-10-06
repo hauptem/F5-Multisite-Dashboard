@@ -6,19 +6,11 @@
 ![F5 iRules](https://img.shields.io/badge/F5-iRules%20(Tcl)-FF6600?logo=f5&logoColor=white)
 ![F5 LTM](https://img.shields.io/badge/F5-LTM%20Module-FF6600?logo=f5&logoColor=white)
 ![F5 APM](https://img.shields.io/badge/F5-APM%20Auth-FF6600?logo=f5&logoColor=white)
-![Partition Support](https://img.shields.io/badge/multi--partition-not%20supported-yellow)
 ![JavaScript](https://img.shields.io/badge/JavaScript-ES6+-F7DF1E?logo=javascript&logoColor=black)
 ![CSS3](https://img.shields.io/badge/CSS3-Grid%20%2B%20Flexbox-1572B6?logo=css3&logoColor=white)
 ![HTML5](https://img.shields.io/badge/HTML5-Semantic-E34F26?logo=html5&logoColor=white)
 ![No Framework](https://img.shields.io/badge/Framework-Vanilla%20JS-success?logo=javascript&logoColor=white)
-![Modular](https://img.shields.io/badge/Architecture-Modular%20ES6-blue)
 ![REST API](https://img.shields.io/badge/API-JSON%20REST-green)
-![Chrome](https://img.shields.io/badge/Chrome-80+-4285F4?logo=googlechrome&logoColor=white)
-![Firefox](https://img.shields.io/badge/Firefox-75+-FF7139?logo=firefox&logoColor=white)
-![Safari](https://img.shields.io/badge/Safari-13+-000000?logo=safari&logoColor=white)
-![Edge](https://img.shields.io/badge/Edge-80+-0078D4?logo=microsoftedge&logoColor=white)
-![Zero Infrastructure](https://img.shields.io/badge/Infrastructure-Zero%20Additional-brightgreen)
-![Self Hosted](https://img.shields.io/badge/Hosting-Self%20Contained-blue)
 
 ---
 
