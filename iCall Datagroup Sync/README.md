@@ -71,7 +71,7 @@ set max_backups 30              ; # Retention count
 set description_max_length 255  ; # Alias truncation limit
 ```
 
-### 5. Edit the script definition and handler
+### 5. Edit the script definition and handler in tmsh
 
 ```bash
 sys icall handler periodic dashboard-pool-sync-handler {
