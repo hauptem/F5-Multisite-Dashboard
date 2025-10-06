@@ -184,25 +184,6 @@ Copy the complete restore script content and save the file.
 chmod +x /usr/local/bin/dashboard-restore.sh
 ```
 
-### Using the Restore Script
-
-**Basic Usage:**
-
-```bash
-# Interactive mode
-dashboard-restore
-
-# Restore from latest backup
-dashboard-restore latest
-
-# Restore from specific backup
-dashboard-restore 20241005_143022
-
-# Preview backup contents
-dashboard-restore view
-
-```
-
 ### Restore Script Demo
 
 **Environment:**
