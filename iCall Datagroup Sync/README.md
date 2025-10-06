@@ -203,7 +203,7 @@ dashboard-restore view
 
 ```
 
-## Restore Script Demo
+### Restore Script Demo
 
 **Environment:**
 - F5 BIG-IP with dashboard pool sync running
@@ -219,7 +219,7 @@ dashboard-restore view
 
 ---
 
-## Viewing Available Backups
+### Viewing Available Backups
 
 ```bash
 [root@f5-bigip-01 ~]# ./dashboard-restore.sh
@@ -238,7 +238,7 @@ Enter backup timestamp (YYYYMMDD_HHMMSS) or 'latest' for most recent:
 
 ---
 
-## Viewing Backup Contents
+### Viewing Backup Contents
 
 ```bash
 [root@f5-bigip-01 ~]# ./dashboard-restore.sh view
@@ -302,7 +302,7 @@ ALIASES (showing pool name and display alias):
 
 ---
 
-## Successful Restore Operation
+### Successful Restore
 
 ```bash
 [root@f5-bigip-01 ~]# ./dashboard-restore.sh 20251006_115719
@@ -399,7 +399,7 @@ Don't forget to save the configuration: tmsh save sys config
 
 ---
 
-## Using Latest Backup Shortcut
+### Latest Backup 
 
 ```bash
 [root@f5-bigip-01 ~]# ./dashboard-restore.sh latest
@@ -448,86 +448,7 @@ Don't forget to save the configuration: tmsh save sys config
 
 ---
 
-## Error Handling - Missing Backup Files
-
-```bash
-[root@f5-bigip-01 ~]# ./dashboard-restore.sh 20251005_120000
-=== Dashboard Datagroup Restore Tool ===
-
-Available backups:
-
-  20251006_115719 (2025-10-06 11:57:19)
-
-TIP: Use './dashboard-restore.sh view' to see backup contents before restoring
-
-ERROR: Backup files not found for timestamp 20251005_120000
-Expected files:
-  /var/tmp/dashboard_backups/datagroup-dashboard-pools_20251005_120000.backup
-  /var/tmp/dashboard_backups/datagroup-dashboard-pool-alias_20251005_120000.backup
-
-Available backups:
-/var/tmp/dashboard_backups/datagroup-dashboard-pools_20251006_115719.backup
-```
-
----
-
-## Error Handling - Invalid Datagroup
-
-```bash
-[root@f5-bigip-01 ~]# ./dashboard-restore.sh latest missing-pools missing-aliases
-=== Dashboard Datagroup Restore Tool ===
-
-Available backups:
-
-
-ERROR: No backup files found for datagroup: missing-pools
-```
-
----
-
-## User Cancellation
-
-```bash
-[root@f5-bigip-01 ~]# ./dashboard-restore.sh latest
-=== Dashboard Datagroup Restore Tool ===
-
-[...backup preview shown...]
-
-============================================
-WARNING: This will replace current datagroups!
-Type 'YES' to continue with restore:
-no
-
-Restore cancelled
-```
-
----
-
-## Help Usage
-
-```bash
-[root@f5-bigip-01 ~]# ./dashboard-restore.sh --help
-Usage: ./dashboard-restore.sh [timestamp|latest|view] [pools_datagroup] [alias_datagroup]
-
-Commands:
-  timestamp     - Restore from specific backup (YYYYMMDD_HHMMSS format)
-  latest        - Restore from most recent backup
-  view          - View backup contents without restoring
-
-Optional parameters:
-  pools_datagroup - Name of pools datagroup (default: datagroup-dashboard-pools)
-  alias_datagroup - Name of alias datagroup (default: datagroup-dashboard-pool-alias)
-
-Examples:
-  ./dashboard-restore.sh latest
-  ./dashboard-restore.sh 20241005_143022
-  ./dashboard-restore.sh view
-  ./dashboard-restore.sh latest prod-dashboard-pools prod-dashboard-aliases
-```
-
----
-
-## Debug Version
+### Debug Version
 
 ```bash
 [root@f5-bigip-01 ~]# ./debug_restore_script_full.sh latest
