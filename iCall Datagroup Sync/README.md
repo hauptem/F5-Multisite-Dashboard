@@ -298,8 +298,6 @@ ALIASES (showing pool name and display alias):
   Total aliases: 17
 ```
 
-*User sees this includes SharePoint pools with proper aliases and infrastructure monitoring*
-
 ---
 
 ### Successful Restore
@@ -477,7 +475,6 @@ Restoring alias datagroup...
 RESTORE COMPLETED SUCCESSFULLY
 ============================================
 ```
-
 ---
 
 ## Post-Restore Verification
