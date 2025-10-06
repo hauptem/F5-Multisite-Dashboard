@@ -1,6 +1,6 @@
 #!/bin/bash
 # Dashboard Datagroup Restore Script
-# Purpose: Restore dashboard datagroups from backup files created by the sync script
+# Purpose: Restore dashboard datagroups from backup files created by the datagroup sync script
 # Usage: ./dashboard-restore.sh [timestamp|latest|view] [datagroup_prefix]
 # Author: Eric Haupt
 # License: MIT
