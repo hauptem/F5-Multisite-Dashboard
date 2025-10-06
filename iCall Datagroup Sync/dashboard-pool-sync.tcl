@@ -3,6 +3,8 @@
 # Features: Pool exclusion, error handling, file-based backups, LTM Pool description parsing
 # Author: Eric Haupt
 # License: MIT
+# Copyright (c) 2025 Eric Haupt
+# Released under the MIT License. See LICENSE file for details.
 #
 # OVERVIEW:
 # This script maintains two dashboard datagroups that track LTM pool configurations:
