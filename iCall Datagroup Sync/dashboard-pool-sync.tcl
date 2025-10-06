@@ -34,14 +34,14 @@ set excluded_pools {
 
 # Backup configuration for change management and recovery
 # Backups are created before any modifications to allow rollback if needed
-set create_backups 1          ; # 0 = disabled; 1 = enabled
+set create_backups 0          ; # 0 = disabled; 1 = enabled
 set max_backups 30            ; # Maximum backup files to retain per datagroup
 set backup_dir "/var/tmp/dashboard_backups"  ; # Backup storage location
 
 # Automatic alias generation from pool description fields
 # When enabled, creates friendly names from pool descriptions for dashboard display
 # Only updates aliases that are currently empty to preserve manual customizations
-set auto_generate_aliases 1   ; # 0 = disabled; 1 = enabled
+set auto_generate_aliases 0   ; # 0 = disabled; 1 = enabled
 set description_max_length 255 ; # Maximum characters in generated alias
 
 # ================================================================================
