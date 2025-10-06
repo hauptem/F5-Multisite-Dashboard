@@ -2,7 +2,7 @@
 
 ## Overview
 
-For the F5 Multisite Dashboard, there are two datagroups that must be managed as LTM pools are created or deleted from the system, datagroup-dashboard-pools and datagroup-dashboard-pool-alias. For most organizations, simply working management of these datagroups into their pool commissioning/decomissioning process should be sufficient. For larger deployments an automated script that performs datagroup management would be preferable. This script runs as an iCall event and parses LTM pool configurations periodically. It then compares the LTM pool configuration with the datagroup configuration to identify pools that exist in LTM but but in the dashboard or vice versa. It then rebuilds the two datagroups dynamically. 
+For the F5 Multisite Dashboard, there are two datagroups that must be managed as LTM pools are created or deleted from the system, *datagroup-dashboard-pools* and *datagroup-dashboard-pool-alias*. For most organizations, simply managing these datagroups via a pool commissioning/decomissioning process should be sufficient. For larger deployments an automated script that performs datagroup management would be preferable. This script runs as an iCall event and parses LTM pool configurations periodically. It then compares the LTM pool configuration with the dashboard datagroup configuration to identify pools that exist in LTM but but in the dashboard or vice versa. It then rebuilds the two datagroups dynamically. 
 
 The script supports a number of configurable options:
 - Periodic datagroup backups
