@@ -97,12 +97,12 @@ tmsh save sys config
 ### Feature Controls
 
 **Auto-Generated Aliases**
-- **Enabled (1)**: Creates aliases from pool descriptions automatically
-- **Disabled (0)**: Leaves aliases empty for manual entry
+- **Enabled (1)**: Creates aliases from LTM pool description field
+- **Disabled (0)**: Leaves aliases empty for manual alias entry
 
 **Backup Creation**
 - **Enabled (1)**: Creates timestamped backups before changes
-- **Disabled (0)**: Skips backup creation for faster execution
+- **Disabled (0)**: Skips backup creation
 
 **Pool Exclusions**
 Patterns to exclude from dashboard (supports wildcards):
@@ -112,10 +112,13 @@ Patterns to exclude from dashboard (supports wildcards):
 ## Alias Processing
 
 ### Space Handling
-Aliases containing spaces are converted to underscores for F5 compatibility:
+Aliases containing spaces are converted to underscores in order to prevent complex parsing and escaping processing:
+
 - **Pool Description**: "Production Web Servers"
 - **Stored Alias**: "Production_Web_Servers"
-- **Dashboard Display**: Convert back to spaces in your UI
+- 
+
+Note: The Multisite Dashboard v1.8 UI Module will replace underscores with spaces for proper alias display.
 
 ### Log Messages
 
@@ -143,7 +146,7 @@ ERROR: Dashboard sync - Alias datagroup validation failed: Datagroup prod-aliase
 For meaningful auto-generated aliases:
 
 ```bash
-# Add descriptive pool descriptions
+# Add descriptive LTM pool descriptions
 tmsh modify ltm pool web_prod_443 description "Production Web Servers - HTTPS"
 tmsh modify ltm pool api_gateway_80 description "API Gateway Load Balancer"
 tmsh modify ltm pool db_cluster_3306 description "Production Database Cluster"
@@ -153,7 +156,7 @@ tmsh modify ltm pool db_cluster_3306 description "Production Database Cluster"
 
 ### Install the Restore Script
 
-The restore script provides recovery capabilities for the backup files created by the sync script.
+The restore script provides recovery capabilities for the datagroup backup files created by the sync script.
 
 **Create the restore script:**
 
