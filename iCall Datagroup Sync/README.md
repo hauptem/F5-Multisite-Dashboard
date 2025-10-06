@@ -203,9 +203,7 @@ dashboard-restore view
 
 ```
 
-# Restore Script Demo
-
-## Demo Scenario Setup
+## Restore Script Demo
 
 **Environment:**
 - F5 BIG-IP with dashboard pool sync running
@@ -221,7 +219,7 @@ dashboard-restore view
 
 ---
 
-## Demo 1: Viewing Available Backups
+## Viewing Available Backups
 
 ```bash
 [root@f5-bigip-01 ~]# ./dashboard-restore.sh
@@ -240,7 +238,7 @@ Enter backup timestamp (YYYYMMDD_HHMMSS) or 'latest' for most recent:
 
 ---
 
-## Demo 2: Viewing Backup Contents
+## Viewing Backup Contents
 
 ```bash
 [root@f5-bigip-01 ~]# ./dashboard-restore.sh view
@@ -304,7 +302,7 @@ ALIASES (showing pool name and display alias):
 
 ---
 
-## Demo 3: Successful Restore Operation
+## Successful Restore Operation
 
 ```bash
 [root@f5-bigip-01 ~]# ./dashboard-restore.sh 20251006_115719
@@ -401,7 +399,7 @@ Don't forget to save the configuration: tmsh save sys config
 
 ---
 
-## Demo 4: Using Latest Backup Shortcut
+## Using Latest Backup Shortcut
 
 ```bash
 [root@f5-bigip-01 ~]# ./dashboard-restore.sh latest
@@ -450,7 +448,7 @@ Don't forget to save the configuration: tmsh save sys config
 
 ---
 
-## Demo 5: Error Handling - Missing Backup Files
+## Error Handling - Missing Backup Files
 
 ```bash
 [root@f5-bigip-01 ~]# ./dashboard-restore.sh 20251005_120000
@@ -473,7 +471,7 @@ Available backups:
 
 ---
 
-## Demo 6: Error Handling - Invalid Datagroup
+## Error Handling - Invalid Datagroup
 
 ```bash
 [root@f5-bigip-01 ~]# ./dashboard-restore.sh latest missing-pools missing-aliases
@@ -487,7 +485,7 @@ ERROR: No backup files found for datagroup: missing-pools
 
 ---
 
-## Demo 7: User Cancellation
+## User Cancellation
 
 ```bash
 [root@f5-bigip-01 ~]# ./dashboard-restore.sh latest
@@ -505,7 +503,7 @@ Restore cancelled
 
 ---
 
-## Demo 8: Help Usage
+## Help Usage
 
 ```bash
 [root@f5-bigip-01 ~]# ./dashboard-restore.sh --help
@@ -529,7 +527,7 @@ Examples:
 
 ---
 
-## Demo 9: Debug Version Example
+## Debug Version
 
 ```bash
 [root@f5-bigip-01 ~]# ./debug_restore_script_full.sh latest
