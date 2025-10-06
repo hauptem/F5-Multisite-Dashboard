@@ -2,7 +2,7 @@
 
 ## Overview
 
-For the F5 Multisite Dashboard, there are two datagroups that must be managed as LTM pools are created or deleted from the system, *datagroup-dashboard-pools* and *datagroup-dashboard-pool-alias*. For most organizations, simply managing these datagroups via a pool commissioning/decomissioning process should be sufficient. For larger deployments an automated script that performs datagroup management would be preferable. This script runs as an iCall event and parses LTM pool configurations periodically. It then compares the LTM pool configuration with the dashboard datagroup configuration to identify pools that exist in LTM but but in the dashboard or vice versa. It then rebuilds the two datagroups dynamically. 
+FIn the F5 Multisite Dashboard, there are two datagroups that must be managed as LTM pools are created or deleted from the system, *datagroup-dashboard-pools* and *datagroup-dashboard-pool-alias*. For most organizations, simply managing these datagroups via a pool commissioning/decomissioning process should be sufficient. For larger or more advanced deployments, an automated script that performs datagroup management would be preferable. This script runs as an iCall event and parses LTM pool configurations periodically. It compares the LTM pool configuration with the dashboard datagroup configuration to identify pools that exist in LTM but but in the dashboard or vice versa. It then rebuilds the two datagroups dynamically and the dashboard will update upon its next poll event.
 
 The script supports a number of configurable options:
 - Periodic datagroup backups
@@ -118,7 +118,7 @@ Aliases containing spaces are converted to underscores in order to prevent compl
 - **Stored Alias**: "Production_Web_Servers"
 - 
 
-Note: The Multisite Dashboard v1.8 UI Module will replace underscores with spaces for proper alias display.
+Note: The Multisite Dashboard v1.8 UI Module will now replace underscores with spaces for proper alias display.
 
 ### Log Messages
 
@@ -156,7 +156,7 @@ tmsh modify ltm pool db_cluster_3306 description "Production Database Cluster"
 
 ### Install the Restore Script
 
-The restore script provides recovery capabilities for the datagroup backup files created by the sync script.
+The restore script provides recovery capabilities for the datagroup backup files created by the sync script in the event that an administrator desires to revert to a previous configuration.
 
 **Create the restore script:**
 
@@ -178,7 +178,7 @@ chmod +x /usr/local/bin/dashboard-restore.sh
 **Basic Usage:**
 
 ```bash
-# View available backups
+# Interactive mode
 dashboard-restore
 
 # Restore from latest backup
@@ -190,7 +190,5 @@ dashboard-restore 20241005_143022
 # Preview backup contents
 dashboard-restore view
 
-# Use custom datagroup names
-dashboard-restore latest prod-pools prod-aliases
 ```
 
