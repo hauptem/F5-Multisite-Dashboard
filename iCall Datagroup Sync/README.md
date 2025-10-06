@@ -72,6 +72,8 @@ set description_max_length 255  ; # Alias truncation limit
 ```
 
 ### 5. Edit the script definition and handler
+
+```bash
 sys icall handler periodic dashboard-pool-sync-handler {
     interval 86400
     script dashboard-pool-sync
@@ -84,7 +86,6 @@ sys icall script dashboard-pool-sync {
     description none
     events none
 }
-
 ```
 
 ### 6. Save
