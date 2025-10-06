@@ -37,7 +37,7 @@ set backup_dir "/var/tmp/dashboard_backups"  ; # Backup storage location
 # When enabled, creates friendly names from pool descriptions for dashboard display
 # Only updates aliases that are currently empty
 set auto_generate_aliases 0   ; # 0 = disabled; 1 = enabled
-set description_max_length 255 ; # Maximum characters in generated alias
+set description_max_length 80 ; # Maximum characters in generated alias
 # ================================================================================
 # MAIN SYNCHRONIZATION LOGIC
 # ================================================================================
