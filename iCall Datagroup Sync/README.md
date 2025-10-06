@@ -5,9 +5,19 @@
 ![TMOS Version](https://img.shields.io/badge/TMOS-15.0%2B-red)
 ![F5 LTM](https://img.shields.io/badge/F5-LTM%20Module-FF6600?logo=f5&logoColor=white)
 
+## Table of Contents
+
+- [Overview](#overview)
+- [Installation Steps](#installation-steps)
+- [Configuration Options](#configuration-options)
+- [Alias Processing](#alias-processing)
+- [Datagroup Recovery and Restore](#datagroup-recovery-and-restore)
+- [License](#license)
+- [Disclaimer](#disclaimer)
+
 ## Overview
 
-In the F5 Multisite Dashboard, there are two datagroups that must be managed as LTM pools are created or deleted from the system, **datagroup-dashboard-pools** and **datagroup-dashboard-pool-alias**. For most organizations, simply managing these datagroups via a pool commissioning/decomissioning process should be sufficient. For larger or more advanced deployments, an automated script that performs datagroup management would be preferable. 
+In the F5 Multisite Dashboard, there are two datagroups that must be managed as LTM pools are created or deleted from the system, **datagroup-dashboard-pools** and **datagroup-dashboard-pool-alias**. For most organizations, simply managing these datagroups via a pool commissioning/decommissioning process should be sufficient. For larger or more advanced deployments, an automated script that performs datagroup management would be preferable. 
 
 This script runs as an iCall event and parses LTM pool configurations periodically. It compares the LTM pool configuration with the dashboard datagroup configuration to identify pools that exist in LTM but not in the dashboard or vice versa. It then rebuilds the two datagroups dynamically and the dashboard will update upon its next poll event.
 
@@ -125,7 +135,6 @@ Aliases containing spaces are converted to underscores in order to prevent compl
 
 - **Pool Description**: "Production Web Servers"
 - **Stored Alias**: "Production_Web_Servers"
-- 
 
 Note: The Multisite Dashboard v1.8 UI Module will now replace underscores with spaces for proper alias display.
 
@@ -160,8 +169,6 @@ tmsh modify ltm pool web_prod_443 description "Production Web Servers - HTTPS"
 tmsh modify ltm pool api_gateway_80 description "API Gateway Load Balancer"
 tmsh modify ltm pool db_cluster_3306 description "Production Database Cluster"
 ```
-
----
 
 ## Datagroup Recovery and Restore
 
@@ -198,8 +205,6 @@ chmod +x /usr/local/bin/dashboard-restore.sh
 └── datagroup-dashboard-pool-alias_20251006_115719.backup
 ```
 
----
-
 ### Viewing Available Backups
 
 ```bash
@@ -214,8 +219,6 @@ TIP: Use './dashboard-restore.sh view' to see backup contents before restoring
 
 Enter backup timestamp (YYYYMMDD_HHMMSS) or 'latest' for most recent:
 ```
-
----
 
 ### Viewing Backup Contents
 
@@ -276,8 +279,6 @@ ALIASES (showing pool name and display alias):
   ACAS_Servers                        
   Total aliases: 17
 ```
-
----
 
 ### Successful Restore
 
@@ -403,9 +404,8 @@ Restoring alias datagroup...
 RESTORE COMPLETED SUCCESSFULLY
 ============================================
 ```
----
 
-## Post-Restore Verification
+### Post-Restore Verification
 
 ```bash
 [root@f5-bigip-01 ~]# tmsh save sys config
@@ -446,8 +446,6 @@ ltm data-group internal datagroup-dashboard-pool-alias {
         }
 ...
 ```
-
----
 
 ## License
 
