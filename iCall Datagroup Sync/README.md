@@ -1,7 +1,5 @@
 # F5 Dashboard Pool Sync iCall Script Installation Guide
 
-**Automated LTM pool synchronization with configurable datagroup names and comprehensive validation**
-
 ## Overview
 
 For the F5 Multisite Dashboard, there are two datagroups that must be managed as LTM pools are created or deleted from the system, datagroup-dashboard-pools and datagroup-dashboard-pool-alias. For most organizations, simply working management of these datagroups into their pool commissioning/decomissioning process should be sufficient. For larger deployments an automated script that performs datagroup management would be preferable. This script runs as an iCall event and parses LTM pool configurations periodically. It then compares the LTM pool configuration with the datagroup configuration to identify pools that exist in LTM but but in the dashboard or vice versa. It then rebuilds the two datagroups dynamically. 
