@@ -1,7 +1,6 @@
 # iCall Script: dashboard-pool-sync
 # Purpose: Automatically synchronize dashboard datagroups with LTM pools
 # Features: Pool exclusion, error handling, file-based backups, LTM Pool description parsing
-# Frequency: Every 24 hours (86400 seconds)
 # Author: Eric Haupt
 # License: MIT
 #
