@@ -1,12 +1,12 @@
 # iCall Script: dashboard-pool-sync
 # Purpose: Automatically synchronize dashboard datagroups with LTM pools
-# Features: Pool exclusion, error handling, file-based backups, description parsing
+# Features: Pool exclusion, error handling, file-based backups, LTM Pool description parsing
 # Frequency: Every 24 hours (86400 seconds)
 # Author: Eric Haupt
 # License: MIT
 #
 # OVERVIEW:
-# This script maintains two LTM datagroups that track LTM pool configurations:
+# This script maintains two dashboard datagroups that track LTM pool configurations:
 # 1. datagroup-dashboard-pools: Contains pool names with sort order values for dashboard display
 # 2. datagroup-dashboard-pool-alias: Contains pool names with friendly display aliases
 # 
@@ -18,29 +18,28 @@
 # CONFIGURATION 
 # ================================================================================
 
-# Target datagroup names - modify these for different environments or naming conventions
-# These datagroups must exist and be type 'string' before the script runs
+# Target datagroup names
+# These datagroups must exist and be type 'string'
 set pools_datagroup "datagroup-dashboard-pools"
 set alias_datagroup "datagroup-dashboard-pool-alias"
 
 # Pool exclusion patterns - pools matching these patterns will be ignored
 # Note: Exclusion prevents automatic addition but does not remove existing entries
-# This allows test/temporary pools to be kept out of production dashboards
 # Supports wildcard patterns using standard Tcl string matching
 set excluded_pools {
     "*_test_pool"
     "*_temp_pool"
 }
 
-# Backup configuration for change management and recovery
-# Backups are created before any modifications to allow rollback if needed
+# Backup configuration
+# Backups are created before any script modifications
 set create_backups 0          ; # 0 = disabled; 1 = enabled
 set max_backups 30            ; # Maximum backup files to retain per datagroup
 set backup_dir "/var/tmp/dashboard_backups"  ; # Backup storage location
 
-# Automatic alias generation from pool description fields
+# Automatic alias generation from LTM pool description field
 # When enabled, creates friendly names from pool descriptions for dashboard display
-# Only updates aliases that are currently empty to preserve manual customizations
+# Only updates aliases that are currently empty
 set auto_generate_aliases 0   ; # 0 = disabled; 1 = enabled
 set description_max_length 255 ; # Maximum characters in generated alias
 
@@ -48,13 +47,12 @@ set description_max_length 255 ; # Maximum characters in generated alias
 # MAIN SYNCHRONIZATION LOGIC
 # ================================================================================
 
-# Initialize error tracking for comprehensive error handling
+# Initialize error tracking
 set sync_error 0
 set error_details ""
 
 # PHASE 1: ENVIRONMENT VALIDATION
-# Verify that required datagroups exist and have correct configuration
-# This prevents data corruption and provides clear error messages for setup issues
+# Verify that required datagroups exist
 
 if {[catch {
     set pools_exists [tmsh::get_config /ltm data-group internal $pools_datagroup]
@@ -85,7 +83,7 @@ if {[catch {
 }
 
 # PHASE 2: LTM POOL DISCOVERY
-# Retrieve current LTM pool configuration and build working dataset
+# Retrieve current LTM pool configuration
 # Only includes pools that pass exclusion filtering
 
 if {[catch {set current_pools [tmsh::get_config /ltm pool]} error_msg]} {
@@ -99,7 +97,7 @@ set ltm_pool_data {}
 foreach pool $current_pools {
     set pool_name [tmsh::get_name $pool]
     
-    # Remove /Common/ prefix since we operate only in Common partition
+    # Remove /Common/ prefix 
     # This standardizes pool names for datagroup storage
     regsub {^/Common/} $pool_name "" pool_name
     
@@ -113,10 +111,9 @@ foreach pool $current_pools {
         }
     }
     
-    # Only process pools that pass exclusion filter
+    # Process pools that pass exclusion filter
     if {!$should_exclude} {
         # Extract pool description for alias generation
-        # Description field is optional and may not exist
         set pool_description ""
         if {[catch {
             set pool_description [tmsh::get_field_value $pool "description"]
@@ -131,14 +128,12 @@ foreach pool $current_pools {
 
 # PHASE 3: DATAGROUP STATE ANALYSIS
 # Read current datagroup contents to determine required changes
-# Handles empty datagroups gracefully
 
 # Initialize arrays to hold current datagroup contents
 array set existing_pools {}    ; # pool_name -> sort_order
 array set existing_aliases {}  ; # pool_name -> alias_value
 
-# Parse existing pools datagroup with comprehensive error handling
-# Empty datagroups may lack 'records' field entirely
+# Parse existing pools datagroup
 if {[catch {
     set datagroup_pools_config [tmsh::get_config /ltm data-group internal $pools_datagroup]
     if {[llength $datagroup_pools_config] > 0} {
@@ -163,7 +158,7 @@ if {[catch {
     set error_details "Failed to read pools datagroup"
 }
 
-# Parse existing alias datagroup with same error handling approach
+# Parse existing alias datagroup
 if {!$sync_error && [catch {
     set datagroup_aliases_config [tmsh::get_config /ltm data-group internal $alias_datagroup]
     if {[llength $datagroup_aliases_config] > 0} {
@@ -188,7 +183,7 @@ if {!$sync_error && [catch {
     set error_details "Failed to read alias datagroup"
 }
 
-# Abort if we encountered errors reading datagroups to prevent data corruption
+# Abort if we encountered errors reading datagroups
 if {$sync_error} {
     tmsh::log "ERROR: Dashboard sync aborted - $error_details"
     return 1
@@ -205,11 +200,10 @@ foreach {pool_name sort_order} [array get existing_pools] {
     }
 }
 
-# Start new pools at next increment of 10 for clean organization
-# This allows administrators to manually insert pools between auto-assigned values
+# Start new pools at next increment of 10
 set next_sort_order [expr {($max_sort_order / 10 + 1) * 10}]
 
-# Initialize change tracking for logging and decision making
+# Initialize change tracking
 set pools_added {}
 set pools_removed {}
 set aliases_updated {}
@@ -237,7 +231,7 @@ foreach pool_data $ltm_pool_data {
                 set clean_desc "[string range $clean_desc 0 [expr {$description_max_length - 4}]]..."
             }
             
-            # Ensure proper capitalization for professional appearance
+            # Ensure proper capitalization
             if {[string length $clean_desc] > 0} {
                 set clean_desc "[string toupper [string index $clean_desc 0]][string range $clean_desc 1 end]"
             }
@@ -245,7 +239,7 @@ foreach pool_data $ltm_pool_data {
             set new_alias $clean_desc
         }
         
-        # Always add entry to alias datagroup (may be empty if auto-generation disabled)
+        # Always add entry to alias datagroup
         set existing_aliases($pool_name) $new_alias
         lappend pools_added $pool_name
         set changes_made 1
@@ -261,7 +255,7 @@ foreach pool_data $ltm_pool_data {
                 set current_alias $existing_aliases($pool_name)
             }
             
-            # Generate new alias from current description
+            # Generate new alias from description
             set new_alias ""
             if {$pool_description ne ""} {
                 # Apply same cleaning logic as for new pools
@@ -278,8 +272,8 @@ foreach pool_data $ltm_pool_data {
                 set new_alias $clean_desc
             }
             
-            # Only update if current alias is empty (preserve manual customizations)
-            # This prevents overwriting aliases that administrators have manually set
+            # Only update if current alias is empty
+            # This prevents overwriting aliases that have been manually set
             if {$new_alias ne $current_alias && $current_alias eq ""} {
                 set existing_aliases($pool_name) $new_alias
                 lappend aliases_updated $pool_name
@@ -287,7 +281,6 @@ foreach pool_data $ltm_pool_data {
             }
         } else {
             # Ensure pool exists in alias datagroup even if auto-generation is disabled
-            # This maintains consistency between the two datagroups
             if {![info exists existing_aliases($pool_name)]} {
                 set existing_aliases($pool_name) ""
                 set changes_made 1
@@ -298,8 +291,6 @@ foreach pool_data $ltm_pool_data {
 
 # PHASE 6: POOL REMOVAL PROCESSING
 # Remove pools from datagroups that no longer exist in LTM
-# Respects exclusion patterns to avoid removing manually managed entries
-
 # Build list of current LTM pool names for comparison
 set ltm_pool_names {}
 foreach pool_data $ltm_pool_data {
@@ -333,18 +324,17 @@ foreach pool_name [array names existing_pools] {
 }
 
 # PHASE 7: CHANGE APPLICATION
-# Apply detected changes to datagroups with backup and error handling
+# Apply detected changes
 
 if {$changes_made} {
     # Create timestamped backups before making changes (if enabled)
-    # This provides rollback capability and change audit trail
     if {$create_backups} {
         set timestamp [clock format [clock seconds] -format "%Y%m%d_%H%M%S"]
         
         # Ensure backup directory exists
         catch {exec mkdir -p $backup_dir}
         
-        # Backup pools datagroup with comprehensive metadata
+        # Backup pools datagroup with metadata
         set pools_backup_file "$backup_dir/${pools_datagroup}_$timestamp.backup"
         if {[catch {
             set pools_config [tmsh::get_config /ltm data-group internal $pools_datagroup]
@@ -374,7 +364,7 @@ if {$changes_made} {
             tmsh::log "WARNING: Dashboard sync - Could not backup pools datagroup: $error_msg"
         }
         
-        # Backup alias datagroup with same approach
+        # Backup alias datagroup
         set alias_backup_file "$backup_dir/${alias_datagroup}_$timestamp.backup"
         if {[catch {
             set alias_config [tmsh::get_config /ltm data-group internal $alias_datagroup]
@@ -441,8 +431,7 @@ if {$changes_made} {
     }
     
     # Build tmsh record syntax for alias datagroup
-    # Spaces are converted to underscores due to tmsh parsing limitations
-    # The frontend will convert underscores back to spaces for display
+    # Spaces are converted to underscores
     set alias_records ""
     foreach pool_name [lsort [array names existing_aliases]] {
         set alias_value $existing_aliases($pool_name)
@@ -450,15 +439,13 @@ if {$changes_made} {
             # Empty alias - create record without data field
             append alias_records " \"$pool_name\" \{ \}"
         } else {
-            # Convert spaces to underscores to prevent tmsh parsing failures
-            # This is a workaround for tmsh limitations with space-containing values
+            # Convert spaces to underscores
             set safe_alias [string map {" " "_"} $alias_value]
             append alias_records " \"$pool_name\" \{ data $safe_alias \}"
         }
     }
     
-    # Apply datagroup updates with comprehensive error handling
-    # Both updates must succeed to maintain consistency
+    # Apply datagroup updates
     if {[catch {
         # Update pools datagroup
         if {$pool_records ne ""} {
@@ -470,7 +457,7 @@ if {$changes_made} {
             tmsh::modify /ltm data-group internal $alias_datagroup records replace-all-with \{ $alias_records \}
         }
         
-        # Log successful synchronization with detailed summary
+        # Log successful synchronization
         set total_pools [array size existing_pools]
         set summary_msg "Dashboard sync - Completed successfully: $total_pools total pools"
         
@@ -486,7 +473,7 @@ if {$changes_made} {
         
         tmsh::log $summary_msg
         
-        # Log detailed change information for audit trail
+        # Log detailed change information
         if {[llength $pools_added] > 0} {
             tmsh::log "Dashboard sync - Added pools: [join $pools_added {, }]"
         }
