@@ -161,6 +161,8 @@ tmsh modify ltm pool api_gateway_80 description "API Gateway Load Balancer"
 tmsh modify ltm pool db_cluster_3306 description "Production Database Cluster"
 ```
 
+---
+
 ## Recovery and Restore
 
 ### Install the Restore Script
@@ -200,6 +202,406 @@ dashboard-restore 20241005_143022
 dashboard-restore view
 
 ```
+
+# Restore Script Demo
+
+## Demo Scenario Setup
+
+**Environment:**
+- F5 BIG-IP with dashboard pool sync running
+- Backup files from October 6th, 2025
+- Current datagroups need to be restored from backup
+
+**Backup Directory Contents:**
+```bash
+/var/tmp/dashboard_backups/
+├── datagroup-dashboard-pools_20251006_115719.backup
+└── datagroup-dashboard-pool-alias_20251006_115719.backup
+```
+
+---
+
+## Demo 1: Viewing Available Backups
+
+```bash
+[root@f5-bigip-01 ~]# ./dashboard-restore.sh
+=== Dashboard Datagroup Restore Tool ===
+
+Available backups:
+
+  20251006_115719 (2025-10-06 11:57:19)
+
+TIP: Use './dashboard-restore.sh view' to see backup contents before restoring
+
+Enter backup timestamp (YYYYMMDD_HHMMSS) or 'latest' for most recent:
+```
+
+*User wants to examine backup contents first*
+
+---
+
+## Demo 2: Viewing Backup Contents
+
+```bash
+[root@f5-bigip-01 ~]# ./dashboard-restore.sh view
+=== Dashboard Datagroup Restore Tool ===
+
+Available backups for viewing:
+
+Recent backups:
+  20251006_115719
+
+Enter timestamp to view (or 'latest' for most recent):
+latest
+============================================
+BACKUP CONTENTS FOR: 20251006_115719
+============================================
+
+POOLS (showing pool name and sort order):
+--------------------------------------------
+  Comcast-DNS_udp_pool                10
+  Company-finance_https_pool          20
+  Company-marketing_https_pool        30
+  Company-portal_https_pool           40
+  DISA-OCSP_Pool                      50
+  Google.com_ICMP_pool                60
+  IPv6_Pool                           70
+  LAB-ASM_lorem_http_pool             80
+  Lab-ASM-Hack-it-Server              90
+  MSC_https_pool                      100
+  Microsoft_PowerBI_http_pool         110
+  SRX-Gateway_ICMP_pool               120
+  SRX-Gateway_ssh_pool                130
+  Palo_Alto-Panorama                  140
+  dashboard-api-hosts_https_pool      150
+  dashboard-dns_udp53_pool            160
+  ACAS_Servers                        170
+  Total pools: 17
+
+ALIASES (showing pool name and display alias):
+--------------------------------------------
+  Comcast-DNS_udp_pool                
+  Company-finance_https_pool          Sharepoint - Finance Web Front Ends
+  Company-marketing_https_pool        Sharepoint - Marketing Web Front Ends
+  Company-portal_https_pool           Sharepoint - Portal Web Front Ends
+  DISA-OCSP_Pool                      DISA OCSP Server
+  Google.com_ICMP_pool                
+  IPv6_Pool                           
+  LAB-ASM_lorem_http_pool             
+  Lab-ASM-Hack-it-Server              
+  MSC_https_pool                      
+  Microsoft_PowerBI_http_pool         Microsoft PowerBI
+  SRX-Gateway_ICMP_pool               
+  SRX-Gateway_ssh_pool                
+  Palo_Alto-Panorama                  Palo Alto Networks Panorama Servers
+  dashboard-api-hosts_https_pool      
+  dashboard-dns_udp53_pool            
+  ACAS_Servers                        
+  Total aliases: 17
+```
+
+*User sees this includes SharePoint pools with proper aliases and infrastructure monitoring*
+
+---
+
+## Demo 3: Successful Restore Operation
+
+```bash
+[root@f5-bigip-01 ~]# ./dashboard-restore.sh 20251006_115719
+=== Dashboard Datagroup Restore Tool ===
+
+Available backups:
+
+  20251006_115719 (2025-10-06 11:57:19)
+
+TIP: Use './dashboard-restore.sh view' to see backup contents before restoring
+
+Will restore from backup: 20251006_115719
+Source files:
+  Pools: /var/tmp/dashboard_backups/datagroup-dashboard-pools_20251006_115719.backup
+  Aliases: /var/tmp/dashboard_backups/datagroup-dashboard-pool-alias_20251006_115719.backup
+
+Target datagroups:
+  Pools: datagroup-dashboard-pools
+  Aliases: datagroup-dashboard-pool-alias
+
+Backup preview:
+============================================
+BACKUP CONTENTS FOR: 20251006_115719
+============================================
+
+POOLS (showing pool name and sort order):
+--------------------------------------------
+  Comcast-DNS_udp_pool                10
+  Company-finance_https_pool          20
+  Company-marketing_https_pool        30
+  Company-portal_https_pool           40
+  DISA-OCSP_Pool                      50
+  Google.com_ICMP_pool                60
+  IPv6_Pool                           70
+  LAB-ASM_lorem_http_pool             80
+  Lab-ASM-Hack-it-Server              90
+  MSC_https_pool                      100
+  Microsoft_PowerBI_http_pool         110
+  SRX-Gateway_ICMP_pool               120
+  SRX-Gateway_ssh_pool                130
+  Palo_Alto-Panorama                  140
+  dashboard-api-hosts_https_pool      150
+  dashboard-dns_udp53_pool            160
+  ACAS_Servers                        170
+  Total pools: 17
+
+ALIASES (showing pool name and display alias):
+--------------------------------------------
+  Comcast-DNS_udp_pool                
+  Company-finance_https_pool          Sharepoint - Finance Web Front Ends
+  Company-marketing_https_pool        Sharepoint - Marketing Web Front Ends
+  Company-portal_https_pool           Sharepoint - Portal Web Front Ends
+  DISA-OCSP_Pool                      DISA OCSP Server
+  Google.com_ICMP_pool                
+  IPv6_Pool                           
+  LAB-ASM_lorem_http_pool             
+  Lab-ASM-Hack-it-Server              
+  MSC_https_pool                      
+  Microsoft_PowerBI_http_pool         Microsoft PowerBI
+  SRX-Gateway_ICMP_pool               
+  SRX-Gateway_ssh_pool                
+  Palo_Alto-Panorama                  Palo Alto Networks Panorama Servers
+  dashboard-api-hosts_https_pool      
+  dashboard-dns_udp53_pool            
+  ACAS_Servers                        
+  Total aliases: 17
+
+============================================
+WARNING: This will replace current datagroups!
+Type 'YES' to continue with restore:
+YES
+
+Starting restore process...
+
+Verifying target datagroups...
+Building pools datagroup records...
+Building alias datagroup records...
+Restoring pools datagroup...
+Restoring alias datagroup...
+
+============================================
+RESTORE COMPLETED SUCCESSFULLY
+============================================
+Restored from backup: 20251006_115719
+Target datagroups:
+  Pools: datagroup-dashboard-pools
+  Aliases: datagroup-dashboard-pool-alias
+
+Use 'tmsh save sys config' to save the configuration
+
+Restore completed successfully!
+Don't forget to save the configuration: tmsh save sys config
+```
+
+---
+
+## Demo 4: Using Latest Backup Shortcut
+
+```bash
+[root@f5-bigip-01 ~]# ./dashboard-restore.sh latest
+=== Dashboard Datagroup Restore Tool ===
+
+Available backups:
+
+  20251006_115719 (2025-10-06 11:57:19)
+
+TIP: Use './dashboard-restore.sh view' to see backup contents before restoring
+
+Will restore from backup: 20251006_115719
+Source files:
+  Pools: /var/tmp/dashboard_backups/datagroup-dashboard-pools_20251006_115719.backup
+  Aliases: /var/tmp/dashboard_backups/datagroup-dashboard-pool-alias_20251006_115719.backup
+
+Target datagroups:
+  Pools: datagroup-dashboard-pools
+  Aliases: datagroup-dashboard-pool-alias
+
+Backup preview:
+[...backup contents displayed...]
+
+============================================
+WARNING: This will replace current datagroups!
+Type 'YES' to continue with restore:
+YES
+
+Starting restore process...
+
+[...restore completes successfully...]
+
+============================================
+RESTORE COMPLETED SUCCESSFULLY
+============================================
+Restored from backup: 20251006_115719
+Target datagroups:
+  Pools: datagroup-dashboard-pools
+  Aliases: datagroup-dashboard-pool-alias
+
+Use 'tmsh save sys config' to save the configuration
+
+Restore completed successfully!
+Don't forget to save the configuration: tmsh save sys config
+```
+
+---
+
+## Demo 5: Error Handling - Missing Backup Files
+
+```bash
+[root@f5-bigip-01 ~]# ./dashboard-restore.sh 20251005_120000
+=== Dashboard Datagroup Restore Tool ===
+
+Available backups:
+
+  20251006_115719 (2025-10-06 11:57:19)
+
+TIP: Use './dashboard-restore.sh view' to see backup contents before restoring
+
+ERROR: Backup files not found for timestamp 20251005_120000
+Expected files:
+  /var/tmp/dashboard_backups/datagroup-dashboard-pools_20251005_120000.backup
+  /var/tmp/dashboard_backups/datagroup-dashboard-pool-alias_20251005_120000.backup
+
+Available backups:
+/var/tmp/dashboard_backups/datagroup-dashboard-pools_20251006_115719.backup
+```
+
+---
+
+## Demo 6: Error Handling - Invalid Datagroup
+
+```bash
+[root@f5-bigip-01 ~]# ./dashboard-restore.sh latest missing-pools missing-aliases
+=== Dashboard Datagroup Restore Tool ===
+
+Available backups:
+
+
+ERROR: No backup files found for datagroup: missing-pools
+```
+
+---
+
+## Demo 7: User Cancellation
+
+```bash
+[root@f5-bigip-01 ~]# ./dashboard-restore.sh latest
+=== Dashboard Datagroup Restore Tool ===
+
+[...backup preview shown...]
+
+============================================
+WARNING: This will replace current datagroups!
+Type 'YES' to continue with restore:
+no
+
+Restore cancelled
+```
+
+---
+
+## Demo 8: Help Usage
+
+```bash
+[root@f5-bigip-01 ~]# ./dashboard-restore.sh --help
+Usage: ./dashboard-restore.sh [timestamp|latest|view] [pools_datagroup] [alias_datagroup]
+
+Commands:
+  timestamp     - Restore from specific backup (YYYYMMDD_HHMMSS format)
+  latest        - Restore from most recent backup
+  view          - View backup contents without restoring
+
+Optional parameters:
+  pools_datagroup - Name of pools datagroup (default: datagroup-dashboard-pools)
+  alias_datagroup - Name of alias datagroup (default: datagroup-dashboard-pool-alias)
+
+Examples:
+  ./dashboard-restore.sh latest
+  ./dashboard-restore.sh 20241005_143022
+  ./dashboard-restore.sh view
+  ./dashboard-restore.sh latest prod-dashboard-pools prod-dashboard-aliases
+```
+
+---
+
+## Demo 9: Debug Version Example
+
+```bash
+[root@f5-bigip-01 ~]# ./debug_restore_script_full.sh latest
+=== Dashboard Datagroup Restore Tool - DEBUG VERSION ===
+
+[...same interface but with additional debug output...]
+
+DEBUG: Processing pools from /var/tmp/dashboard_backups/datagroup-dashboard-pools_20251006_115719.backup
+DEBUG: Processing name='ACAS_Servers' data='170'
+DEBUG: Added pool record: "ACAS_Servers" { data 170 }
+DEBUG: Processing name='Comcast-DNS_udp_pool' data='10'
+DEBUG: Added pool record:  "Comcast-DNS_udp_pool" { data 10 }
+
+[...detailed processing continues...]
+
+DEBUG: About to execute tmsh command for pools:
+tmsh modify ltm data-group internal "datagroup-dashboard-pools" records replace-all-with { "ACAS_Servers" { data 170 } "Comcast-DNS_udp_pool" { data 10 } [... full command] }
+
+DEBUG: About to execute tmsh command for aliases:
+tmsh modify ltm data-group internal "datagroup-dashboard-pool-alias" records replace-all-with { "ACAS_Servers" { } "Comcast-DNS_udp_pool" { } [... full command] }
+
+Restoring pools datagroup...
+Restoring alias datagroup...
+
+============================================
+RESTORE COMPLETED SUCCESSFULLY
+============================================
+```
+
+---
+
+## Post-Restore Verification
+
+```bash
+[root@f5-bigip-01 ~]# tmsh save sys config
+Saving running configuration...
+ /config/bigip.conf
+ /config/bigip_base.conf
+ /config/bigip_user.conf
+
+[root@f5-bigip-01 ~]# tmsh list ltm data-group internal datagroup-dashboard-pools 
+ltm data-group internal datagroup-dashboard-pools {
+    records {
+        ACAS_Servers {
+            data 170
+        }
+        Comcast-DNS_udp_pool {
+            data 10
+        }
+        Company-finance_https_pool {
+            data 20
+        }
+        Company-marketing_https_pool {
+            data 30
+        }
+
+[root@f5-bigip-01 ~]# tmsh list ltm data-group internal datagroup-dashboard-pool-alias 
+ltm data-group internal datagroup-dashboard-pool-alias {
+    records {
+        ACAS_Servers {
+        }
+        Comcast-DNS_udp_pool {
+        }
+        Company-finance_https_pool {
+            data Sharepoint_-_Finance_Web_Front_Ends
+        }
+        Company-marketing_https_pool {
+            data Sharepoint_-_Marketing_Web_Front_Ends
+        }
+```
+
+---
 
 ## License
 
