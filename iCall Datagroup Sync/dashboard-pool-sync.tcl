@@ -14,6 +14,7 @@
 # The script runs automatically via iCall to ensure datagroups stay synchronized
 # with actual LTM pool configurations, adding new pools and removing deleted ones.
 #
+
 # ================================================================================
 # CONFIGURATION 
 # ================================================================================
@@ -38,13 +39,15 @@ set backup_dir "/var/tmp/dashboard_backups"  ; # Backup storage location
 # Only updates aliases that are currently empty
 set auto_generate_aliases 0   ; # 0 = disabled; 1 = enabled
 set description_max_length 80 ; # Maximum characters in generated alias
+
 # ================================================================================
-# MAIN SYNCHRONIZATION LOGIC
+# SYNCHRONIZATION LOGIC
 # ================================================================================
 # Initialize error tracking
 set sync_error 0
 set error_details ""
-# PHASE 1: ENVIRONMENT VALIDATION
+
+# ENVIRONMENT VALIDATION
 # Verify that required datagroups exist
 if {[catch {
     set pools_exists [tmsh::get_config /ltm data-group internal $pools_datagroup]
@@ -72,7 +75,7 @@ if {[catch {
     tmsh::log "ERROR: Dashboard sync - Alias datagroup validation failed: $error_msg"
     return 1
 }
-# PHASE 2: LTM POOL DISCOVERY
+# LTM POOL DISCOVERY
 # Retrieve current LTM pool configuration
 # Only includes pools that pass exclusion filtering
 if {[catch {set current_pools [tmsh::get_config /ltm pool]} error_msg]} {
@@ -110,7 +113,7 @@ foreach pool $current_pools {
         lappend ltm_pool_data [list $pool_name $pool_description]
     }
 }
-# PHASE 3: DATAGROUP STATE ANALYSIS
+# DATAGROUP ANALYSIS
 # Read current datagroup contents to determine required changes
 # Initialize arrays to hold current datagroup contents
 array set existing_pools {}    ; # pool_name -> sort_order
@@ -166,7 +169,7 @@ if {$sync_error} {
     tmsh::log "ERROR: Dashboard sync aborted - $error_details"
     return 1
 }
-# PHASE 4: SORT ORDER MANAGEMENT
+# SORT ORDER MANAGEMENT
 # Calculate appropriate sort order values for new pools
 # Uses increments of 10 to allow manual insertion between values
 set max_sort_order 0
@@ -182,7 +185,7 @@ set pools_added {}
 set pools_removed {}
 set aliases_updated {}
 set changes_made 0
-# PHASE 5: POOL ADDITION AND ALIAS PROCESSING
+# POOL ADDITION AND ALIAS PROCESSING
 # Add new pools and update aliases based on current LTM configuration
 foreach pool_data $ltm_pool_data {
     set pool_name [lindex $pool_data 0]
@@ -247,7 +250,8 @@ foreach pool_data $ltm_pool_data {
         }
     }
 }
-# PHASE 6: POOL REMOVAL PROCESSING
+
+# POOL REMOVAL PROCESSING
 # Remove pools from datagroups that no longer exist in LTM
 # Build list of current LTM pool names for comparison
 set ltm_pool_names {}
@@ -278,8 +282,8 @@ foreach pool_name [array names existing_pools] {
         }
     }
 }
-# PHASE 7: CHANGE APPLICATION
-# Apply detected changes
+
+# APPLY CHANGES
 if {$changes_made} {
     # Create timestamped backups before making changes (if enabled)
     if {$create_backups} {
@@ -343,7 +347,6 @@ if {$changes_made} {
             tmsh::log "WARNING: Dashboard sync - Could not backup alias datagroup: $error_msg"
         }
         # Cleanup old backup files to prevent disk space issues
-        # Maintains most recent backups up to configured limit
         if {[catch {
             # Clean pools datagroup backups
             set pool_files [glob -nocomplain "$backup_dir/${pools_datagroup}_*.backup"]
@@ -429,11 +432,11 @@ if {$changes_made} {
     }
 } else {
     # Log periodic execution even when no changes are needed
-    # This provides operational visibility and confirms script is running
     set total_pools [array size existing_pools]
     set excluded_count [llength $excluded_pools]
     tmsh::log "Dashboard sync - No changes required: monitoring $total_pools pools, excluding $excluded_count patterns"
 }
+
 # SUCCESSFUL COMPLETION
 # Script completed without errors
 return 0
