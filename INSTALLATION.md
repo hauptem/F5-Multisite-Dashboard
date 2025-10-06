@@ -21,7 +21,7 @@ This guide provides complete step-by-step installation procedures for both Front
 - F5 BIG-IP with LTM and APM modules provisioned
 - TMOS Version: 15.0 or higher (tested on 15.x, 16.x, 17.x)
 - DNS resolver configured for PTR lookups (optional)
-- **Note:** Version 1.7.x is not multi-partition compatible; Partition compatibility is planned for version 2.0.
+- **Note:** Version 1.x is not multi-partition compatible; Partition compatibility is planned for version 2.0.
 
 ---
 
@@ -46,7 +46,7 @@ Used to define dashboard site list in the dropdown control - the Frontend is typ
 Used to map remote Site names to API Host Virtual Server IP addresses. e.g. "NEWYORK = 192.168.4.33". It is this mapping that the Frontend uses to proxy JSON fetch requests to the API hosts.
 
 **5. `datagroup-dashboard-pools` (String)**  
-Used to provide a list of pools to display. **This is an essential step.** LTM does not permit an iRule to determine general elements of TMOS configuration. Therefore we **must** administratively provide configuration attributes in the form of a list of LTM pool names that the dashboard will be permitted to process via LB::status events and subsequently display. This is the one data group that will require management of pools as new pools are implemented or pools are removed from LTM. A bash script has been provided to assist with the initial population of this data group. An iCall-based solution for automatic pool and alias datagroup management is currently in development and testing and is not offered in this solution at this time.
+Used to provide a list of pools to display. **This is an essential step.** LTM does not permit an iRule to determine general elements of TMOS configuration. Therefore we **must** administratively provide configuration attributes in the form of a list of LTM pool names that the dashboard will be permitted to process via LB::status events and subsequently display. This is the one data group that will require management of pools as new pools are implemented or pools are removed from LTM. A bash script has been provided to assist with the initial population of this data group. An iCall-based solution for automatic pool and alias datagroup management is now available for use.
 
 **6. `datagroup-dashboard-pool-alias` (String)**  
 Used to create alias names for actual pool names. This feature is optional, but the data group itself must exist. This is to permit 'Aliases' or user friendly names to be displayed instead of the actual LTM pool names. This is for environments where a pool name might not provide the best indicator of what the pool actually supports.
@@ -73,7 +73,7 @@ This variable must be equal to 1 for the Frontend iRule to trigger and needs to 
 - `dashboard_js-data.js` **Javascript Data Module** Data management, instance tracking, state tracking, pool reordering functionality, and DNS hostname caching
 - `dashboard_js-ui.js` **Javascript UI Module** UI rendering, search filtering, visual state management, MACRO/micro view mode support, search recall and save, and integrated pool grid management
 - `dashboard_js-logger.js` **Javascript Logger Module** Dedicated logger with resizable UI, state persistence, memory management, wake lock integration, session storage and copy
-- `dashboard_themes.css` **Dashboard CSS with 3 themes** AGLight (theme1) which is reminiscent of AdminGUI, Monochrome Grey (theme2), and Amber (theme3)
+- `dashboard.css` **Dashboard CSS with 3 themes** AGLight (theme1) which is reminiscent of AdminGUI, Monochrome Grey (theme2), and Amber (theme3)
 - `dashboard_logo.png` any 53px by 53px png logo image
 
 ---
@@ -335,8 +335,8 @@ Upload the following files:
    - Name: `dashboard_logo.png`
    - Upload your organization's logo image
 
-2. **dashboard_themes.css**
-   - Name: `dashboard_themes.css`
+2. **dashboard.css**
+   - Name: `dashboard.css`
 
 3. **dashboard_js-core.js**
    - Name: `dashboard_js-core.js`
@@ -385,8 +385,8 @@ ltm ifile dashboard_js-ui.js {
 ltm ifile dashboard_logo.png {
     file-name dashboard_logo.png
 }
-ltm ifile dashboard_themes.css {
-    file-name dashboard_themes.css
+ltm ifile dashboard.css {
+    file-name dashboard.css
 }
 ```
 
