@@ -12,12 +12,12 @@ The script supports a number of configurable options:
 
 ## Installation Steps
 
-### 1. Create Required Datagroups
+### 1. Create Required Datagroups (if not already created)
 
 The script requires two string-type datagroups. **Datagroup names can be customized** in the script configuration.
 
 ```bash
-# Create default datagroups (modify names if needed)
+# Create default datagroups
 tmsh create ltm data-group internal datagroup-dashboard-pools type string
 tmsh create ltm data-group internal datagroup-dashboard-pool-alias type string
 ```
@@ -39,17 +39,21 @@ chmod 755 /var/tmp/dashboard_backups
 mkdir -p /config/icallscripts/dashboard
 vi dashboard-pool-sync.tcl
 ```
-
-When the editor opens, paste the complete dashboard-pool-sync.tcl script content and save (`:wq` in vi).
+When the editor opens, paste the complete 'dashboard-pool-sync.tcl' script content and save (`:wq` in vi).
 
 ### 4. Configure Script Parameters
 
 In vi edit the parameters of the script to suit your needs:
 
 ```tcl
-# Datagroup names - modify for your environment
+# Target datagroup names
 set pools_datagroup "datagroup-dashboard-pools"
 set alias_datagroup "datagroup-dashboard-pool-alias"
+
+# Backup configuration for change management and recovery
+set create_backups 1          ; # 0 = disabled; 1 = enabled
+set max_backups 30            ; # Maximum backup files to retain per datagroup
+set backup_dir "/var/tmp/dashboard_backups"  ; # Backup storage location
 
 # Pool exclusion patterns
 set excluded_pools {
