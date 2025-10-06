@@ -61,11 +61,11 @@ set excluded_pools {
     "*_temp_pool"
 }
 
-# Feature toggles
-set auto_generate_aliases 0     ; # 0 = disabled; 1 = enabled
-set create_backups 0            ; # 0 = disabled; 1 = enabled
-set max_backups 30              ; # Retention count
-set description_max_length 255  ; # Alias truncation limit
+# Automatic alias generation from pool description fields
+# When enabled, creates friendly names from pool descriptions for dashboard display
+# Only updates aliases that are currently empty
+set auto_generate_aliases 1   ; # 0 = disabled; 1 = enabled
+set description_max_length 255 ; # Maximum characters in generated alias
 ```
 
 ### 5. Edit the script definition and handler in tmsh
