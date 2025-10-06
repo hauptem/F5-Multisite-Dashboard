@@ -46,7 +46,7 @@ chmod 755 /var/tmp/dashboard_backups
 mkdir -p /config/icallscripts/dashboard
 vi dashboard-pool-sync.tcl
 
-When the editor opens, paste the complete script content and save (`:wq` in vi).
+When the editor opens, paste the complete dashboard-pool-sync.tcl script content and save (`:wq` in vi).
 
 ### 4. Configure Script Parameters
 
