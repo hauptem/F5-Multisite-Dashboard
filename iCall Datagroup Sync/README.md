@@ -15,6 +15,8 @@ The script supports a number of configurable options:
 - Exclusion capability for pools that are not desired in dashboard
 - The auto-generation of dashboard aliases using the value of the LTM pool description field
 
+It is recommended to test and evaluate this script in your demo/lab/preproduction environment before deploying to production. 
+
 ## Installation Steps
 
 ### 1. Create Required Datagroups (if not already created)
