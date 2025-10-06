@@ -1,6 +1,5 @@
 # DNS_Dashboard-DNS-Restrict_v1.0_irule
 # Version:  1.0
-# Date: July 2025
 # Author: Eric Haupt
 # License: MIT
 # Copyright (c) 2025 Eric Haupt
@@ -72,4 +71,5 @@ when DNS_REQUEST {
     }
 
 }
+
 
