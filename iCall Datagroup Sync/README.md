@@ -234,8 +234,6 @@ TIP: Use './dashboard-restore.sh view' to see backup contents before restoring
 Enter backup timestamp (YYYYMMDD_HHMMSS) or 'latest' for most recent:
 ```
 
-*User wants to examine backup contents first*
-
 ---
 
 ### Viewing Backup Contents
@@ -394,57 +392,6 @@ Use 'tmsh save sys config' to save the configuration
 Restore completed successfully!
 Don't forget to save the configuration: tmsh save sys config
 ```
-
----
-
-### Latest Backup 
-
-```bash
-[root@f5-bigip-01 ~]# ./dashboard-restore.sh latest
-=== Dashboard Datagroup Restore Tool ===
-
-Available backups:
-
-  20251006_115719 (2025-10-06 11:57:19)
-
-TIP: Use './dashboard-restore.sh view' to see backup contents before restoring
-
-Will restore from backup: 20251006_115719
-Source files:
-  Pools: /var/tmp/dashboard_backups/datagroup-dashboard-pools_20251006_115719.backup
-  Aliases: /var/tmp/dashboard_backups/datagroup-dashboard-pool-alias_20251006_115719.backup
-
-Target datagroups:
-  Pools: datagroup-dashboard-pools
-  Aliases: datagroup-dashboard-pool-alias
-
-Backup preview:
-[...backup contents displayed...]
-
-============================================
-WARNING: This will replace current datagroups!
-Type 'YES' to continue with restore:
-YES
-
-Starting restore process...
-
-[...restore completes successfully...]
-
-============================================
-RESTORE COMPLETED SUCCESSFULLY
-============================================
-Restored from backup: 20251006_115719
-Target datagroups:
-  Pools: datagroup-dashboard-pools
-  Aliases: datagroup-dashboard-pool-alias
-
-Use 'tmsh save sys config' to save the configuration
-
-Restore completed successfully!
-Don't forget to save the configuration: tmsh save sys config
-```
-
----
 
 ### Debug Version
 
