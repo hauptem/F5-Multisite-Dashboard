@@ -6,13 +6,12 @@
 # Copyright (c) 2025 Eric Haupt
 # Released under the MIT License. See LICENSE file for details.
 #
-# OVERVIEW:
 # This script maintains two dashboard datagroups that track LTM pool configurations:
-# 1. datagroup-dashboard-pools: Contains pool names with sort order values for dashboard display
-# 2. datagroup-dashboard-pool-alias: Contains pool names with friendly display aliases
+# 1. datagroup-dashboard-pools: Contains LTM pool names with sort order values 
+# 2. datagroup-dashboard-pool-alias: Contains LTM pool names with friendly aliases
 # 
 # The script runs automatically via iCall to ensure datagroups stay synchronized
-# with actual LTM pool configurations, adding new pools and removing deleted ones.
+# with LTM pool configurations, adding new pools and removing deleted ones.
 #
 
 # ================================================================================
