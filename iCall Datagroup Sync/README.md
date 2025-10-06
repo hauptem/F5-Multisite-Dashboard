@@ -119,12 +119,14 @@ Aliases containing spaces are converted to underscores for F5 compatibility:
 ### Log Messages
 
 **Successful Synchronization:**
+
 ```
 Dashboard sync - Completed successfully: 15 total pools, 2 added, 1 removed
 Dashboard sync - Added pools: web_prod_pool, api_v2_pool
 ```
 
 **No Changes Required:**
+
 ```
 Dashboard sync - No changes required: monitoring 15 pools, excluding 4 patterns
 ```
