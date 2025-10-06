@@ -1,13 +1,11 @@
 // Multi-Site Dashboard JavaScript - CORE MODULE
-// Dashboard Version: 1.7
-// Dashboard JSON:    1.7
-// Date: September 2025
+// Dashboard Version: 1.8
+// Dashboard JSON:    1.8
 // Author: Eric Haupt
 // License: MIT
 //
 // Copyright (c) 2025 Eric Haupt
 // Released under the MIT License. See LICENSE file for details.
-// https://github.com/hauptem/F5-Multisite-Dashboard
 //
 // Description: Core coordination functionality including initialization, themes, 
 // timers, view modes, wake lock management, and alias functionality

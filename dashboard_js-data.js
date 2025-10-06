@@ -1,13 +1,11 @@
 // Multi-Site Dashboard JavaScript - DATA MODULE
-// Dashboard Version: 1.7
-// Dashboard JSON:    1.7
-// Date: September 2025
+// Dashboard Version: 1.8
+// Dashboard JSON:    1.8
 // Author: Eric Haupt
 // License: MIT
 //
 // Copyright (c) 2025 Eric Haupt
 // Released under the MIT License. See LICENSE file for details.
-// https://github.com/hauptem/F5-Multisite-Dashboard
 //
 // Description: Data management, state tracking, pool reordering functionality, 
 // DNS hostname caching, and alias mode persistence
@@ -48,7 +46,7 @@ Dashboard.data.getInstanceData = function() {
       },
       hostnameCache: {
         maxEntries: 5000,
-        chunkSize: 250,
+        chunkSize: 64,
         persistencePrefix: 'hostnameCache_'
       }
     };
@@ -95,7 +93,7 @@ Dashboard.data.initializeHostnameCache = function() {
   // Remove in-memory cache - only keep configuration
   instanceData.hostnameCache = {
     maxEntries: 5000,
-    chunkSize: 250,
+    chunkSize: 64,
     persistencePrefix: 'hostnameCache_'
   };
   

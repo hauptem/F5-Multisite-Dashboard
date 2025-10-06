@@ -1,13 +1,11 @@
 // Multi-Site Dashboard JavaScript - UI MODULE
-// Dashboard Version: 1.7
-// Dashboard JSON:    1.7
-// Date: September 2025
+// Dashboard Version: 1.8
+// Dashboard JSON:    1.8
 // Author: Eric Haupt
 // License: MIT
 //
 // Copyright (c) 2025 Eric Haupt
 // Released under the MIT License. See LICENSE file for details.
-// https://github.com/hauptem/F5-Multisite-Dashboard
 //
 // Description: UI rendering, search filtering, visual state management, 
 // MACRO/MICRO view mode support, search recall and save, and integrated grid management
@@ -2424,7 +2422,8 @@ Dashboard.ui.compareIPAddresses = function(ip1, ip2) {
 Dashboard.ui.getPoolDisplayName = function(pool) {
   // Check if alias mode is enabled and alias is available
   if (Dashboard.state.currentAliasMode && pool.alias && pool.alias !== null && pool.alias !== 'null') {
-    return pool.alias;
+    // Convert underscores to spaces for alias display
+    return pool.alias.replace(/_/g, ' ');
   }
   
   // Fall back to pool name
@@ -2442,15 +2441,14 @@ Dashboard.ui.getPoolDisplayTooltip = function(pool) {
     return 'Pool Name: ' + pool.name;
   }
   
-  // If showing pool name, tooltip shows alias if available
+  // If showing pool name, tooltip shows alias if available (convert underscores to spaces)
   if (pool.alias && pool.alias !== null && pool.alias !== 'null') {
-    return 'Pool Alias: ' + pool.alias;
+    return 'Pool Alias: ' + pool.alias.replace(/_/g, ' ');
   }
   
   // No alias available
   return 'Pool Name: ' + pool.name;
 };
-
 /**
  * Ensure backward compatibility with logger functions for legacy code support
  */
