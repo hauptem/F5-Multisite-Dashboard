@@ -1,1 +1,1 @@
-
+This iRule can be used to restrict a GTM listener that is dedicated for dashboard use. One of the reasons we would want a dedicated listener would be to place a transparent cache in the DNS profile to absorb PTR requests coming from Dashboard Front-ends or API-Hosts in large deployments or where dashboard is being used by many people. If a dedicated GTM listener is not deployed then this iRule is not needed at all.
