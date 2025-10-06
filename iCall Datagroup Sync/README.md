@@ -90,6 +90,7 @@ sys icall script dashboard-pool-sync {
 ```bash
 # Save configuration
 tmsh save sys config
+```
 
 ## Configuration Options
 
