@@ -298,7 +298,7 @@ X-Need-DNS-IPs-2: 192.168.2.1,192.168.2.2
 3. **Response Generation**: Return scoped pool data with hostname information
 
 ---
-## JSON Schema v1.7.x
+## JSON Schema v1.8
 
 ```bash
 /api/proxy/pools
@@ -337,7 +337,7 @@ X-Need-DNS-IPs-2: 192.168.2.1,192.168.2.2
      "hostname": "bigip-hostname",
      "timestamp": "YYYY-MM-DD HH:MM:SS",
      "uptime_seconds": number,
-     "version": "1.7",
+     "version": "1.8",
      "pools_configured": number,
      "message": "status description"
    }
