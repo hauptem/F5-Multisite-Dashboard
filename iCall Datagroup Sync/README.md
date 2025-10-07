@@ -62,6 +62,13 @@ When the editor opens, paste the complete 'dashboard-pool-sync.tcl' script conte
 
 ### 4. Configure Script Parameters
 
+The dashboard-pool-sync.tcl script contains editable parameters that offer various functional options.
+
+- If custom datagroup names are used for your dashboard configurations they can be edited
+- If datagroup backups are desired, this can be enabled and the number of backup files and the backup location can be set
+- If you have pools that you **do not** wish to display in the dashboard, these can be either explicitely excluded or excluded via a pattern. Note that once you exclude pools they will not be removed from the datagroups if they are already present. The exclusion feature will simply prevent them from being re-added during the iCall script run. You must manually remove excluded pools and aliases from the datagroups once you have set the desired exclusion parameters in this script.
+- The script supports auto-alias generation using the description field of the LTM Pool. If you desire to use your current pool descriptors as dashboard aliases enable this feature. It will not overwrite aliases that are already present.
+
 In vi edit the parameters of the script to suit your needs:
 
 ```tcl
@@ -84,7 +91,7 @@ set excluded_pools {
 # When enabled, creates friendly names from pool descriptions for dashboard display
 # Only updates aliases that are currently empty
 set auto_generate_aliases 1   ; # 0 = disabled; 1 = enabled
-set description_max_length 255 ; # Maximum characters in generated alias
+set description_max_length 80 ; # Maximum characters in generated alias
 ```
 
 ### 5. Edit the script definition and handler in tmsh
