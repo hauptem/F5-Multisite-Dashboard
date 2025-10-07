@@ -210,6 +210,12 @@ echo "Total pools configured: $(echo $POOLS | wc -w)"
 
 **Note:** After running this script, you can manually customize aliases by modifying the `datagroup-dashboard-pool-alias` data group to provide user-friendly display names.
 
+## Optional capability: iCall Dashboard Pool Sync Script
+
+An iCall script that will periodically refresh the pool and alias datagroups with the current LTM pool configuration.
+
+📋 **[iCall Script](/iCall%20Datagroup%20Sync/README.md)** - Step-by-step setup instructions for both Dashboard Front-end and API-Host components
+
 ---
 
 ### Create Required Pools
@@ -692,6 +698,12 @@ echo "Total pools configured: $(echo $POOLS | wc -w)"
 
 **Note:** After running this script, you can manually customize aliases by modifying the `datagroup-dashboard-pool-alias` data group to provide user-friendly display names.
 
+## Optional capability: iCall Dashboard Pool Sync Script
+
+An iCall script that will periodically refresh the pool and alias datagroups with the current LTM pool configuration.
+
+📋 **[iCall Script](/iCall%20Datagroup%20Sync/README.md)** - Step-by-step setup instructions for both Dashboard Front-end and API-Host components
+
 ---
 
 ### Create Required Pools (API Host)
@@ -936,15 +948,6 @@ Copy the complete DNS iRule code (from `DNS_Dashboard-DNS-Restrict_v1.0_irule.tx
 Note: It is recommended to also implement a transparent cache for the dashboard listener in a `dashboard-dns` profile to reduce DNS PTR queries to Infrastructure DNS servers even further.
 
 ---
-
-## Optional capability: iCall Dashboard Pool Sync Script
-
-An iCall script that will periodically refresh the pool and alias datagroups with the current LTM pool configuration.
-
-📋 **[iCall Script](/iCall%20Datagroup%20Sync/README.md)** - Step-by-step setup instructions for both Dashboard Front-end and API-Host components
-
----
-
 
 ## Testing and Validation
 
