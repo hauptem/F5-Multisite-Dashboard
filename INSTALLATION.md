@@ -936,6 +936,13 @@ Note: It is recommended to also implement a transparent cache for the dashboard 
 
 ---
 
+## Optional capability: iCall Dashboard Pool Sync Script
+
+📋 **[iCall Script](/iCall Datagroup Sync/README.md)** - Step-by-step setup instructions for both Dashboard Front-end and API-Host components
+
+---
+
+
 ## Testing and Validation
 
 ### Basic API Testing
