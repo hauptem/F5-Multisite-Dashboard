@@ -5,6 +5,7 @@
 # License: MIT
 # Copyright (c) 2025 Eric Haupt
 # Released under the MIT License. See LICENSE file for details.
+# https://github.com/hauptem/F5-Multisite-Dashboard
 #
 # This script maintains two dashboard datagroups that track LTM pool configurations:
 # 1. datagroup-dashboard-pools: Contains LTM pool names with sort order values 
