@@ -97,7 +97,7 @@ sys icall handler periodic dashboard-pool-sync-handler {
 sys icall script dashboard-pool-sync {
     app-service none
     definition {
-        source /config/icallscripts/dashboard/dashboard-sync.tcl
+        source /config/icallscripts/dashboard/dashboard-pool-sync.tcl
     }
     description none
     events none
