@@ -8,8 +8,8 @@
 # https://github.com/hauptem/F5-Multisite-Dashboard
 #
 # This script maintains two dashboard datagroups that track LTM pool configurations:
-# 1. datagroup-dashboard-pools: Contains LTM pool names with sort order values 
-# 2. datagroup-dashboard-pool-alias: Contains LTM pool names with friendly aliases
+# - datagroup-dashboard-pools: Contains LTM pool names with sort order values 
+# - datagroup-dashboard-pool-alias: Contains LTM pool names with friendly aliases
 # 
 # The script runs automatically via iCall to ensure datagroups stay synchronized
 # with LTM pool configurations, adding new pools and removing deleted ones.
