@@ -938,6 +938,8 @@ Note: It is recommended to also implement a transparent cache for the dashboard 
 
 ## Optional capability: iCall Dashboard Pool Sync Script
 
+An iCall script that will periodically refresh the pool and alias datagroups with the current LTM pool configuration.
+
 📋 **[iCall Script](/iCall%20Datagroup%20Sync/README.md)** - Step-by-step setup instructions for both Dashboard Front-end and API-Host components
 
 ---
