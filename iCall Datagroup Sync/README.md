@@ -89,7 +89,17 @@ set description_max_length 255 ; # Maximum characters in generated alias
 
 ### 5. Edit the script definition and handler in tmsh
 
+Note: The script must be created before the handler.
+
 ```bash
+In tmsh:
+
+create sys icall script dashboard-pool-sync
+** edit definition line in editor as you would in vi**
+
+create sys icall handler periodic dashboard-pool-sync-handler { interval 86400 script dashboard-pool-sync }
+
+
 sys icall handler periodic dashboard-pool-sync-handler {
     interval 86400
     script dashboard-pool-sync
