@@ -195,7 +195,6 @@ chmod +x /usr/local/bin/dashboard-restore.sh
 
 **Environment:**
 - F5 BIG-IP with dashboard pool sync running
-- Backup files from October 6th, 2025
 - Current datagroups need to be restored from backup
 
 **Backup Directory Contents:**
