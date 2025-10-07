@@ -3,9 +3,9 @@
 // Dashboard JSON:    1.8
 // Author: Eric Haupt
 // License: MIT
-//
 // Copyright (c) 2025 Eric Haupt
 // Released under the MIT License. See LICENSE file for details.
+// https://github.com/hauptem/F5-Multisite-Dashboard
 //
 // Description: Core coordination functionality including initialization, themes, 
 // timers, view modes, wake lock management, and alias functionality
