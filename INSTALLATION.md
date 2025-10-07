@@ -8,6 +8,7 @@ This guide provides complete step-by-step installation procedures for both Front
 - [Frontend Installation](#frontend-installation)
 - [API Host Installation](#api-host-installation)
 - [GTM/DNS Listener Configuration](#gtmdns-listener-configuration)
+- [iCall Dashboard Pool Sync Script](#iCall-Dashboard-Pool-Sync-Script)
 - [Testing and Validation](#testing-and-validation)
 - [Debug System Operation](#debug-system-operation)
 - [Troubleshooting](#troubleshooting)
