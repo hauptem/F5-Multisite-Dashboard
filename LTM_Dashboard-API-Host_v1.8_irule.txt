@@ -5,6 +5,7 @@
 # License: MIT
 # Copyright (c) 2025 Eric Haupt
 # Released under the MIT License. See LICENSE file for details.
+# https://github.com/hauptem/F5-Multisite-Dashboard
 #
 # Description:
 #   This iRule provides a JSON-enabled backend API endpoint for the multi-site dashboard.  
