@@ -21,12 +21,6 @@ In the F5 Multisite Dashboard, there are two datagroups that must be managed whe
 
 This script runs as an iCall event and parses LTM pool configurations periodically. It compares the LTM pool configuration with the dashboard datagroup configuration to identify pools that exist in LTM but not in the dashboard or vice versa. It then rebuilds the two datagroups dynamically and the dashboard will update upon its next poll event. This script should be run on all Dashboard Front-ends and API-Hosts where automatic management of dashboard datagroups is desired. This script was released for Dashboard v1.8.
 
-The script supports a number of configurable options:
-- Periodic datagroup backups
-- The number of backup files
-- Exclusion capability for pools that are not desired in dashboard
-- The auto-generation of dashboard aliases using the value of the LTM pool description field
-
 It is recommended to test and evaluate this script in your demo/lab/preproduction environment before deploying to production. 
 
 ## Installation Steps
@@ -65,8 +59,11 @@ When the editor opens, paste the complete 'dashboard-pool-sync.tcl' script conte
 The dashboard-pool-sync.tcl script contains editable parameters that offer various functional options.
 
 - If custom datagroup names are used for your dashboard configurations they can be edited
+
 - If datagroup backups are desired, this can be enabled and the number of backup files and the backup location can be set
+
 - If you have pools that you **do not** wish to display in the dashboard, these can be either explicitely excluded or excluded via a pattern. Note that once you exclude pools they will not be removed from the datagroups if they are already present. The exclusion feature will simply prevent them from being re-added during the iCall script run. You must manually remove excluded pools and aliases from the datagroups once you have set the desired exclusion parameters in this script.
+
 - The script supports auto-alias generation using the description field of the LTM Pool. If you desire to use your current pool descriptors as dashboard aliases enable this feature. It will not overwrite aliases that are already present.
 
 In vi edit the parameters of the script to suit your needs:
