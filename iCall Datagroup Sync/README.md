@@ -50,6 +50,7 @@ chmod 755 /var/tmp/dashboard_backups
 ```bash
 # Create script
 mkdir -p /config/icallscripts/dashboard
+cd /config/icallscripts/dashboard
 vi dashboard-pool-sync.tcl
 ```
 When the editor opens, paste the complete 'dashboard-pool-sync.tcl' script content and save (`:wq` in vi).
