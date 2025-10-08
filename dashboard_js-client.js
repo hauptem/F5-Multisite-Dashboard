@@ -193,11 +193,11 @@ Dashboard.client.loadPoolData = function(forceDNSResolution = false) {
     const currentData = JSON.parse(sessionStorage.getItem(cacheKey) || '{}');
     
     if (currentData.pools && Dashboard.data && Dashboard.data.getAllIPsForDNSResolution) {
-      // MODIFIED: Check if search filtering is active to determine scoping
+      // Check if search filtering is active to determine scoping
       const uiInstanceState = Dashboard.ui && Dashboard.ui.getInstanceState ? Dashboard.ui.getInstanceState() : null;
       const shouldRespectVisibility = uiInstanceState && uiInstanceState.searchFilterActive && uiInstanceState.searchFilter;
       
-      // MODIFIED: Pass visibility flag to getAllIPsForDNSResolution
+      // Pass visibility flag to getAllIPsForDNSResolution
       const allIPs = Dashboard.data.getAllIPsForDNSResolution(currentData, shouldRespectVisibility);
       
       if (allIPs.length > 0 && Dashboard.data.buildNeedDNSHeaders) {
@@ -268,7 +268,7 @@ Dashboard.client.loadPoolData = function(forceDNSResolution = false) {
     }
     
     // =============================================================================
-    // DNS: Merge server response with client hostname cache (with safety checks)
+    // DNS: Merge server response with client hostname cache 
     // =============================================================================
     let processedData = data;
     try {
@@ -973,7 +973,7 @@ Dashboard.client.processJSONResponse = function(response) {
 };
 
 /**
- * Standardized AJAX POST request for settings with comprehensive error handling
+ * Standardized AJAX POST request for settings with error handling
  * @param {string} endpoint - URL endpoint for the request
  * @param {string} parameter - Parameter name for the POST body
  * @param {string} value - Parameter value for the POST body
@@ -1014,7 +1014,7 @@ Dashboard.client.sendPoolDataRequest = function(requestHeaders = {}, signal = nu
   // Add instance ID header for backend identification
   headers['X-Instance-ID'] = Dashboard.core.instanceID;
   
-  // CRITICAL FIX: Send instance-specific selected site as header
+  // Send instance-specific selected site as header
   headers['X-Selected-Site'] = Dashboard.state.currentSite || '';
   
   const requestOptions = {
