@@ -186,11 +186,11 @@ tmsh modify ltm pool db_cluster_3306 description "Production Database Cluster"
 
 ---
 
-## Datagroup Recovery and Restore
+## (OPTIONAL) Datagroup Recovery and Restore
 
 ### Install the Restore Script
 
-The restore script provides datagroup recovery capabilities using dashboard-pool-sync backup files in the event that an administrator desires to revert to a previous dashboard datagroup configuration. This process is only applicable if the backup feature has been enabled.
+The restore script provides datagroup recovery capabilities using dashboard-pool-sync backup files in the event that an administrator desires to revert to a previous dashboard datagroup configuration. **This process is only applicable if the backup feature has been enabled.**
 
 **Create the restore script:**
 
