@@ -11,7 +11,7 @@
 - [Installation Steps](#installation-steps)
 - [Configuration Options](#configuration-options)
 - [Alias Processing](#alias-processing)
-- [Datagroup Recovery and Restore](#datagroup-recovery-and-restore)
+- [Datagroup Recovery and Restore](#optional-datagroup-recovery-and-restore)
 - [License](#license)
 - [Disclaimer](#disclaimer)
 
