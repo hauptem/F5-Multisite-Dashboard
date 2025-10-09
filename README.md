@@ -14,7 +14,7 @@
 
 ---
 
-A comprehensive real-time monitoring dashboard for F5 BIG-IP load balancers featuring multi-site support, DNS hostname resolution, member state tracking, and advanced filtering capabilities.
+A comprehensive near real-time monitoring dashboard for F5 BIG-IP load balancers featuring multi-site support, DNS hostname resolution, member state tracking, and advanced filtering capabilities.
 
 ---
 
