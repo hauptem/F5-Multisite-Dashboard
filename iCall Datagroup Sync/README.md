@@ -125,7 +125,11 @@ sys icall script dashboard-pool-sync {
 tmsh save sys config
 ```
 
-### 7. Repeat this process on other devices in the cluster
+### 7. Repeat this process on other devices in the cluster:
+
+- Create the /var/tmp/dashboard_backups directory
+- Create the /config/icallscripts/dashboard directory
+- Create the dashboard-pool-sync.tcl script
 
 
 ## Configuration Options
