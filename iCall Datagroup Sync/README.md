@@ -35,7 +35,9 @@ tmsh create ltm data-group internal datagroup-dashboard-pools type string
 tmsh create ltm data-group internal datagroup-dashboard-pool-alias type string
 ```
 
-### 2. Create Directories
+### 2. Create Backup Directory
+
+This step can be skipped if you do not plan to use the datagroup backup feature.
 
 ```bash
 # Create backup directory
@@ -152,12 +154,12 @@ Patterns to exclude from dashboard (supports wildcards):
 ## Alias Processing
 
 ### Space Handling
-Aliases containing spaces are converted to underscores in order to prevent complex parsing and escaping processing:
+Aliases containing spaces are converted to underscores in order to prevent complex parsing and escaping processing in tmsh:
 
 - **Pool Description**: "Production Web Servers"
 - **Stored Alias**: "Production_Web_Servers"
 
-Note: The Multisite Dashboard v1.8 UI Module will now replace underscores with spaces for proper alias display.
+Note: The Multisite Dashboard v1.8 Javascript UI Module will now replace added alias underscores with spaces for proper alias display.
 
 ### Log Messages
 
