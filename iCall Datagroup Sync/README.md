@@ -125,6 +125,9 @@ sys icall script dashboard-pool-sync {
 tmsh save sys config
 ```
 
+### 7. Repeat this process on other devices in the cluster
+
+
 ## Configuration Options
 
 ### Feature Controls
