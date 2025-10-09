@@ -559,7 +559,7 @@ Press Alt+R or click the "Resolve" button to force fresh DNS resolution. Press A
 
 #### Is there a maximum number of pools the dashboard can display?
 
-There's no hard limit, but performance may decrease with very large numbers of pools (1000+). Use search filtering and MICRO view to manage large pool sets effectively. Dashboard 1.x has been tested with 600 pools and 800+ nodes per-site on a Lab license VE without issue with the JSON response being 200k for 600 pools.
+There's no hard limit, but browser performance may decrease with very large numbers of pools (1000+). Use search filtering and MICRO view to manage large pool sets effectively. Dashboard 1.x has been tested with 600 pools and 800+ nodes per-site on a Lab license VE without issue with the JSON response being 200k for 600 pools.
 
 #### How do I pause polling if I need to step away for a time, but don't want to lose my existing saved site session data?
 
