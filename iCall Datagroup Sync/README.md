@@ -27,7 +27,7 @@ It is recommended to test and evaluate this script in your demo/lab/preproductio
 
 ### 1. Create Required Datagroups (if not already created)
 
-The script requires two string-type datagroups. **Datagroup names can be customized** in the script configuration.
+The script requires two string-type datagroups. Datagroup names can be customized in the script configuration.
 
 ```bash
 # Create default datagroups
