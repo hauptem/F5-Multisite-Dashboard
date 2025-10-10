@@ -90,7 +90,6 @@ The dashboard requires several data groups for configuration and access control.
 3. Configure data group:
    - **Name**: `datagroup-dashboard-clients`
    - **Type**: `Address`
-   - **Description**: `Authorized client networks for dashboard access`
 4. Add client networks:
    - **Address**: `192.168.1.0/24` (example - your client network)
    - **Address**: `10.0.0.0/8` (add your specific subnets)
@@ -102,7 +101,6 @@ The dashboard requires several data groups for configuration and access control.
 2. Configure data group:
    - **Name**: `datagroup-dashboard-debug`
    - **Type**: `Address`
-   - **Description**: `Client IPs authorized for debug logging`
 3. Add debug clients:
    - **Address**: `192.168.1.100` (admin workstation IP)
    - **Address**: `10.0.1.50` (network engineer desktop)
@@ -114,7 +112,6 @@ The dashboard requires several data groups for configuration and access control.
 2. Configure data group:
    - **Name**: `datagroup-dashboard-sites`
    - **Type**: `String`
-   - **Description**: `Available monitoring sites with display order`
 3. Add sites; note that the Frontend itself should have the lowest sort order which will cause it to appear first in the list:
    - **String**: `CHICAGO`, **Value**: `10`
    - **String**: `NEW_YORK`, **Value**: `20`
@@ -128,7 +125,6 @@ The dashboard requires several data groups for configuration and access control.
 2. Configure data group:
    - **Name**: `datagroup-dashboard-api-host`
    - **Type**: `String`
-   - **Description**: `Maps site names to backend BIG-IP API IPs`
 3. Add site mappings:
    - **String**: `NEW_YORK`, **Value**: `192.168.2.100`
    - **String**: `LONDON`, **Value**: `192.168.3.100`
@@ -143,7 +139,6 @@ The dashboard requires several data groups for configuration and access control.
 2. Configure data group:
    - **Name**: `datagroup-dashboard-pools`
    - **Type**: `String`
-   - **Description**: `Local pools to display with sort order`
 3. Add local pools. You can also add a sort order; the Javascript UI will show pools from lowest to highest. If no sort order is configured the pools will be displayed in the order they appear within the pools data group. (It is recommended to use sort order increments of 10 for later re-adjustments):
    - **String**: `web_servers_pool`, **Value**: `10`
    - **String**: `app_servers_pool`, **Value**: `20`
@@ -157,7 +152,6 @@ The dashboard requires several data groups for configuration and access control.
 2. Configure data group:
    - **Name**: `datagroup-dashboard-pool-alias`
    - **Type**: `String`
-   - **Description**: `User-friendly names for pools`
 3. Add pool aliases:
    - **String**: `web_servers_pool`, **Value**: `Web Servers`
    - **String**: `app_servers_pool`, **Value**: `Application Tier`
@@ -171,7 +165,6 @@ The dashboard requires several data groups for configuration and access control.
 2. Configure data group:
    - **Name**: `datagroup-dashboard-api-keys`
    - **Type**: `String`
-   - **Description**: `API keys for backend authentication`
 3. Add API key:
    - **String**: `dashboard-api-key-2025-v17`
 4. Click **Finished**
@@ -620,7 +613,6 @@ The dashboard requires several data groups for configuration and access control.
 3. Configure data group:
    - **Name**: `datagroup-dashboard-trusted-frontends`
    - **Type**: `Address`
-   - **Description**: `Authorized Frontend BIG-IP self-IPs for API access`
 4. Add Frontend IPs:
    - **Address**: `192.168.1.50` (Primary Frontend BIG-IP self-IP)
    - **Address**: `192.168.1.51` (Secondary Frontend BIG-IP self-IP)
@@ -633,7 +625,6 @@ The dashboard requires several data groups for configuration and access control.
 2. Configure data group:
    - **Name**: `datagroup-dashboard-pools`
    - **Type**: `String`
-   - **Description**: `Local pools to display with sort order`
 3. Add local pools (recommended to use sort order increments of 10 for later adjustment):
    - **String**: `web2_servers_pool`, **Value**: `10`
    - **String**: `app2_servers_pool`, **Value**: `20`
@@ -647,7 +638,6 @@ The dashboard requires several data groups for configuration and access control.
 2. Configure data group:
    - **Name**: `datagroup-dashboard-pool-alias`
    - **Type**: `String`
-   - **Description**: `User-friendly names for pools`
 3. Add pool aliases:
    - **String**: `web2_servers_pool`, **Value**: `Web Servers`
    - **String**: `app2_servers_pool`, **Value**: `Application Tier`
@@ -661,7 +651,6 @@ The dashboard requires several data groups for configuration and access control.
 2. Configure data group:
    - **Name**: `datagroup-dashboard-api-keys`
    - **Type**: `String`
-   - **Description**: `Valid API keys for dashboard authentication`
 3. Add API key:
    - **String**: `dashboard-api-key-2025-v17`, **Value**: `Production API Key - Issued 2025-09 - Shared with Frontend`
 4. Click **Finished**
