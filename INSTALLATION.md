@@ -217,7 +217,7 @@ The Frontend requires specific pools for health monitoring and backend communica
 
 #### Pool 1 - dashboard-api-hosts_https_pool
 
-This pool is used only for monitoring and detection of API host reachability and operation. The Frontend uses the data group 'datagroup-dashboard-api-host' to actually map client requests for specific sites to backend virtual server IPs. This pool enables dashboard to present intelligence about the state of the API host instead of failing silently.
+This pool is used only for monitoring and detection of API host reachability and operation. The Frontend uses the data group `datagroup-dashboard-api-host` to actually map client requests for specific sites to backend virtual server IPs. This pool enables dashboard to present intelligence about the state of the API host instead of failing silently.
 
 1. Navigate to **Local Traffic → Pools → Pool List**
 2. Click **Create**
