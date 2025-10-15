@@ -44,7 +44,7 @@ Used to limit dashboard debug via Client IP or Client Subnet
 Used to define dashboard site list in the dropdown control - the Frontend is typically the first site defined with the lowest sort order e.g. "CHICAGO = 10".
 
 **4. `datagroup-dashboard-api-host` (String)**  
-Used to map remote Site names to API Host Virtual Server IP addresses. e.g. "NEWYORK = 192.168.4.33". It is this mapping that the Frontend uses to proxy JSON fetch requests to the API hosts.
+Used to map remote Site names to API Host Virtual Server IP addresses. e.g. "NEWYORK = 192.168.4.33". It is this mapping that the Frontend uses to map JSON fetch requests to the API hosts.
 
 **5. `datagroup-dashboard-pools` (String)**  
 Used to provide a list of pools to display. **This is an essential step.** LTM does not permit an iRule to determine general elements of TMOS configuration. Therefore we **must** administratively provide configuration attributes in the form of a list of LTM pool names that the dashboard will be permitted to process via LB::status events and subsequently display. This is the one data group that will require management of pools as new pools are implemented or pools are removed from LTM. A bash script has been provided to assist with the initial population of this data group. **NEW: An iCall-based solution for automatic pool and alias datagroup management is now available for use as of version 1.8.**
@@ -56,7 +56,7 @@ Used to create alias names for actual pool names. This feature is optional, but 
 Used to authenticate Frontend to API hosts. This key can be the same across the entire topology but must exist or the Frontend will have no access to the api endpoint /api/proxy/pools. This is an application-level control for security.
 
 **8. `dashboard-api-hosts_https_pool` (LTM Pool)**  
-This pool contains the API Host IPs for monitoring. The pool is not used for Frontend proxy LB determination, it is used simply to make the Frontend aware of API host operation via LTM pool monitor status.
+This pool contains the API Host IPs. 
 
 **9. `dashboard-dns_udp53_pool` (LTM Pool)**  
 This pool contains the DNS listener used for monitoring purposes only. If the listener is detected down by the monitor attached to this pool, the iRule will fail back to IP-only mode gracefully.
