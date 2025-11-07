@@ -172,7 +172,7 @@ HTTP Request (/api/proxy/pools)
 
 **Memory Management:**
 - Automatic variable cleanup when procedures exit
-- No manual memory management required
+- No manual memory management required (no need to unset a variable)
 
 **Key Design Principles:**
 - **Reusability**: Same procedures work in frontend and API host iRules
