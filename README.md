@@ -168,22 +168,6 @@ HTTP Request (/api/proxy/pools)
 │ • Returns: "null" or "\"hostname.domain.com\""
 └─────────────────────────────────────────────────────────
 ```
-## Stack Execution Flow
-
-**Request Processing:**
-- 2-3 levels deep depending on DNS needs
-- Each level has single, clear responsibility
-- Parameters flow down, results flow up
-
-**Memory Management:**
-- Automatic variable cleanup when procedures exit
-- No manual memory management required (no need to unset a variable)
-
-**Key Design Principles:**
-- **Reusability**: Same procedures work in frontend and API host iRules
-- **Efficiency**: Direct JSON string building, no object serialization
-- **Safety**: Bounded stack depth, automatic variable cleanup, error isolation
-
 ## Architecture Overview - Dataplane protection via poll optimization
 
 The dashboard implements intelligent request scoping to minimize dataplane impact on F5 Big-IP systems while maximizing efficiency through targeted pool monitoring and on-demand DNS resolution.
