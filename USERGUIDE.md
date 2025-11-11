@@ -202,9 +202,9 @@ changed             → Only pools with pulsing status badges (unacknowledged st
 
 ```text
 "web server" AND up                 → Pools with exact phrase "web server" and "up" status
-centos AND changed NOT disabled     → Changed centos servers (not disabled)
-up NOT down                         → Show pools that are fully available
-down NOT up                         → Show pools that are fully unavailable
+centos AND changed NOT disabled     → Changed (alarmed) centos servers (that are not disabled)
+up NOT down                         → Show pools that are fully available with no down members
+down NOT up                         → Show pools that are fully unavailable with no up members
 ```
 
 ### Search Scope
