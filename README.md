@@ -42,6 +42,24 @@ The backend becomes nearly stateless. It receives a request, processes the speci
 
 The implications cascade outward. Because the backend is stateless and lightweight, it scales horizontally without architectural limits. Need to monitor ten sites? Deploy ten API Hosts. Need to support a hundred concurrent users? The backend load barely increases because each browser handles its own state management and filtering. Traditional monitoring systems would require more powerful databases, larger servers, and eventually complete architectural redesign to support that scale. This dashboard just adds more F5 devices running the same lightweight iRule.
 
+## Architecture Topology
+
+The dashboard consists of two main components:
+
+### Front-end (one - or more as desired)
+- Serves the web interface and static assets
+- Handles user authentication via APM
+- Provides local pool monitoring for the frontend site
+- Proxies requests to remote backend API-Hosts
+
+### API-Host (all other clusters within a topology)
+- Exposes JSON API endpoints for pool data
+- Performs DNS resolution and member status checks
+- Provides health monitoring endpoints
+
+**Notional layout of the multi-site topology. Supports multiple Front-ends; scales horizontally as needed**
+<img width="2026" height="1130" alt="Image" src="https://github.com/user-attachments/assets/d629864e-4614-4e6b-8886-553c0b720f2c" />
+
 ---
 
 ### Core Function 
@@ -61,22 +79,6 @@ At its core it's a pool status iRule on steroids:    **query member status → d
 
 ---
 
-## Architecture Topology
-
-The dashboard consists of two main components:
-
-### Front-end (one - or more as desired)
-- Serves the web interface and static assets
-- Handles user authentication via APM
-- Provides local pool monitoring for the frontend site
-- Proxies requests to remote backend API-Hosts
-
-### API-Host (all other clusters within a topology)
-- Exposes JSON API endpoints for pool data
-- Performs DNS resolution and member status checks
-- Provides health monitoring endpoints
-
-
 ## Screenshots
 
 **Theme1 - AGLight in MACRO mode**
@@ -90,9 +92,6 @@ The dashboard consists of two main components:
 
 **3 instances of Dashboard showing 3 sites in 3 tabs of Microsoft Edge with instance site table data isolation**
 <img width="2497" height="1186" alt="Image" src="https://github.com/user-attachments/assets/980ad18f-fa62-431b-b6ac-38dbb86cc6ea" />
-
-**Notional layout of the multi-site topology. Supports multiple Front-ends; scales horizontally as needed**
-<img width="2026" height="1130" alt="Image" src="https://github.com/user-attachments/assets/d629864e-4614-4e6b-8886-553c0b720f2c" />
 
 ---
 
