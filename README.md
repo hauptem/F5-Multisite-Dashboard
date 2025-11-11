@@ -30,14 +30,6 @@ The architecture is distributed rather than centralized. Each F5 site can operat
 
 ---
 
-## The Twenty-Year Market Failure
-
-Enterprise monitoring vendors have sold F5 monitoring capabilities for two decades. SolarWinds, Nagios, PRTG, and dozens of competitors offer F5 integration modules. They charge thousands to tens of thousands of dollars for licenses. They promise comprehensive visibility into your load balancer infrastructure. They deliver SNMP polling with five-minute intervals and dashboards showing historical trends.
-
-What they don't deliver is the answer to the question every F5 administrator asks during an incident: "Which pool members are down right now, across all my sites?"
-
----
-
 ## The Architecture That Changes Everything
 
 Traditional monitoring operates on a simple principle: poll everything, store everything, filter when queried. This works adequately for infrastructure that changes infrequently and where historical trending matters more than instantaneous state. It fails when you need to know what's happening right now and only care about a subset of your total configuration at any given moment.
