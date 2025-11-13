@@ -200,7 +200,7 @@ DNS resolution operates independently from regular polling cycles and is trigger
 Web browsers cannot perform PTR record lookups directly due to security restrictions. The dashboard overcomes this by:
 - Collecting IP addresses of pool members without cached hostnames
 - Packaging them into **X-Need-DNS** headers during user-initiated resolve requests
-- Sending an out-of-cycle request to the backend for DNS processing
+- Sending an out-of-cycle request to the selected site Big-IP for DNS processing
 
 #### Scoping Behavior
 DNS resolution respects search filter visibility:
