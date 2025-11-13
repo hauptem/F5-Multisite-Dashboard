@@ -218,7 +218,7 @@ DNS resolution respects search filter visibility:
 #### DNS Infrastructure Protection
 
 ##### Caching Strategy
-- **Per-Site Caching**: Each site maintains its own hostname cache
+- **Per-Site Caching**: Each site sessionstorage maintains its own hostname cache
 - **Cross-Pool Efficiency**: Duplicate IPs (e.g., SharePoint WFE servers) resolved once per site
 - **Session Persistence**: Cached hostnames survive browser refreshes
 
@@ -226,15 +226,6 @@ DNS resolution respects search filter visibility:
 - **User-Initiated Only**: No automatic DNS queries during regular polling
 - **Cache-First Lookup**: Known hostnames never re-queried until cache is flushed
 - **Infrastructure Respect**: Designed to minimize DNS server load
-
-#### Cache Management
-
-##### Automatic Cache Behavior
-```
-Known Hostname: Skip DNS request
-Unknown IP: Include in X-Need-DNS headers
-Cache Hit: Display cached hostname immediately
-```
 
 ##### Manual Cache Control
 - **Flush Function**: Clears site-specific hostname cache
@@ -247,11 +238,6 @@ Cache Hit: Display cached hostname immediately
 Each site can independently:
 - Enable/disable DNS resolution capability
 - Configure DNS resolver endpoints
-
-##### Recommended Architecture
-- **Site-Specific DNS**: Each site handles its own DNS resolution
-- **Dedicated Resolvers**: Use dedicated DNS resolvers for dashboard queries
-- **Scoped Queries**: Limit resolver scope to `in-addr.arpa` for PTR records
 
 ### Performance Impact Analysis
 
