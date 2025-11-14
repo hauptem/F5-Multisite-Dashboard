@@ -36,7 +36,7 @@ Instead of the backend deciding what to collect and clients filtering afterwards
 
 The backend becomes stateless. It receives a request, processes the specific pools requested, returns JSON, and immediately forgets everything. No state accumulates. No variables persist between requests. Memory usage remains constant regardless of how many requests are processed. The F5 dataplane already handles thousands of decisions per second for production traffic, so checking pool status for a handful of pools every thirty seconds is negligible overhead.
 
-The implications cascade outward. Because the backend is stateless and lightweight, it scales horizontally without architectural limits. Need to monitor ten sites? Deploy ten API Hosts. Need to support a hundred concurrent users? The backend load barely increases because each browser handles its own state management and filtering. Traditional monitoring systems would require more powerful databases, larger servers, and eventually complete architectural redesign to support that scale. This dashboard just adds more F5 devices running the same lightweight iRule.
+The implications cascade outward. Because the backend is stateless and lightweight, it scales horizontally without architectural limits. Need to monitor ten clusters? Deploy ten API Host virtualservers. Need to support a hundred concurrent users? The backend load barely increases because each browser handles its own state management and filtering. Traditional monitoring systems would require more powerful databases, larger servers, and eventually complete architectural redesign to support that scale. This dashboard just adds more F5 devices running the same lightweight iRule.
 
 ## Architecture Topology
 
