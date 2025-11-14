@@ -20,7 +20,7 @@ A comprehensive near real-time monitoring dashboard for F5 BIG-IP load balancers
 
 ## Overview
 
-A production incident is unfolding. Your application is degraded. You need to know immediately: which pool members are down, across all your data centers, right now. Not five minutes ago when your monitoring system last polled. Not "let me login to each F5 and check." Right now.
+A production incident is unfolding. Your application is degraded. You need to know immediately: which pool members are down, across all your data centers, right now. Not five minutes ago when your sluggish monitoring system last polled. Not "let me login to each F5 and check." Right now.
 
 This dashboard answers that question in ten seconds.
 
@@ -28,13 +28,13 @@ It's a browser-based monitoring application that provides real-time visibility i
 
 The architecture is distributed rather than centralized. Each F5 site can operate as either a Dashboard Frontend (serving the interface and aggregating data) or an API Host (providing pool data via JSON endpoints), or both. Sites communicate directly with each other without requiring a central monitoring server. Add ten sites, add a hundred sites—the architecture scales horizontally without redesign because there's no central bottleneck.
 
-Traditional monitoring operates on a simple principle: poll everything, store everything, filter when queried. This works adequately for infrastructure that changes infrequently and where historical trending matters more than instantaneous state. It fails when you need to know what's happening right now and only care about a subset of your total configuration at any given moment.
+Traditional monitoring operates on a simple principle: poll everything, store everything, filter only when queried. This works adequately for infrastructure that changes infrequently and where historical trending matters more than instantaneous state. It fails when you need to know what's happening right now and only care about a subset of your total configuration at any given moment.
 
 This dashboard inverts the traditional model completely. Instead of the backend deciding what to collect and clients filtering afterwards, the client tells the backend exactly what it needs in this specific moment. When a user searches for "sharepoint" and sees three matching pools out of two hundred configured, the next poll cycle queries only those three pools. The backend processes three pool status checks instead of two hundred. That's not a minor optimization—it's a ninety-eight-point-five percent reduction in processing load.
 
-The Big-IPs remain stateless. It receives a request, processes the specific pools requested, returns JSON, and immediately forgets everything. No state accumulates. No variables persist between requests. Memory usage remains constant regardless of how many requests are processed. The F5 dataplane already handles thousands of decisions per second for production traffic, so checking pool status for a handful of pools every thirty seconds is negligible overhead.
+The Big-IPs remain stateless. They receive a JSON request, processes the specific pools requested, returns JSON, and immediately forgets everything. No state accumulates. No variables persist between requests. Memory usage remains constant regardless of how many requests are processed. The F5 dataplane already handles thousands of decisions per second for production traffic, so checking pool status for a handful of pools every thirty seconds is negligible overhead.
 
-The implications cascade outward. Because the system is stateless and lightweight, it scales horizontally without architectural limits. Need to monitor ten clusters? Deploy ten API Host virtualservers. Need to support a hundred concurrent users? The backend load barely increases because each browser handles its own state management and filtering. Traditional monitoring systems would require more powerful databases, larger servers, and eventually complete architectural redesign to support that scale.  This dashboard pushes all the complexity to the robust client browsers.
+The implications cascade outward. Because the system is stateless and lightweight, it scales horizontally without architectural limit. Need to monitor ten Big-IP clusters? Deploy ten API-Host virtualservers. Need to support a hundred concurrent users? The backend load barely increases because each user browser handles its own state management and filtering. Traditional monitoring systems would require more powerful databases, larger servers, and eventually a complete architectural redesign to support that scale.  This dashboard pushes all the state tracking complexity to the client.
 
 ## Architecture Topology
 
