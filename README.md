@@ -32,7 +32,7 @@ Traditional monitoring operates on a simple principle: poll everything, store ev
 
 This dashboard inverts the traditional model completely.
 
-Instead of the backend deciding what to collect and clients filtering afterwards, the client tells the backend exactly what it needs in this specific moment. When a user searches for "web" and sees three matching pools out of two hundred configured, the next poll cycle queries only those three pools. The backend processes three pool status checks instead of two hundred. That's not a minor optimization—it's a ninety-eight-point-five percent reduction in processing load.
+Instead of the backend deciding what to collect and clients filtering afterwards, the client tells the backend exactly what it needs in this specific moment. When a user searches for "sharepoint" and sees three matching pools out of two hundred configured, the next poll cycle queries only those three pools. The backend processes three pool status checks instead of two hundred. That's not a minor optimization—it's a ninety-eight-point-five percent reduction in processing load.
 
 The backend becomes stateless. It receives a request, processes the specific pools requested, returns JSON, and immediately forgets everything. No state accumulates. No variables persist between requests. Memory usage remains constant regardless of how many requests are processed. The F5 dataplane already handles thousands of decisions per second for production traffic, so checking pool status for a handful of pools every thirty seconds is negligible overhead.
 
