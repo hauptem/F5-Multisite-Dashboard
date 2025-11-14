@@ -28,10 +28,6 @@ It's a browser-based monitoring application that provides real-time visibility i
 
 The architecture is distributed rather than centralized. Each F5 site can operate as either a Dashboard Frontend (serving the interface and aggregating data) or an API Host (providing pool data via JSON endpoints), or both. Sites communicate directly with each other without requiring a central monitoring server. Add ten sites, add a hundred sites—the architecture scales horizontally without redesign because there's no central bottleneck.
 
----
-
-## The Architecture That Changes Everything
-
 Traditional monitoring operates on a simple principle: poll everything, store everything, filter when queried. This works adequately for infrastructure that changes infrequently and where historical trending matters more than instantaneous state. It fails when you need to know what's happening right now and only care about a subset of your total configuration at any given moment.
 
 This dashboard inverts the traditional model completely.
