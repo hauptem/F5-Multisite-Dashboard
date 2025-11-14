@@ -54,7 +54,7 @@ The dashboard consists of two main components:
 - Provides health monitoring endpoints
 
 **Notional layout of the multi-site topology. Supports multiple Front-ends; scales horizontally as needed**
-<img width="2026" height="1130" alt="Image" src="https://github.com/user-attachments/assets/d629864e-4614-4e6b-8886-553c0b720f2c" />
+<img width="2023" height="1137" alt="Image" src="https://github.com/user-attachments/assets/3c4a285a-92f2-408f-938d-6b3e65d42440" />
 
 ---
 
