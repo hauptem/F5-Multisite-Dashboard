@@ -14,19 +14,19 @@
 
 ---
 
-A comprehensive near real-time monitoring dashboard for F5 BIG-IP load balancers featuring multi-site support, DNS hostname resolution, member state tracking, and advanced filtering capabilities.
+A comprehensive **near real-time** monitoring dashboard for F5 BIG-IP load balancers featuring multi-site support, DNS hostname resolution, member state tracking, and advanced filtering capabilities.
 
 ---
 
 ## Overview
 
-A production incident is unfolding. Your application is degraded. You need to know immediately: which pool members are down, across all your data centers, right now. Not five minutes ago when your sluggish monitoring system last polled. Not "let me login to each F5 and check." Right now.
+A production incident is unfolding. Your application is degraded. You need to know immediately: which pool members are down, across all your data centers, right now. Not five minutes ago when your sluggish monitoring system last polled. Not "let me login to each F5 and check." **Right now.**
 
 This dashboard answers that question in ten seconds.
 
-It's a browser-based monitoring application that provides real-time visibility into F5 BIG-IP pool member status across unlimited sites. It runs entirely from the F5 devices themselves—no external servers, no databases, no agents, no infrastructure. Upload seven files, configure eight data groups, apply two iRules, and you're operational. Thirty minutes from start to finish.
+It's a browser-based monitoring application that provides real-time visibility into F5 BIG-IP pool member status across unlimited sites. It runs entirely from the F5 devices themselves — no external servers, no databases, no agents, no infrastructure. Upload seven files, configure eight data groups, apply two iRules, and you're operational. Thirty minutes from start to finish.
 
-The architecture is distributed rather than centralized. Each F5 site can operate as either a Dashboard Frontend (serving the interface and aggregating data) or an API Host (providing pool data via JSON endpoints), or both. Sites communicate directly with each other without requiring a central monitoring server. Add ten sites, add a hundred sites—the architecture scales horizontally without redesign because there's no central bottleneck.
+The architecture is distributed rather than centralized. Each F5 site can operate as either a Dashboard Frontend (serving the interface and aggregating data) or an API-Host (providing pool data via JSON endpoints), or both. Sites communicate directly with each other without requiring a central monitoring server. Add ten sites, add a hundred sites—the architecture scales horizontally without redesign because there's no central bottleneck.
 
 Traditional monitoring operates on a simple principle: poll everything, store everything, filter only when queried. This works adequately for infrastructure that changes infrequently and where historical trending matters more than instantaneous state. It fails when you need to know what's happening right now and only care about a subset of your total configuration at any given moment. This dashboard inverts the traditional model completely. Instead of the backend deciding what to collect and clients filtering afterwards, the client tells the backend exactly what it needs in this specific moment. When a user searches for "sharepoint" and sees three matching pools out of two hundred configured, the next poll cycle queries only those three pools. The backend processes three pool status checks instead of two hundred. That's not a minor optimization—it's a ninety-eight-point-five percent reduction in processing load.
 
