@@ -272,7 +272,7 @@ X-Need-DNS-IPs-2: 192.168.2.1,192.168.2.2
 
 ## JSON Schema v1.8
 
-```json
+```bash
 /api/proxy/pools
    {
      "hostname": "bigip-hostname",
@@ -302,7 +302,7 @@ X-Need-DNS-IPs-2: 192.168.2.1,192.168.2.2
    }
 ```
 
-```json
+```bash
 /api/health
    {
      "status": "healthy|unhealthy",
