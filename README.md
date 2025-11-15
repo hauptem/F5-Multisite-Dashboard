@@ -45,6 +45,8 @@ All JavaScript modules, CSS themes, and iRules exist to make that single status 
 
 At its core it's a pool status iRule on steroids:    **query member status → detect changes → display nicely → repeat**
 
+---
+
 ## Architecture Topology
 
 The dashboard consists of two components:
@@ -101,6 +103,8 @@ DNS resolution only supports IPv4 PTR lookups at this time
 ### TMOS Version Compatibility
 - TMOS 15-17.x series (all versions)
 
+---
+
 ## Performance
 
 **Scalability:**
@@ -116,11 +120,13 @@ DNS resolution only supports IPv4 PTR lookups at this time
 
 ---
 
-## Architecture Overview - Call Stack Visualization
+## Architecture Overview
+
+### Call Stack Visualization
 
 The F5 Multisite Dashboard uses a 3-level procedural architecture with automatic memory management and efficient variable scoping. Procedures offer code modularity for easy sharing between Front-end and API-Hosts to maintain operational parity for Dashboard components. It became very apparent early in development that standard iRule "monolithic blocks of code" would be unsustainable long term if we wanted the Front-end and API-Host to operate identically throughout development and feature tuning. Procedures were the logical solution.
 
-```
+```plaintext
 HTTP Request (/api/proxy/pools)
 │
 ▼ LEVEL 0: Global Scope (HTTP_REQUEST Event)
@@ -159,41 +165,41 @@ HTTP Request (/api/proxy/pools)
 │ • Returns: "null" or "\"hostname.domain.com\""
 └─────────────────────────────────────────────────────────
 ```
-## Architecture Overview - Dataplane efficiency via poll optimizations
+
+### Dataplane Efficiency via Poll Optimizations
 
 The dashboard implements intelligent request scoping to minimize dataplane impact on F5 Big-IP systems while maximizing efficiency through targeted pool monitoring and on-demand DNS resolution.
 
-### Pool Request Optimization
-#### How It Works
+#### Pool Request Optimization
+
+##### How It Works
 The dashboard uses **X-Need-Pools** headers to request only visible pool data during each polling cycle, rather than processing all configured pools.
 
-#### Scoping Behavior
+##### Scoping Behavior
 - **Full Site Mode**: When no search filter is active, all pools in `datagroup-dashboard-pools` are processed
-- **Filtered Mode**: When a search filter is active, only visible pools are requested via optimization headers
-- **Header Structure**: Each `X-Need-Pools` header contains up to 5 pool names, with unlimited headers supported for larger pool sets
+- **Filtered Mode**: With an active search showing 4 pools out of 100 configured, only those 4 pools are sent in X-Need-Pools headers
 
-#### Example Scenario
-```
-Site Configuration: 100 pools total
-Active Search Filter: Shows 4 pools
+```plaintext
+Example: 100 configured pools, search filter shows 4 pools
 Request Optimization: Only 4 pools processed by backend
 Performance Gain: 96% reduction in backend processing
 ```
 
-#### Important Notes
+##### Important Notes
 - To update all pools at a site, ensure no search filter is active
 
-### DNS Request Optimization
-#### On-Demand Resolution Model
+#### DNS Request Optimization
+
+##### On-Demand Resolution Model
 DNS resolution operates independently from regular polling cycles and is triggered only by explicit user action via the **Resolve** button.
 
-#### Browser Security Limitations
+##### Browser Security Limitations
 Web browsers cannot perform PTR record lookups directly due to security restrictions. The dashboard overcomes this by:
 - Collecting IP addresses of pool members without cached hostnames
 - Packaging them into **X-Need-DNS** headers during user-initiated resolve requests
 - Sending an out-of-cycle request to the selected site Big-IP for DNS processing
 
-#### Scoping Behavior
+##### Scoping Behavior
 DNS resolution respects search filter visibility:
 
 | Scenario | Total Pools | Visible Pools | DNS Scope |
@@ -201,71 +207,72 @@ DNS resolution respects search filter visibility:
 | No Filter | 50 | 50 | All member IPs |
 | Search Active | 50 | 2 | Only visible pool member IPs |
 
-#### Header Structure
+##### Header Structure
 - **Capacity**: Each `X-Need-DNS` header supports up to 250 IP addresses
 - **Scalability**: Unlimited headers supported for large member sets
 - **Format**: Comma-separated IP address lists
 
-#### DNS Infrastructure Protection
+##### DNS Infrastructure Protection
 
-##### Caching Strategy
+###### Caching Strategy
 - **Per-Site Caching**: Each site sessionstorage maintains its own hostname cache
 - **Cross-Pool Efficiency**: Duplicate IPs (e.g., SharePoint WFE servers) resolved once per site
 - **Session Persistence**: Cached hostnames survive browser refreshes
 
-##### Anti-Strobing Measures
+###### Anti-Strobing Measures
 - **User-Initiated Only**: No automatic DNS queries during regular polling
 - **Cache-First Lookup**: Known hostnames never re-queried until cache is flushed
 - **Infrastructure Respect**: Designed to minimize DNS server load
 
-##### Manual Cache Control
+###### Manual Cache Control
 - **Flush Function**: Clears site-specific hostname cache
 - **Use Case**: PTR record updates or hostname changes
 - **Effect**: Next resolve will re-query all member IPs for fresh data
 
-#### Site-Level DNS Control
+##### Site-Level DNS Control
 
-##### iRule Configuration Options
+###### iRule Configuration Options
 Each site can independently:
 - Enable/disable DNS resolution capability
 - Configure DNS resolver endpoints
 
-### Performance Impact Analysis
+#### Performance Impact Analysis
 
-#### Pool Optimization Benefits
+##### Pool Optimization Benefits
 | Pool Count | Search Filter | Backend Load | Efficiency Gain |
 |------------|---------------|--------------|-----------------|
 | 100 pools | None | 100% | Baseline |
 | 100 pools | 5 visible | 5% | 95% reduction |
 | 200 pools | 10 visible | 5% | 95% reduction |
 
-### Technical Implementation
+#### Technical Implementation
 
-#### Request Header Examples
+##### Request Header Examples
 
-##### Pool Scoping Headers
+###### Pool Scoping Headers
 ```http
 X-Need-Pools-Count: 2
 X-Need-Pools-1: pool1,pool2,pool3,pool4,pool5
 X-Need-Pools-2: pool6,pool7
 ```
 
-##### DNS Resolution Headers
+###### DNS Resolution Headers
 ```http
 X-Need-DNS-Count: 2
 X-Need-DNS-IPs-1: 192.168.1.1,192.168.1.2,...,192.168.1.250
 X-Need-DNS-IPs-2: 192.168.2.1,192.168.2.2
 ```
 
-#### Backend Processing Flow
+##### Backend Processing Flow
 1. **Header Detection**: iRule detects optimization headers
 2. **Scope Determination**: Process only requested pools/IPs
 3. **Response Generation**: Return scoped pool data with hostname information
 
 ---
+
 ## JSON Schema v1.8
 
-```bash
+```json
 /api/proxy/pools
    {
      "hostname": "bigip-hostname",
@@ -295,7 +302,7 @@ X-Need-DNS-IPs-2: 192.168.2.1,192.168.2.2
    }
 ```
 
-```bash
+```json
 /api/health
    {
      "status": "healthy|unhealthy",
@@ -307,6 +314,7 @@ X-Need-DNS-IPs-2: 192.168.2.1,192.168.2.2
      "message": "status description"
    }
 ```
+
 ---
 
 ## Contributing
@@ -329,6 +337,8 @@ When contributing:
 ## License
 
 MIT License - see [LICENSE](LICENSE) file for details.
+
+---
 
 ## Disclaimer
 
