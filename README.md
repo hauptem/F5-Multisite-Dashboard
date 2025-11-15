@@ -159,7 +159,7 @@ HTTP Request (/api/proxy/pools)
 │ • Returns: "null" or "\"hostname.domain.com\""
 └─────────────────────────────────────────────────────────
 ```
-## Architecture Overview - Dataplane protection via poll optimization
+## Architecture Overview - Dataplane efficiency via poll optimizations
 
 The dashboard implements intelligent request scoping to minimize dataplane impact on F5 Big-IP systems while maximizing efficiency through targeted pool monitoring and on-demand DNS resolution.
 
