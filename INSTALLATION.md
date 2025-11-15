@@ -184,6 +184,8 @@ An iCall script that will periodically refresh the pool and alias datagroups wit
 
 📋 **[iCall Script](/iCall%20Datagroup%20Sync/README.md)** - Step-by-step setup instructions for both Dashboard Front-end and API-Host components
 
+---
+
 #### Data Group - datagroup-dashboard-pool-alias
 
 1. Click **Create** (new data group)
