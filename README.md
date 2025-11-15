@@ -26,7 +26,7 @@ A production incident is unfolding. Your application is degraded. You need to kn
 
 This dashboard answers that question in ten seconds.
 
-It's a browser-based monitoring application that provides real-time visibility into F5 BIG-IP pool member status across unlimited sites. It runs entirely from the F5 devices themselves — no external servers, no databases, no agents, no infrastructure. Upload seven files, configure eight data groups, apply two iRules, and you're operational. Thirty minutes from start to finish.
+It's a browser-based monitoring application that provides near real-time visibility into F5 BIG-IP pool member status across unlimited sites. It runs entirely from the F5 devices themselves — no external servers, no databases, no agents, no infrastructure. Upload seven files, configure eight data groups, apply two iRules, and you're operational. Thirty minutes from start to finish.
 
 The architecture is distributed rather than centralized. Each F5 site can operate as either a Dashboard Frontend (serving the interface and aggregating data) or an API-Host (providing pool data via JSON endpoints), or both. Sites communicate directly with each other without requiring a central monitoring server. Add ten sites, add a hundred sites—the architecture scales horizontally without redesign because there's no central bottleneck.
 
