@@ -93,6 +93,8 @@ The dashboard consists of two components:
 All BIG-IP objects (pools, data groups, virtual servers, iRules, etc.) must reside in the `/Common` partition. Multi-partition support is planned for v2.0 and is in development and testing.
 DNS resolution only supports IPv4 PTR lookups at this time
 
+Following the release of partitions in 2.0, an iappLX is planned for the future.
+
 ### TMOS Version Compatibility
 - TMOS 15-17.x series (all versions)
 
