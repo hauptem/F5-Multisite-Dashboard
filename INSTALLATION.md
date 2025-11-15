@@ -619,6 +619,16 @@ The dashboard requires several data groups for configuration and access control.
    - Add additional Self-IPs as needed for Front-end monitors 
 5. Click **Finished**
 
+#### Data Group - datagroup-dashboard-api-keys
+
+1. Click **Create** (new data group)
+2. Configure data group:
+   - **Name**: `datagroup-dashboard-api-keys`
+   - **Type**: `String`
+3. Add API key:
+   - **String**: `dashboard-api-key-2025-v17`, **Value**: `Production API Key - Issued 2025-09 - Shared with Frontend`
+4. Click **Finished**
+
 #### Data Group - datagroup-dashboard-pools
 
 1. Click **Create** (new data group)
@@ -643,16 +653,6 @@ The dashboard requires several data groups for configuration and access control.
    - **String**: `app2_servers_pool`, **Value**: `Application Tier`
    - **String**: `database2_pool`, **Value**: `Database Cluster`
    - **String**: `api2_pool`, **Value**: `API Gateway`
-4. Click **Finished**
-
-#### Data Group - datagroup-dashboard-api-keys
-
-1. Click **Create** (new data group)
-2. Configure data group:
-   - **Name**: `datagroup-dashboard-api-keys`
-   - **Type**: `String`
-3. Add API key:
-   - **String**: `dashboard-api-key-2025-v17`, **Value**: `Production API Key - Issued 2025-09 - Shared with Frontend`
 4. Click **Finished**
 
 #### Automated Pool Discovery
