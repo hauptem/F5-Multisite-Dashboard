@@ -12,8 +12,6 @@
 ![No Framework](https://img.shields.io/badge/Framework-Vanilla%20JS-success?logo=javascript&logoColor=white)
 ![REST API](https://img.shields.io/badge/API-JSON%20REST-green)
 
----
-
 ## Overview
 
 A production incident is unfolding. Your application is degraded. You need to know immediately: which pool members are down, across all your data centers, right now. Not five minutes ago when your sluggish monitoring system last polled. Not "let me login to each F5 and check." 
