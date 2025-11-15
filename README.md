@@ -20,7 +20,9 @@ A comprehensive **near real-time** monitoring dashboard for F5 BIG-IP load balan
 
 ## Overview
 
-A production incident is unfolding. Your application is degraded. You need to know immediately: which pool members are down, across all your data centers, right now. Not five minutes ago when your sluggish monitoring system last polled. Not "let me login to each F5 and check." **Right now.**
+A production incident is unfolding. Your application is degraded. You need to know immediately: which pool members are down, across all your data centers, right now. Not five minutes ago when your sluggish monitoring system last polled. Not "let me login to each F5 and check." 
+
+**Right now.**
 
 This dashboard answers that question in ten seconds.
 
