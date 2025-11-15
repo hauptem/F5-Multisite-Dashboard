@@ -146,31 +146,6 @@ The dashboard requires several data groups for configuration and access control.
    - **String**: `api_pool`, **Value**: `40`
 4. Click **Finished**
 
-#### Data Group - datagroup-dashboard-pool-alias
-
-1. Click **Create** (new data group)
-2. Configure data group:
-   - **Name**: `datagroup-dashboard-pool-alias`
-   - **Type**: `String`
-3. Add pool aliases:
-   - **String**: `web_servers_pool`, **Value**: `Web Servers`
-   - **String**: `app_servers_pool`, **Value**: `Application Tier`
-   - **String**: `database_pool`, **Value**: `Database Cluster`
-   - **String**: `api_pool`, **Value**: `API Gateway`
-4. Click **Finished**
-
-#### Data Group - datagroup-dashboard-api-keys
-
-1. Click **Create** (new data group)
-2. Configure data group:
-   - **Name**: `datagroup-dashboard-api-keys`
-   - **Type**: `String`
-3. Add API key:
-   - **String**: `dashboard-api-key-2025-v17`
-4. Click **Finished**
-
-**Note:** This same key must be configured on all backend BIG-IP systems.
-
 #### Automated Pool Discovery
 
 Use this script to automatically discover and populate existing pools into both pool data groups:
@@ -208,6 +183,31 @@ echo "Total pools configured: $(echo $POOLS | wc -w)"
 An iCall script that will periodically refresh the pool and alias datagroups with the current LTM pool configuration.
 
 📋 **[iCall Script](/iCall%20Datagroup%20Sync/README.md)** - Step-by-step setup instructions for both Dashboard Front-end and API-Host components
+
+#### Data Group - datagroup-dashboard-pool-alias
+
+1. Click **Create** (new data group)
+2. Configure data group:
+   - **Name**: `datagroup-dashboard-pool-alias`
+   - **Type**: `String`
+3. Add pool aliases:
+   - **String**: `web_servers_pool`, **Value**: `Web Servers`
+   - **String**: `app_servers_pool`, **Value**: `Application Tier`
+   - **String**: `database_pool`, **Value**: `Database Cluster`
+   - **String**: `api_pool`, **Value**: `API Gateway`
+4. Click **Finished**
+
+#### Data Group - datagroup-dashboard-api-keys
+
+1. Click **Create** (new data group)
+2. Configure data group:
+   - **Name**: `datagroup-dashboard-api-keys`
+   - **Type**: `String`
+3. Add API key:
+   - **String**: `dashboard-api-key-2025-v17`
+4. Click **Finished**
+
+**Note:** This same key must be configured on all backend BIG-IP systems.
 
 ---
 
