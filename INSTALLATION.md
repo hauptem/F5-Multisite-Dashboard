@@ -952,7 +952,7 @@ Test the health endpoint:
    ```
 
 2. **Expected Response** (HTTP 200):
-   ```json
+```bash
    {
      "status": "healthy",
      "hostname": "NEWYORK-bigip.lab.local",
@@ -990,7 +990,7 @@ Test API key authentication:
 
 **Example Pool Data Response:**
 
-```json
+```bash
 {
   "hostname": "CHICAGO-bigip.lab.local",
   "timestamp": "2025-01-15 14:30:45",
