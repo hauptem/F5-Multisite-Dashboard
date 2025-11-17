@@ -516,17 +516,6 @@ For the Frontend profile, apply these settings:
 5. From the **HTTP Compression Profile** dropdown, select `dashboard-httpcompression`
 6. Click **Update**
 
-#### Expected Compression Ratios
-
-| Component | Content Type | Typical Size (Uncompressed) | Typical Size (Compressed) | Savings |
-|-----------|--------------|----------------------------|---------------------------|---------|
-| **Frontend** | | | | |
-| Main HTML | text/html | 20-30 KB | 5-8 KB | 70-75% |
-| JavaScript Modules | application/javascript | 170 KB (total) | 90-110 KB | 75-80% |
-| CSS Themes | text/css | 50 KB | 10-12 KB | 75-80% |
-| JSON Pool Data (100 pools) | application/json | 150 KB | 30-40 KB | 70-75% |
-| Error Pages | text/html | 2-3 KB | ~1 KB | 60% |
-
 ---
 
 ### APM Configuration
@@ -864,15 +853,6 @@ For the API Host profile, apply these settings:
 4. Scroll down to the **HTTP Compression Profile** section
 5. From the **HTTP Compression Profile** dropdown, select `dashboard-httpcompression`
 6. Click **Update**
-
-#### Expected Compression Ratios
-
-| Component | Content Type | Typical Size (Uncompressed) | Typical Size (Compressed) | Savings |
-|-----------|--------------|----------------------------|---------------------------|---------|
-| **API Host** | | | | |
-| JSON Pool Data (100 pools) | application/json | 150 KB | 30-40 KB | 70-75% |
-| JSON Health Check | application/json | 1 KB | ~500 bytes | 50% |
-| Error Pages | text/html | 2-3 KB | ~1 KB | 60% |
 
 ---
 
