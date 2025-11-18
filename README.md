@@ -26,7 +26,7 @@ The architecture is distributed rather than centralized. Each F5 site can operat
 
 Traditional monitoring operates on a simple principle: poll everything, store everything, filter only when queried. This works adequately for infrastructure that changes infrequently and where historical trending matters more than instantaneous state. It fails when you need to know what's happening right now and only care about a subset of your total configuration at any given moment. This dashboard inverts the traditional model completely. Instead of the backend deciding what to collect and clients filtering afterwards, the client tells the backend exactly what it needs in this specific moment. When a user searches for "sharepoint" and sees three matching pools out of two hundred configured, the next poll cycle queries only those three visble pools. The backend processes three pool status checks instead of two hundred. That's not a minor optimization—it's a ninety-eight-point-five percent reduction in processing load.
 
-The Big-IPs remain stateless. They receive a JSON request, process the specific pools requested, return JSON, and immediately forget everything. No state accumulates. No variables persist between requests. Memory usage remains constant regardless of how many requests are processed. The F5 dataplane already handles thousands of decisions per second for production traffic, so checking pool status for a handful of pools every thirty seconds is negligible overhead. The implications cascade outward. Because the system is stateless and lightweight, it scales horizontally without architectural limit. 
+The Big-IPs remain stateless. They receive a JSON request, process the specific pools requested, return JSON, and immediately forget everything. Great care was taken to limit the impact of the dashboard on the Big-IP operational dataplane. No static/global variables, or state tracking of any kind occurs on the Big-IP's. All dashboard state tracking complexity occurs on the client. The F5 dataplane already handles thousands of decisions per second for production traffic, so checking pool status for a handful of pools every thirty seconds is negligible overhead. Because the system is stateless and lightweight, it scales horizontally without architectural limit. 
 
 ### Core Function 
 
@@ -39,7 +39,7 @@ LB::status pool $pool_name member $ip $port
 - Executes this command across pools and members at each poll
 - Returns status
 
-All JavaScript modules, CSS themes, and iRules exist to make that single status command operationally useful by adding visual presentation, change tracking, and user experience features. Great care was taken to limit the impact of the dashboard on the Big-IP operational dataplane. No static/global variables, or state tracking of any kind occurs on the Big-IP's. All dashboard state tracking complexity occurs on the client.
+All JavaScript modules, CSS themes, and iRules exist to make that single status command operationally useful by adding visual presentation, change tracking, and user experience features. 
 
 At its core it's a pool status iRule on steroids:    **query member status → detect changes → display nicely → repeat**
 
