@@ -183,7 +183,6 @@ Request Optimization: Only 4 pools processed by backend
 Performance Gain: 96% reduction in backend processing
 ```
 
-##### Important Notes
 - To update all pools at a site, ensure no search filter is active
 
 #### DNS Request Optimization
