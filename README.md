@@ -110,12 +110,6 @@ DNS resolution only supports IPv4 PTR lookups at this time
 - Tested with 1000+ pool members on lab grade VE's
 - Currently deployed and in operation with various organizations on pre-iSeries appliances, iSeries appliances, and rSeries appliance tenants
 
-**Resource Usage:**
-- ~2MB memory per dashboard instance
-- 5000 entry FIFO buffer for logger
-- ~1KB/pool in session storage
-- 0% GPU Browser pipeline usage when in an unalarmed state
-
 ---
 
 ## Architecture Overview
