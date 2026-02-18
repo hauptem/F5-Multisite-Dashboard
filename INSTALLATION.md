@@ -20,7 +20,7 @@ This guide provides complete step-by-step installation procedures for both Front
 ## Prerequisites
 
 - F5 BIG-IP with LTM and APM modules provisioned
-- TMOS Version: 15.1 or higher 
+- TMOS Version: 17.1 or higher 
 - DNS resolver configured for PTR lookups (optional)
 - **Note:** Version 1.x is not multi-partition compatible; Partition compatibility is planned for version 2.0.
 
