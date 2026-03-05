@@ -100,6 +100,7 @@ DNS resolution only supports IPv4 PTR lookups at this time
 
 ### TMOS Version Compatibility
 - TMOS 17.x+ series (all versions)
+- TMOS 21.x+ series (all versions)
 
 ---
 
