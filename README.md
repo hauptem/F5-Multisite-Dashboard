@@ -95,8 +95,6 @@ All BIG-IP objects (pools, data groups, virtual servers, iRules, etc.) must resi
 
 Multi-partition support is planned for v2.0 and is in development and testing.
 
-Following the release of partitions in 2.0, an iappLX rpm is planned for the future.
-
 DNS resolution only supports IPv4 PTR lookups at this time
 
 ### TMOS Version Compatibility
