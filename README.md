@@ -86,6 +86,7 @@ The dashboard consists of two components:
 
 📋 **[Complete Installation Guide](INSTALLATION.md)** - Step-by-step setup instructions for both Dashboard Front-end and API-Host components
 
+📋 **[User Guide](USERGUIDE.md)** - Comprehensive Dashboard User Manual
 ---
 
 ## Dashboard Current Limitations
