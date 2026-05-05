@@ -229,15 +229,6 @@ Each site can independently:
 - Enable/disable DNS resolution capability
 - Configure DNS resolver endpoints
 
-#### Performance Impact Analysis
-
-##### Pool Optimization Benefits
-| Pool Count | Search Filter | Backend Load | Efficiency Gain |
-|------------|---------------|--------------|-----------------|
-| 100 pools | None | 100% | Baseline |
-| 100 pools | 5 visible | 5% | 95% reduction |
-| 200 pools | 10 visible | 5% | 95% reduction |
-
 #### Technical Implementation
 
 ##### Request Header Examples
