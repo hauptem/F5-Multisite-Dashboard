@@ -301,13 +301,6 @@ X-Need-DNS-IPs-2: 192.168.2.1,192.168.2.2
 
 ---
 
-This project uses:
-- **iRules (Tcl)** for F5 BIG-IP integration
-- **Vanilla JavaScript** (no frameworks)
-- **CSS** for responsive layout
-
----
-
 ## License
 
 MIT License - see [LICENSE](LICENSE) file for details.
