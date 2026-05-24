@@ -301,20 +301,10 @@ X-Need-DNS-IPs-2: 192.168.2.1,192.168.2.2
 
 ---
 
-## Contributing
-
 This project uses:
 - **iRules (Tcl)** for F5 BIG-IP integration
 - **Vanilla JavaScript** (no frameworks)
 - **CSS** for responsive layout
-
-When contributing:
-1. Maintain compatibility with F5 BIG-IP TMOS 
-2. All development must currently target `/Common` partition (v1.x limitation)
-3. Test with multiple themes and view modes
-4. Verify browser compatibility across supported platforms
-5. Update version numbers consistently across all files
-6. Add reasonable debug logging for new features
 
 ---
 
