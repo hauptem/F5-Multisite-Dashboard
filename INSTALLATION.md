@@ -68,10 +68,10 @@ This variable must be equal to 1 for the Frontend iRule to trigger and needs to 
 
 **12. iFiles:**
 
-- `dashboard_js-core.js` **Javascript Core Module** Core coordination functionality including initialization, themes switching, timers, MACRO/micro view modes, wake lock management, and alias switching
+- `dashboard_js-core.js` **Javascript Core Module** Core coordination functionality including initialization, themes switching, timers, MACRO/MICRO view modes, wake lock management, and alias switching
 - `dashboard_js-client.js` **Javascript Client Module** HTTP communication layer for JSON fetch API calls, settings persistence, DNS operations, and fetch request lifecycle management
 - `dashboard_js-data.js` **Javascript Data Module** Data management, instance tracking, state tracking, pool reordering functionality, and DNS hostname caching
-- `dashboard_js-ui.js` **Javascript UI Module** UI rendering, search filtering, visual state management, MACRO/micro view mode support, search recall and save, and integrated pool grid management
+- `dashboard_js-ui.js` **Javascript UI Module** UI rendering, search filtering, visual state management, MACRO/MICRO view mode support, search recall and save, and integrated pool grid management
 - `dashboard_js-logger.js` **Javascript Logger Module** Dedicated logger with resizable UI, state persistence, memory management, wake lock integration, session storage and copy
 - `dashboard.css` **Dashboard CSS with 3 themes** AGLight (theme1) which is reminiscent of AdminGUI, Monochrome Grey (theme2), and Amber (theme3)
 - `dashboard_logo.png` any 53px by 53px png logo image
@@ -298,7 +298,7 @@ create net dns-resolver dashboard-DNS forward-zones add { in-addr.arpa { nameser
 
 - Replace `192.168.1.53` with your DNS server IP address
 - For GTM integration, use your GTM listener IP address
-- Dashboard will only request PTR records so it is recommended to scope the resolver to in-addr-arpa. unless a shared resolver is used for dashboard
+- Dashboard will only request PTR records so it is recommended to scope the resolver to in-addr.arpa unless a shared resolver is used for dashboard
 
 #### Verify DNS Resolver Creation
 
@@ -733,7 +733,7 @@ create net dns-resolver dashboard-DNS forward-zones add { in-addr.arpa { nameser
 
 - Replace `192.168.1.53` with your DNS server IP address
 - For GTM integration, use your GTM listener IP address
-- Dashboard will only request PTR records so it is recommended to scope the resolver to in-addr-arpa. unless a shared resolver is used for dashboard
+- Dashboard will only request PTR records so it is recommended to scope the resolver to in-addr.arpa unless a shared resolver is used for dashboard
 
 #### Verify DNS Resolver Creation
 
@@ -1018,7 +1018,7 @@ The dashboard debug system uses dual-condition activation to prevent the dashboa
 
 When a client HTTP request arrives, the Frontend iRule first checks if `debug_enabled = 1`, then validates the client IP against the `datagroup-dashboard-debug` list. Only when both conditions are met does it set `client_debug_enabled = 1` and begin logging debug information. For API host architectures, the Frontend forwards the authorized client's IP via an `X-Forwarded-Debug-Client` header to the relevant backend API Host, allowing the API hosts to perform the same dual validation and maintain consistent debug scope across the entire request chain.
 
-Clientside JavaScript debugging follows a similar pattern. Client browsers will never log Dashboard Javascript events to devtools console unless a debug variable is seen in the received JSON response. The Frontend must contain the requesting client IP address in `datagroup-dashboard-debug` and `debug_enabled = 1` for the Frontend to signal the client Javascript (via the JSON "debug_enabled": "enabled|disabled", element) to begin browser console debug (note that debug is not available in the minified code)
+Clientside JavaScript debugging follows a similar pattern. Client browsers will not log Dashboard Javascript operational events to the devtools console unless the Frontend signals debug to the client. The Frontend must contain the requesting client IP address in `datagroup-dashboard-debug` and have `debug_enabled = 1` for this signal to occur. The signal is delivered two ways: the initial page load injects the debug state into the page configuration, and each JSON poll response carries a "debug_enabled": "enabled|disabled" element that can activate console debug mid-session (note that debug is not available in the minified code)
 
 ### Configuration
 
