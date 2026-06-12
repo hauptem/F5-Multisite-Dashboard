@@ -264,7 +264,7 @@ X-Need-DNS-IPs-2: 192.168.2.1,192.168.2.2
      "hostname": "bigip-hostname",
      "timestamp": "YYYY-MM-DD HH:MM:SS",
      "debug_enabled": "enabled|disabled",
-     "instanceId":"inst_timestamp_random" (echoed from request; empty string if no X-Instance-ID header sent),
+     "instanceId":"inst_timestamp_random" (empty string if no X-Instance-ID header sent),
      "pools": [
        {
          "name": "pool_name",
