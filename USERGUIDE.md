@@ -201,11 +201,13 @@ changed             → Only pools with pulsing status badges (unacknowledged st
 ### Advanced Search Examples
 
 ```text
-"web server" AND up                 → Pools with exact phrase "web server" and "up" status
+web AND up                          → Pools containing "web" with "up" status or members
 centos AND changed NOT disabled     → Changed (alarmed) centos servers (that are not disabled)
 up NOT down                         → Show pools that are fully available with no down members
 down NOT up                         → Show pools that are fully unavailable with no up members
 ```
+
+**Note**: Quoted phrases are not supported. Every term is an individual case-insensitive substring match, so `web server` matches pools containing "web" OR "server". If both terms must be present, use `web AND server`. For multi-word aliases, search on the most distinctive single word.
 
 ### Search Scope
 
@@ -331,11 +333,11 @@ The integrated text-based logger provides near real-time activity tracking and d
 ### Logger Interface Features
 
 #### Header Controls
-- **Title**: "Dashboard Logs"
-- **Font Size**: + and - buttons to adjust text size
+- **Title**: "Dashboard Event Logger"
+- **Font Size**: + / R / - buttons to increase, reset, or decrease text size
 - **Expand**: Toggle between normal and full-width view
 - **Copy**: Copy all logger text to clipboard
-- **Clear**: Remove all log entries
+- **Clear**: Remove all log entries (DOM and session storage)
 - **Close (X)**: Close the logger window
 
 #### Content Display
@@ -349,12 +351,12 @@ The integrated text-based logger provides near real-time activity tracking and d
 #### Repositioning
 - **Drag Handle**: Click and drag the header to reposition the logger
 - **Free Positioning**: Place anywhere on screen
-- **Boundaries**: Constrained to browser window
+- **Session Behavior**: Position is not persisted; the logger returns to its default bottom-center position when toggled or reopened
 
 #### Resizing
 - **Resize Handles**: Bottom, right, and corner resize handles
-- **Dynamic Sizing**: Adjust width and height independently
-- **State Persistence**: Size and position remembered
+- **Dynamic Sizing**: Adjust width and height independently (15-80% of viewport height, 50-95% of viewport width)
+- **State Persistence**: Visibility, expanded state, and font size are remembered; custom size and drag position reset when the logger is closed and reopened
 
 ### Log Entry Format
 
@@ -389,12 +391,16 @@ Each log entry contains:
 ### Data Persistence
 
 Settings automatically stored include:
-- **Theme Selection**: Current visual theme
-- **View Mode**: MACRO/MICRO mode per site
-- **Alias Mode**: Pool name display preference per site
-- **Search Filters**: Active search terms per site
-- **Logger State**: Window position and visibility
-- **Custom Pool Order**: Drag-and-drop arrangements per site
+- **Theme Selection**: Current visual theme (cookie, 7 days, shared across tabs)
+- **Refresh Interval**: Polling interval preference (cookie, 7 days, shared across tabs)
+- **View Mode**: MACRO/MICRO mode per site (session storage, per browser tab)
+- **Alias Mode**: Pool name display preference per site (session storage, per browser tab)
+- **Search Filters**: Active search terms per site (session storage, per browser tab)
+- **Saved Searches**: Five global search slots (cookies, 365 days, shared across tabs and sites)
+- **Logger State**: Visibility, expanded state, and font size (session storage, per browser tab)
+- **Custom Pool Order**: Drag-and-drop arrangements per site (session storage, per browser tab)
+
+**Note**: Session storage items persist for the life of the browser tab and are isolated per dashboard instance, which is what enables independent multi-tab monitoring of different sites.
 
 ## NOC Mode Setup
 
@@ -525,7 +531,7 @@ Type "changed" in the search box, click the "Changed" button, or press Alt+C. Th
 
 #### What's the difference between "web app" and "web AND app" in search?
 
-"web app" (without quotes) searches for pools containing "web" OR "app". "web AND app" requires both terms to be present. Use quotes for exact phrases: "web app".
+"web app" searches for pools containing "web" OR "app", since multiple terms use OR logic by default. "web AND app" requires both terms to be present somewhere in the pool's data. Quoted exact-phrase matching is not supported; all terms are individual substring matches.
 
 ### Status Change Management
 

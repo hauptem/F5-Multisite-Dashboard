@@ -21,11 +21,11 @@ A production incident is unfolding. Your application is degraded. You need to kn
 
 This dashboard answers that question in ten seconds.
 
-It's a browser-based monitoring application that provides near real-time visibility into F5 BIG-IP pool member status across unlimited sites. It runs entirely from the F5 devices themselves in the dataplane — no external servers, no databases, no agents, no infrastructure. Upload seven files, configure eight data groups, apply two iRules, and you're operational. Thirty minutes from start to finish.
+It's a browser-based monitoring application that provides near real-time visibility into F5 BIG-IP pool member status across unlimited sites. It runs entirely from the F5 devices themselves in the dataplane: no external servers, no databases, no agents, no infrastructure. Upload seven files, configure eight data groups, apply two iRules, and you're operational. Thirty minutes from start to finish.
 
-The architecture is distributed rather than centralized. Each F5 site can operate as either a Dashboard Frontend (serving the interface and aggregating data) or an API-Host (providing pool data via JSON endpoints), or both. Sites communicate directly with each other without requiring a central monitoring server. Add ten sites, add a hundred sites—the architecture scales horizontally without redesign because there's no central bottleneck.
+The architecture is distributed rather than centralized. Each F5 site can operate as either a Dashboard Frontend (serving the interface and aggregating data) or an API-Host (providing pool data via JSON endpoints), or both. Sites communicate directly with each other without requiring a central monitoring server. Add ten sites, add a hundred sites. The architecture scales horizontally without redesign because there's no central bottleneck.
 
-Traditional monitoring operates on a simple principle: poll everything, store everything, filter only when queried. This works adequately for infrastructure that changes infrequently and where historical trending matters more than instantaneous state. It fails when you need to know what's happening right now and only care about a subset of your total configuration at any given moment. This dashboard inverts the traditional model completely. Instead of the backend deciding what to collect and clients filtering afterwards, the client tells the backend exactly what it needs in this specific moment. When a user searches for "sharepoint" and sees three matching pools out of two hundred configured, the next poll cycle queries only those three visble pools. The backend processes three pool status checks instead of two hundred. That's not a minor optimization—it's a ninety-eight-point-five percent reduction in processing load.
+Traditional monitoring operates on a simple principle: poll everything, store everything, filter only when queried. This works adequately for infrastructure that changes infrequently and where historical trending matters more than instantaneous state. It fails when you need to know what's happening right now and only care about a subset of your total configuration at any given moment. This dashboard inverts the traditional model completely. Instead of the backend deciding what to collect and clients filtering afterwards, the client tells the backend exactly what it needs in this specific moment. When a user searches for "sharepoint" and sees three matching pools out of two hundred configured, the next poll cycle queries only those three visible pools. The backend processes three pool status checks instead of two hundred. That's not a minor optimization. It's a ninety-eight-point-five percent reduction in processing load.
 
 The Big-IPs remain stateless. They receive a JSON request, process the specific pools requested, return JSON, and immediately forget everything. Great care was taken to limit the impact of the dashboard on the Big-IP operational dataplane. No state tracking of any kind occurs on the Big-IP's. All dashboard state tracking complexity occurs on the client. The F5 dataplane already handles thousands of decisions per second for production traffic, so checking pool status for a handful of pools every thirty seconds is negligible overhead. Because the system is stateless and lightweight, it scales horizontally without architectural limit. 
 
@@ -201,8 +201,8 @@ DNS resolution respects search filter visibility:
 | Search Active | 50 | 2 | Only visible pool member IPs |
 
 ##### Header Structure
-- **Capacity**: Each `X-Need-DNS` header supports up to 250 IP addresses
-- **Scalability**: Unlimited headers supported for large member sets
+- **Capacity**: Each `X-Need-DNS-IPs-N` header carries up to 64 IP addresses
+- **Scalability**: Up to 50 numbered headers per request (3,200 member IPs maximum), enforced by backend header-count validation
 - **Format**: Comma-separated IP address lists
 
 ##### DNS Infrastructure Protection
@@ -239,13 +239,15 @@ X-Need-Pools-Count: 2
 X-Need-Pools-1: pool1,pool2,pool3,pool4,pool5
 X-Need-Pools-2: pool6,pool7
 ```
+*(Up to 5 pool names per header. X-Need-Pools-Count reflects the number of numbered headers, maximum 50, for a limit of 250 filtered pools per request. Requests exceeding the cap fall back to full-site processing.)*
 
 ###### DNS Resolution Headers
 ```http
 X-Need-DNS-Count: 2
-X-Need-DNS-IPs-1: 192.168.1.1,192.168.1.2,...,192.168.1.250
+X-Need-DNS-IPs-1: 192.168.1.1,192.168.1.2,...,192.168.1.64
 X-Need-DNS-IPs-2: 192.168.2.1,192.168.2.2
 ```
+*(Up to 64 IPs per header; X-Need-DNS-Count reflects the number of numbered headers, maximum 50)*
 
 ##### Backend Processing Flow
 1. **Header Detection**: iRule detects optimization headers
@@ -262,11 +264,11 @@ X-Need-DNS-IPs-2: 192.168.2.1,192.168.2.2
      "hostname": "bigip-hostname",
      "timestamp": "YYYY-MM-DD HH:MM:SS",
      "debug_enabled": "enabled|disabled",
-     "instanceId":"inst_timestamp_random" or null,
+     "instanceId":"inst_timestamp_random" (echoed from request; empty string if no X-Instance-ID header sent),
      "pools": [
        {
          "name": "pool_name",
-         "alias": "user_friendly_name" or "null",
+         "alias": "user_friendly_name" or null,
          "sort_order": number,
          "status": "UP|DOWN|DISABLED|UNKNOWN|EMPTY",
          "up_members": number,
@@ -278,7 +280,7 @@ X-Need-DNS-IPs-2: 192.168.2.1,192.168.2.2
              "ip": "x.x.x.x",
              "port": "port",
              "status": "up|down|disabled|session_disabled",
-             "hostname": "resolved-hostname" or "null"
+             "hostname": "resolved-hostname" or null
            }
          ]
        }
