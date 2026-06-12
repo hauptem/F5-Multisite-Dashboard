@@ -64,7 +64,7 @@ The dashboard-pool-sync.tcl script contains editable parameters that offer vario
 
 - If datagroup backups are desired, this can be enabled and the number of backup files and the backup location can be set
 
-- If you have pools that you **do not** wish to display in the dashboard, these can be either explicitely excluded or excluded via a pattern. Note that once you exclude pools they will not be removed from the datagroups if they are already present. The exclusion feature will simply prevent them from being re-added during the iCall script run. You must manually remove excluded pools and aliases from the datagroups once you have set the desired exclusion parameters in this script.
+- If you have pools that you **do not** wish to display in the dashboard, these can be either explicitly excluded or excluded via a pattern. Note that once you exclude pools they will not be removed from the datagroups if they are already present. The exclusion feature will simply prevent them from being re-added during the iCall script run. You must manually remove excluded pools and aliases from the datagroups once you have set the desired exclusion parameters in this script.
 
 - The script supports auto-alias generation using the description field of the LTM Pool. If you desire to use your current pool descriptors as dashboard aliases enable this feature. It will not overwrite aliases that are already present.
 
@@ -76,7 +76,7 @@ set pools_datagroup "datagroup-dashboard-pools"
 set alias_datagroup "datagroup-dashboard-pool-alias"
 
 # Backup configuration for change management and recovery
-set create_backups 0          ; # 0 = disabled; 1 = enabled
+set create_backups 1          ; # 0 = disabled; 1 = enabled
 set max_backups 30            ; # Maximum backup files to retain per datagroup
 set backup_dir "/var/tmp/dashboard_backups"  ; # Backup storage location
 
@@ -89,23 +89,29 @@ set excluded_pools {
 # Automatic alias generation from pool description fields
 # When enabled, creates friendly names from pool descriptions for dashboard display
 # Only updates aliases that are currently empty
-set auto_generate_aliases 0   ; # 0 = disabled; 1 = enabled
-set description_max_length 80 ; # Maximum characters in generated alias
+set auto_generate_aliases 1   ; # 0 = disabled; 1 = enabled
+set description_max_length 255 ; # Maximum characters in generated alias
 ```
 
 ### 5. Edit the script definition and handler in tmsh
 
 Note: The script must be created before the handler.
 
+In tmsh, create the script object first. This opens an editor; set the definition to source the script file, then save and exit as you would in vi.
+
 ```bash
-In tmsh:
-
 create sys icall script dashboard-pool-sync
-** edit definition line in editor as you would in vi**
+```
 
+Then create the periodic handler:
+
+```bash
 create sys icall handler periodic dashboard-pool-sync-handler { interval 86400 script dashboard-pool-sync }
+```
 
+The resulting configuration should look like this:
 
+```bash
 sys icall handler periodic dashboard-pool-sync-handler {
     interval 86400
     script dashboard-pool-sync
