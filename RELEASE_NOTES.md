@@ -2,7 +2,7 @@
 
 ## 1.8 (Fall 2025)
 
-Dashboard 1.8 does not support partitions other than Common. The 1.8 release will remain in the repo as the last main release before the 2.0 rework.
+Dashboard 1.8 does not support partitions other than Common. The 1.8 release will remain in the repo as the last stable release before the 2.0 rework.
 
 ## 2.0 (July 2026)
 
