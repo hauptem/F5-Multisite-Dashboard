@@ -2,7 +2,7 @@
 
 ## 2.0 (July 2026)
 
-Dashboard 2.0 adds multi-partition support. The frontend iRule, API-Host iRules, iCall script, iFiles, and datagroups must all be upgraded together. 
+Dashboard 2.0 adds multi-partition support.
 
 ### New Features
 
