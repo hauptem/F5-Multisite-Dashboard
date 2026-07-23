@@ -160,27 +160,17 @@ tmsh save sys config
 
 Pool names are the record keys and sort order is the value. The UI shows pools from lowest to highest sort order within each partition; increments of 10 are recommended for later re-adjustments. Pools in `/Common` use the bare name. Pools in any other partition use the full path:
 
-```bash
-tmsh modify ltm data-group internal /Common/dashboard/datagroup-dashboard-pools records add { web_servers_pool { data 10 } app_servers_pool { data 20 } /dmz/web_servers_pool { data 30 } }
-```
-
-A `/Common` pool must not be listed both bare and as `/Common/name`; that is two entries for one pool and produces a duplicate grid tile. The discovery script (below) generates correct entries automatically and is the recommended way to populate this data group.
-
 #### Data Group - /Common/dashboard/datagroup-dashboard-pool-alias
 
-Alias keys match the pool data group exactly, including full paths for partitioned pools:
+Alias keys match the pool data group exactly, including full paths for partitioned pools
 
-```bash
-tmsh modify ltm data-group internal /Common/dashboard/datagroup-dashboard-pool-alias records add { web_servers_pool { data "Web Servers" } /dmz/web_servers_pool { data "DMZ Web Servers" } }
-```
-
-#### Automated Pool Discovery
+#### Pool Discovery Script
 
 Use the included discovery script to populate both pool data groups automatically:
 
 📋 **[Pool Discovery Script](dashboard_pool_discovery.sh)**
 
-The script discovers pools across all partitions, writes canonical names (bare for `/Common`, full path otherwise), and merges with existing records: hand-tuned sort orders and aliases survive re-runs, new pools append after the current maximum, and removed pools are logged. Edit the two settings at the top before running:
+The script discovers pools across all partitions, writes canonical names, and merges with existing records: hand-tuned sort orders and aliases survive re-runs, new pools append after the current maximum, and removed pools are logged. Edit the two settings at the top before running:
 
 - `EXCLUDE_PARTITIONS`: partitions to hide from the dashboard entirely (`Common` cannot be excluded)
 - `EXCLUDE_POOLS`: individual pools to skip, such as the dashboard's own utility pools
