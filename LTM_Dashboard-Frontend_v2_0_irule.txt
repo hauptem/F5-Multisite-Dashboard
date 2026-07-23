@@ -224,7 +224,7 @@ when HTTP_REQUEST {
                     return
                 }
             } else {
-                call send_error_response 503 "Configuration Error" "No API Endpoint information found for $selected_site<br><br>Please verify Site-to-IP mapping exists in datagroup-dashboard-api-host" "No backend VIP found for site $selected_site in datagroup-dashboard-api-host"
+                call send_error_response 503 "Configuration Error" "No API Endpoint information found for $selected_site. Please verify Site-to-IP mapping exists in datagroup-dashboard-api-host" "No backend VIP found for site $selected_site in datagroup-dashboard-api-host"
                 log local0. "DEBUG: Site $selected_site is not currently mapped to a backend VIP"
                 return
             }
