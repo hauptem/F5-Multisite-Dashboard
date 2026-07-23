@@ -552,11 +552,11 @@ Type the partition name in search. `dmz` shows the dmz partition; If the partiti
 
 #### Two pools have the same name. Which is which?
 
-Pools in different partitions can share a name. When actual pool names are displayed, pools outside Common show their full path (`/dmz/web-pool`) so the two are visibly different. The grid also groups by partition (Common first, then alphabetically), hovering the pool header shows the full path when an alias is displayed, and logger entries always show the full path for pools outside Common.
+Pools in different partitions can share a name. When actual pool names are displayed, pools outside Common show their full path (`/dmz/web-pool`) so the two are visibly different. The grid also groups by partition (Common first, then alphabetically), hovering the pool header shows the full path when an alias is displayed, and logger entries always show the full path for pools non in the Common partition.
 
 #### What's the difference between "web app" and "web AND app" in search?
 
-"web app" searches for pools containing "web" OR "app", since multiple terms use OR logic by default. "web AND app" requires both terms to be present somewhere in the pool's data. Quoted exact-phrase matching is not supported; all terms are individual substring matches.
+"web app" searches for pools containing "web" OR "app", since multiple terms use OR logic by default. "web AND app" requires both terms to be present somewhere in the pool's data. 
 
 ### Status Change Management
 
