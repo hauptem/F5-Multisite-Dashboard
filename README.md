@@ -27,9 +27,9 @@ Pools from `/dmz`, `/secure`, or any other partition appear right alongside your
 
 There is no partition dropdown to manage. The search box is partition aware:
 
-- Type `dmz` and the grid shows just pool in the dmz partition
-- Type `dmz AND web` to narrow it to specific pools within the dmz
-- Add `NOT` to drop anything you don't want in the view i.e. a pool named 'test-dmz' in a non-dmz partition
+- Type `dmz` and the grid shows only pools that reside in the dmz partition
+- Type `dmz AND web` to narrow it to specific web pools within the dmz
+- Add `NOT` to exclude anything you don't want in the view i.e. a pool named 'test-dmz' in a non-dmz partition
 
 ### Same-named pools stay separate
 
