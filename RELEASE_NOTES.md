@@ -1,5 +1,9 @@
 # Release Notes
 
+## 1.8 (Fall 2025)
+
+Dashboard 1.8 does not support partitions other than Common. The 1.8 release will remain in the repo as the last main release before the 2.0 rework.
+
 ## 2.0 (July 2026)
 
 Dashboard 2.0 adds multi-partition support. All components must be upgraded together: frontend iRule, API-Host iRules, iCall script, all iFiles, and all datagroups. There is no compatibility with 1.x components. The first poll after upgrade re-baselines member state for partitioned pools and resets any pending acknowledgments one time. No action is required.
