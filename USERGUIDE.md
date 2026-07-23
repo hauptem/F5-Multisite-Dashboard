@@ -546,9 +546,9 @@ Type "down" in the search box. This will show pools that either have DOWN status
 
 Type "changed" in the search box, click the "Changed" button, or press Alt+C. This shows pools with unacknowledged status changes (pulsing badges).
 
-#### How do I see just one partition?
+#### How do I see just pools in a single partition?
 
-Type the partition name in search. `dmz` shows the dmz partition, and `DisplayAll` is as simple as clearing the search. If the partition name also matches unrelated pool names, add `NOT` terms to trim them out.
+Type the partition name in search. `dmz` shows the dmz partition; If the partition name also matches unrelated pool names, add `NOT` terms to trim them from the display grid.
 
 #### Two pools have the same name. Which is which?
 
