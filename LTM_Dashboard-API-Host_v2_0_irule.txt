@@ -8,7 +8,6 @@
 #
 # Description:
 #   This iRule provides a JSON-enabled backend API endpoint for the multi-site dashboard.  
-#   Note that dashboard v1.x is not multi-partition compatible. 
 #   
 # Dashboard API Hosts Critical Dependencies:
 #
@@ -35,14 +34,6 @@
 #    /api/proxy/pools - Returns JSON array of pool status and member data (requires API key)
 #    /api/health - Returns health status of the API endpoint (no auth)
 #
-
-#
-#   NOTE: Bare pool names in datagroup-dashboard-pools resolve relative to the
-#   virtual server's partition. The bare-equals-Common convention holds while
-#   this virtual server is deployed in /Common; deploying it in another
-#   partition silently repoints every bare entry at that partition.
-#
-
 when RULE_INIT {
 # ======================================================================================================
 # USER CONFIGURATION VARIABLES - Set Debug enable, DNS enable, Dashboard pool name, and Resolver name 
