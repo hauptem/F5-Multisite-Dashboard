@@ -154,9 +154,6 @@ declare -A EXISTING_ALIAS
 # record names and data values only when they contain special characters,
 # so both quoted ("web-pool" { data "10" }) and unquoted
 # (web-pool { data 10 }) forms must parse, plus empty records (name { }).
-# Emits name<TAB>value lines - BIG-IP bash predates 4.3 namerefs, so the
-# caller reads pairs into its own array. Names cannot contain whitespace
-# (F5 object naming) and values cannot contain tabs, so the delimiter is safe
 parse_datagroup_records() {
     local DG="$1"
     local LINE NAME VALUE
