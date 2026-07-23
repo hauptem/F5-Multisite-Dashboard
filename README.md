@@ -43,7 +43,7 @@ Dashboard housekeeping no longer trips the Changes Pending flag on manually sync
 
 ### Upgrading
 
-All dashboard components move to 2.0 together; 1.x and 2.0 pieces don't mix. Common-only deployments keep their member state, acknowledgments, and custom sort orders through the upgrade. The first poll after upgrading establishes fresh baselines for partitioned pools, and that's the whole migration.
+All dashboard components move to 2.0 together; 1.x and 2.0 pieces don't mix. 
 
 ## Dashboard Overview
 
