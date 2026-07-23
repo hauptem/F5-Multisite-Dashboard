@@ -1,4 +1,4 @@
-# F5 Multisite Dashboard 2.0 (now with partition support!)
+# F5 Multisite Dashboard 2.0 (July 23 2026)
 
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![F5 Compatible](https://img.shields.io/badge/F5%20BIG--IP-compatible-orange)
@@ -13,7 +13,7 @@
 ![No Framework](https://img.shields.io/badge/Framework-Vanilla%20JS-success?logo=javascript&logoColor=white)
 ![REST API](https://img.shields.io/badge/API-JSON%20REST-green)
 
-## What's New in 2.0 (July 23 2026)
+## What's New in 2.0 
 
 Dashboard 2.0 now brings multi-partition support. If your BIG-IPs organize applications into administrative partitions, every one of those pools can now be displayed. If you already have Dashboard 1.8 up and running, 2.0 brings no functional changes other than a re-worked iCall method that no longer causes cluster Sync notifications when the script makes a change. If you dont have partitions then staying on 1.8 is the right move.
 
