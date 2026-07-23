@@ -19,19 +19,19 @@ Dashboard 2.0 now brings multi-partition support. If your BIG-IPs organize appli
 
 ### Monitor pools from any partition
 
-Pools from `/dmz`, `/secure`, or any other partition appear right alongside your Common pools in the same grid. No separate views, no extra configuration in the UI. The grid groups everything by partition automatically: Common pools first, then each partition alphabetically, with your custom pool ordering preserved inside each group.
+Pools from `/dmz`, `/secure`, or any other partition appear right alongside your Common pools in the same grid. The grid groups everything by partition automatically: Common pools first, then each partition alphabetically, with your custom pool ordering preserved inside each group.
 
 ### Find what you need with search
 
-There is no partition dropdown to manage. The search box does it all:
+There is no partition dropdown to manage. The search box is partition aware:
 
-- Type `dmz` and the grid shows just that partition
-- Type `dmz AND web` to narrow it to specific pools
-- Add `NOT` to drop anything you don't want in the view
+- Type `dmz` and the grid shows just pool in the dmz partition
+- Type `dmz AND web` to narrow it to specific pools within the dmz
+- Add `NOT` to drop anything you don't want in the view i.e. a pool named 'test-dmz' in a non-dmz partition
 
 ### Same-named pools stay separate
 
-If `web-pool` exists in both Common and `/dmz`, the dashboard treats them as the two different pools they are. Status changes, acknowledgments, and history are tracked independently, log entries show the full path so there is no guessing which one flapped, and drag reordering keeps each partition's pools grouped together.
+If `web-pool` exists in both /Common and `/dmz`, the dashboard treats them as the two different pools they are. Status changes, acknowledgments, and history are tracked independently, log entries show the full path so there is no guessing which one flapped, and drag reordering keeps each partition's pools grouped together.
 
 ### Automatic pool discovery, now partition-aware
 
@@ -39,11 +39,11 @@ The included discovery tooling finds pools across all partitions and keeps the d
 
 ### Friendlier to clusters
 
-Dashboard housekeeping no longer trips the Changes Pending flag on manually synced device groups via a reworked iCall method. The automatically maintained pool lists moved to a device-local location that config sync ignores, so the sync status on your clusters only reflects changes a human actually made.
+Dashboard's iCall Sync script no longer trips the 'Changes Pending' flag on manually synced device groups via a reworked method. The automatically maintained pool lists have been moved to a device-local location that config sync ignores, so the sync status on your clusters only reflects changes a human actually made.
 
 ### Upgrading
 
-All dashboard components move to 2.0 together; 1.x and 2.0 pieces don't mix. 
+All dashboard components must be upgraded to 2.0; 1.8 and 2.0 components are not compatible. 
 
 ## Dashboard Overview
 
