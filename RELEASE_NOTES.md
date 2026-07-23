@@ -25,8 +25,8 @@ Dashboard 2.0 adds multi-partition support.
 
 ### Fixes
 
-- Acknowledging a status change on a route-domain member (10.1.1.1%2) failed silently. Route-domain addresses were misidentified as hostnames by an input check. This bug existed in 1.x but only surfaced in deployments using route domains.
-- All external data rendered into the page is now HTML-escaped, including resolved DNS hostnames, backend error messages, and logger entries.
+- Acknowledging a status change on a route-domain member (10.1.1.1%2) failed silently. Route-domain addresses were misidentified as hostnames by a UI input check. This bug existed in 1.x but only surfaced in deployments using route domains with domain identifiers.
+- All external data rendered into the dashboard page is now HTML-escaped, including resolved DNS hostnames, backend error messages, and logger entries.
 
 ---
 
