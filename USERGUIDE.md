@@ -19,10 +19,12 @@
 - [Keyboard Shortcuts Reference](#keyboard-shortcuts-reference)
 - [Theme Selection](#theme-selection)
 - [Frequently Asked Questions](#frequently-asked-questions)
+- [License](#license)
+- [Disclaimer](#disclaimer)
 
 ## Introduction
 
-The F5 Multisite Dashboard provides centralized monitoring of LTM pools across multiple Big-IP clusters. This web-based interface offers near real-time visibility into pool health, member status, and provides advanced features for tracking status changes and managing your monitoring experience.
+The F5 Multisite Dashboard provides centralized monitoring of LTM pools across multiple BIG-IP clusters. This web-based interface offers near real-time visibility into pool health, member status, and provides advanced features for tracking status changes and managing your monitoring experience.
 
 ## Quick Start
 
@@ -41,7 +43,7 @@ The F5 Multisite Dashboard provides centralized monitoring of LTM pools across m
 
 The header provides essential navigation and site information:
 
-- **Logo and Title**: F5 logo (links to Big-IP Front-end management interface if DNS record exists)
+- **Logo and Title**: F5 logo (links to BIG-IP Frontend management interface if DNS record exists)
 - **Site Information Bar**: Displays current site hostname and last update timestamp (when a site is selected)
 - **Logout Button**: Ends your dashboard session and logs you out of APM
 
@@ -160,9 +162,9 @@ Pool aliases provide user-friendly names as alternatives to technical LTM pool n
 
 When a site is selected, the header displays:
 
-- **Hostname**: The source Big-IP hostname providing the data
+- **Hostname**: The source BIG-IP hostname providing the data
 - **Last Updated**: Timestamp of the most recent client data fetch
-- **Direct Link**: Click hostname to access the source Big-IP management interface (if DNS record exists)
+- **Direct Link**: Click hostname to access the source BIG-IP management interface (if DNS record exists)
 
 ## Advanced Search and Filtering
 
@@ -494,7 +496,7 @@ The dashboard includes three distinct visual themes:
 
 1. **Theme 1 (AGLight)**: Light theme with professional appearance
 2. **Theme 2 (Monochrome Grey)**: Dark theme with high contrast
-3. **Theme 3 (Amber Terminal)**: Terminal-style theme with amber accents
+3. **Theme 3 (Amber)**: Terminal-style theme with amber accents
 
 ### Changing Themes
 
@@ -512,7 +514,7 @@ The default refresh interval is 30 seconds, but you can change it to 10, 60, or 
 
 #### Does the dashboard poll all sites all the time?
 
-No, the Dashboard Javascript Client Module only polls the currently selected site. If you have visited other sites, you retain their polled status in browser sessionstorage and will detect any changes if those sites are visited again, which causes a new poll event.
+No, the Dashboard Javascript Client Module only polls the currently selected site. If you have visited other sites, you retain their polled status in browser session storage and will detect any changes if those sites are visited again, which causes a new poll event.
 
 #### Can I monitor multiple sites simultaneously?
 
@@ -552,7 +554,7 @@ Type the partition name in search. `dmz` shows the dmz partition; If the partiti
 
 #### Two pools have the same name. Which is which?
 
-Pools in different partitions can share a name. When actual pool names are displayed, pools outside Common show their full path (`/dmz/web-pool`) so the two are visibly different. The grid also groups by partition (Common first, then alphabetically), hovering the pool header shows the full path when an alias is displayed, and logger entries always show the full path for pools non in the Common partition.
+Pools in different partitions can share a name. When actual pool names are displayed, pools outside Common show their full path (`/dmz/web-pool`) so the two are visibly different. The grid also groups by partition (Common first, then alphabetically), hovering the pool header shows the full path when an alias is displayed, and logger entries always show the full path for pools not in the Common partition.
 
 #### What's the difference between "web app" and "web AND app" in search?
 
@@ -590,7 +592,7 @@ Press Alt+R or click the "Resolve" button to force fresh DNS resolution. Press A
 
 #### Is there a maximum number of pools the dashboard can display?
 
-There's no hard limit, but browser performance may decrease with very large numbers of pools (1000+). Use search filtering and MICRO view to manage large pool sets effectively. Dashboard 1.x has been tested with 600 pools and 800+ nodes per-site on a Lab license VE without issue with the JSON response being 200k for 600 pools.
+There's no hard limit, but browser performance may decrease with very large numbers of pools (1000+). Use search filtering and MICRO view to manage large pool sets effectively. The dashboard has been tested with 500+ pools and 1000+ pool members per site on a Lab license VE without issue, with the JSON response being approximately 200k for 600 pools.
 
 #### How do I pause polling if I need to step away for a time, but don't want to lose my existing saved site session data?
 
