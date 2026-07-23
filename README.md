@@ -15,7 +15,7 @@
 
 ## What's New in 2.0 (July 23 2026)
 
-Dashboard 2.0 now brings multi-partition support. If your BIG-IPs organize applications into administrative partitions, every one of those pools can now be displayed.
+Dashboard 2.0 now brings multi-partition support. If your BIG-IPs organize applications into administrative partitions, every one of those pools can now be displayed. If you already have Dashboard 1.8 up and running, 2.0 brings no functional changes other than a re-worked iCall method that no longer causes cluster Sync notifications when the script makes a change. If you dont need partitions staying on 1.8 is the right move.
 
 ### Monitor pools from any partition
 
