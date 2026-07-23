@@ -1,16 +1,27 @@
 # iCall Script: dashboard-pool-sync
-# Purpose: Automatically synchronize dashboard datagroups with LTM pools
-# Features: Pool exclusion, error handling, file-based backups, LTM Pool description parsing
+# Dashboard Version 2.0 - Multi-Partition
+# Purpose: Automatically synchronize dashboard datagroups with LTM pools across all partitions
+# Features: Partition exclusion, pool exclusion, error handling, file-based backups, LTM Pool description parsing
 # Author: Eric Haupt
 # License: MIT
-# Copyright (c) 2025 Eric Haupt
+# Copyright (c) 2026 Eric Haupt
 # Released under the MIT License. See LICENSE file for details.
 # https://github.com/hauptem/F5-Multisite-Dashboard
 #
 # This script maintains two dashboard datagroups that track LTM pool configurations:
-# - datagroup-dashboard-pools: Contains LTM pool names with sort order values 
-# - datagroup-dashboard-pool-alias: Contains LTM pool names with friendly aliases
-# 
+# - datagroup-dashboard-pools: Contains canonical pool names with sort order values
+# - datagroup-dashboard-pool-alias: Contains canonical pool names with friendly aliases
+#
+# Canonical naming: /Common pools are stored as bare names (web-pool); pools in
+# any other partition are stored as full paths (/dmz/web-pool). This script is
+# the only writer of these datagroups, so bare-equals-Common and never-both-forms
+# hold by construction.
+#
+# Partition visibility is controlled here, not in the iRule. Pools in excluded
+# partitions are never written to the datagroup and existing entries from a
+# newly-excluded partition are removed on the next run, so exclusion takes
+# effect at the next sync interval.
+#
 # The script runs automatically via iCall to ensure datagroups stay synchronized
 # with LTM pool configurations, adding new pools and removing deleted ones.
 #
@@ -20,14 +31,27 @@
 # ================================================================================
 # Target datagroup names
 # These datagroups must exist and be type 'string'
-set pools_datagroup "datagroup-dashboard-pools"
-set alias_datagroup "datagroup-dashboard-pool-alias"
+# Machine-written datagroups live in a device-local folder excluded from
+# config sync. Every write here is a config change; in /Common on a
+# manual-sync cluster each sync run would flip "Changes Pending" and train
+# operators to ignore a meaningful flag. Each device's sync maintains its
+# own copy - there is nothing meaningful to sync between peers
+set pools_datagroup "/Common/dashboard/datagroup-dashboard-pools"
+set alias_datagroup "/Common/dashboard/datagroup-dashboard-pool-alias"
 # Pool exclusion patterns - pools matching these patterns will be ignored
+# Patterns match against the canonical name (bare for Common, full path otherwise)
 # Note: Exclusion prevents automatic addition but does not remove existing entries
 # Supports wildcard patterns using standard Tcl string matching
 set excluded_pools {
     "*_test_pool"
     "*_temp_pool"
+}
+# Partition exclusion - pools in these partitions are excluded from the dashboard
+# Exact partition names, no slashes, no wildcards. Common cannot be excluded.
+# Unlike pool patterns, partition exclusion is authoritative: existing datagroup
+# entries from a newly-excluded partition are REMOVED on the next sync run
+# Example: set excluded_partitions { "secure" "lab-test" }
+set excluded_partitions {
 }
 # Backup configuration
 # Backups are created before any script modifications
@@ -75,26 +99,69 @@ if {[catch {
     tmsh::log "ERROR: Dashboard sync - Alias datagroup validation failed: $error_msg"
     return 1
 }
+# Guard: Common is the implicit default partition and is never excludable
+if {[lsearch -exact $excluded_partitions "Common"] != -1} {
+    tmsh::log "WARNING: Dashboard sync - Common cannot be excluded, ignoring"
+    set excluded_partitions [lsearch -all -inline -not -exact $excluded_partitions "Common"]
+}
 # LTM POOL DISCOVERY
-# Retrieve current LTM pool configuration
-# Only includes pools that pass exclusion filtering
-if {[catch {set current_pools [tmsh::get_config /ltm pool]} error_msg]} {
+# Retrieve current LTM pool configuration across all partitions.
+# A plain get_config only sees the current partition; recursive from the root
+# folder returns every pool as a full path (/Partition/name, including folder
+# forms like /Common/appA/web-pool). cd back to /Common immediately;
+# datagroup references below are full paths and cd-immune, but restoring
+# the default context keeps any future bare-name operation safe
+if {[catch {
+    tmsh::cd "/"
+    set current_pools [tmsh::get_config /ltm pool recursive]
+    tmsh::cd "/Common"
+} error_msg]} {
+    catch {tmsh::cd "/Common"}
     tmsh::log "ERROR: Dashboard sync - Failed to get pool configuration: $error_msg"
     return 1
 }
 # Build filtered list of LTM pool data with descriptions
-# Each entry contains: {pool_name pool_description}
+# Each entry contains: {canonical_name pool_description}
 set ltm_pool_data {}
 foreach pool $current_pools {
-    set pool_name [tmsh::get_name $pool]
-    # Remove /Common/ prefix 
-    # This standardizes pool names for datagroup storage
-    regsub {^/Common/} $pool_name "" pool_name
+    set full_name [tmsh::get_name $pool]
+    # Partition is the second path segment; pool name is everything after it,
+    # rejoined - never a single segment alone. TMOS permits folders
+    # (/Common/appA/web-pool); taking one segment would silently assign every
+    # pool in a folder the same name and collide their datagroup keys
+    set trimmed [string trimleft $full_name "/"]
+    set slash_idx [string first "/" $trimmed]
+    if {$slash_idx == -1} {
+        tmsh::log "WARNING: Dashboard sync - Skipping unexpected pool path: $full_name"
+        continue
+    }
+    set partition [string range $trimmed 0 [expr {$slash_idx - 1}]]
+    set pool_name [string range $trimmed [expr {$slash_idx + 1}] end]
+    if {$partition eq "" || $pool_name eq ""} {
+        tmsh::log "WARNING: Dashboard sync - Skipping malformed pool path: $full_name"
+        continue
+    }
+    # Partition exclusion - discovery side; the removal pass below cleans out
+    # datagroup entries whose partition was excluded after they were added
+    if {$partition ne "Common" && [lsearch -exact $excluded_partitions $partition] != -1} {
+        continue
+    }
+    # Canonical form: bare name for Common (F5's own default addressing form),
+    # constructed full path for every other partition. Built explicitly from
+    # the parsed parts rather than taken from get_name, whose output may or
+    # may not carry the leading slash depending on TMOS version and iCall
+    # context - a slashless entry reads as a Common bare name to the iRule
+    # and fails every LB command
+    if {$partition eq "Common"} {
+        set canonical_name $pool_name
+    } else {
+        set canonical_name "/$partition/$pool_name"
+    }
     # Apply exclusion filters to keep unwanted pools out of dashboard
     # Uses pattern matching to support wildcards and specific names
     set should_exclude 0
     foreach pattern $excluded_pools {
-        if {[string match $pattern $pool_name]} {
+        if {[string match $pattern $canonical_name]} {
             set should_exclude 1
             break
         }
@@ -110,7 +177,7 @@ foreach pool $current_pools {
         }
         
         # Store as list for later processing: {name description}
-        lappend ltm_pool_data [list $pool_name $pool_description]
+        lappend ltm_pool_data [list $canonical_name $pool_description]
     }
 }
 # DATAGROUP ANALYSIS
@@ -126,6 +193,7 @@ if {[catch {
         if {[catch {set records [tmsh::get_field_value [lindex $datagroup_pools_config 0] "records"]} records_error]} {
             set records {}
         }
+        set pools_record_count [llength $records]
         # Process each existing record
         foreach record $records {
             set name [tmsh::get_name $record]
@@ -169,6 +237,17 @@ if {$sync_error} {
     tmsh::log "ERROR: Dashboard sync aborted - $error_details"
     return 1
 }
+# Guard: a populated datagroup that parses to zero records means the
+# read-back is broken, not that the datagroup is empty. Proceeding would
+# silently renumber every sort order and wipe every alias - a failure mode
+# indistinguishable from a bootstrap in the summary log. Fail loud instead
+if {[info exists pools_record_count] == 0} {
+    set pools_record_count 0
+}
+if {$pools_record_count > 0 && [array size existing_pools] == 0} {
+    tmsh::log "ERROR: Dashboard sync aborted - $pools_datagroup contains $pools_record_count records but zero parsed; record iteration is broken on this TMOS version"
+    return 1
+}
 # SORT ORDER MANAGEMENT
 # Calculate appropriate sort order values for new pools
 # Uses increments of 10 to allow manual insertion between values
@@ -198,6 +277,11 @@ foreach pool_data $ltm_pool_data {
         if {$auto_generate_aliases && $pool_description ne ""} {
             # Clean and format the description for display
             set clean_desc [string trim $pool_description]
+            # Strip characters that break tmsh record syntax. Descriptions are
+            # free text typed by admins; braces, quotes, backslashes, or
+            # semicolons in an unquoted data value would corrupt the generated
+            # replace-all-with command and fail the entire datagroup write
+            regsub -all {[\{\}"\\;]} $clean_desc "" clean_desc
             # Truncate overly long descriptions with ellipsis
             if {[string length $clean_desc] > $description_max_length} {
                 set clean_desc "[string range $clean_desc 0 [expr {$description_max_length - 4}]]..."
@@ -226,6 +310,11 @@ foreach pool_data $ltm_pool_data {
             if {$pool_description ne ""} {
                 # Apply same cleaning logic as for new pools
                 set clean_desc [string trim $pool_description]
+            # Strip characters that break tmsh record syntax. Descriptions are
+            # free text typed by admins; braces, quotes, backslashes, or
+            # semicolons in an unquoted data value would corrupt the generated
+            # replace-all-with command and fail the entire datagroup write
+            regsub -all {[\{\}"\\;]} $clean_desc "" clean_desc
                 if {[string length $clean_desc] > $description_max_length} {
                     set clean_desc "[string range $clean_desc 0 [expr {$description_max_length - 4}]]..."
                 }
@@ -259,6 +348,10 @@ foreach pool_data $ltm_pool_data {
     lappend ltm_pool_names [lindex $pool_data 0]
 }
 # Check each datagroup entry against current LTM pools
+# Note the asymmetry: pool patterns protect entries from removal (manual
+# entries survive), but partition exclusion does not - a pool whose partition
+# was excluded is absent from ltm_pool_names and is removed here, which is
+# what makes partition exclusion authoritative
 foreach pool_name [array names existing_pools] {
     # Skip removal if pool matches exclusion pattern
     # This prevents removal of manually managed pools that don't exist in LTM
@@ -288,10 +381,14 @@ if {$changes_made} {
     # Create timestamped backups before making changes (if enabled)
     if {$create_backups} {
         set timestamp [clock format [clock seconds] -format "%Y%m%d_%H%M%S"]
+        # Datagroup names are full paths (/Common/dashboard/...) and slashes
+        # cannot appear in a flat backup filename; map them to underscores
+        set pools_backup_name [string map {"/" "_"} [string trimleft $pools_datagroup "/"]]
+        set alias_backup_name [string map {"/" "_"} [string trimleft $alias_datagroup "/"]]
         # Ensure backup directory exists
         catch {exec mkdir -p $backup_dir}
         # Backup pools datagroup with metadata
-        set pools_backup_file "$backup_dir/${pools_datagroup}_$timestamp.backup"
+        set pools_backup_file "$backup_dir/${pools_backup_name}_$timestamp.backup"
         if {[catch {
             set pools_config [tmsh::get_config /ltm data-group internal $pools_datagroup]
             if {[llength $pools_config] > 0} {
@@ -319,7 +416,7 @@ if {$changes_made} {
             tmsh::log "WARNING: Dashboard sync - Could not backup pools datagroup: $error_msg"
         }
         # Backup alias datagroup
-        set alias_backup_file "$backup_dir/${alias_datagroup}_$timestamp.backup"
+        set alias_backup_file "$backup_dir/${alias_backup_name}_$timestamp.backup"
         if {[catch {
             set alias_config [tmsh::get_config /ltm data-group internal $alias_datagroup]
             if {[llength $alias_config] > 0} {
@@ -349,7 +446,7 @@ if {$changes_made} {
         # Cleanup old backup files to prevent disk space issues
         if {[catch {
             # Clean pools datagroup backups
-            set pool_files [glob -nocomplain "$backup_dir/${pools_datagroup}_*.backup"]
+            set pool_files [glob -nocomplain "$backup_dir/${pools_backup_name}_*.backup"]
             if {[llength $pool_files] > $max_backups} {
                 set pool_files [lsort -decreasing $pool_files]
                 foreach file [lrange $pool_files $max_backups end] {
@@ -357,7 +454,7 @@ if {$changes_made} {
                 }
             }
             # Clean alias datagroup backups
-            set alias_files [glob -nocomplain "$backup_dir/${alias_datagroup}_*.backup"]
+            set alias_files [glob -nocomplain "$backup_dir/${alias_backup_name}_*.backup"]
             if {[llength $alias_files] > $max_backups} {
                 set alias_files [lsort -decreasing $alias_files]
                 foreach file [lrange $alias_files $max_backups end] {
