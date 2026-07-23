@@ -6,7 +6,7 @@ Dashboard 1.8 does not support partitions other than Common. The 1.8 release wil
 
 ## 2.0 (July 2026)
 
-Dashboard 2.0 adds multi-partition support. All components must be upgraded together: frontend iRule, API-Host iRules, iCall script, all iFiles, and all datagroups. There is no compatibility with 1.x components. The first poll after upgrade re-baselines member state for partitioned pools and resets any pending acknowledgments one time. No action is required.
+Dashboard 2.0 adds multi-partition support. All components must be upgraded together: frontend iRule, API-Host iRules, iCall script, all iFiles, and all datagroups. There is no compatibility with 1.x components. The first poll after upgrade re-baselines member state for partitioned pools and resets any pending acknowledgments one time.
 
 - Pools from any partition can now be monitored alongside Common pools in the same grid. The full path (/dmz/web-pool) is the pool identifier used in datagroups, aliases, headers, and state tracking. Common pools continue to use the bare name, so Common-only deployments keep their member state, acknowledgments, and sort orders through the upgrade
 - The JSON response includes a new partition field on every pool. The client requires this field and will report a deployment error if a 1.x iRule is still serving a site
