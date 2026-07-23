@@ -47,7 +47,7 @@ When an application is degraded, you need to know which pool members are down ac
 
 It's a browser-based monitoring application that provides near real-time visibility into F5 BIG-IP pool member status across unlimited sites. It runs entirely from the F5 devices themselves in the dataplane: no external servers, no databases, no agents. Upload seven files, configure eight data groups, apply two iRules, and you're operational in about thirty minutes.
 
-The architecture is distributed rather than centralized. Each F5 site can operate as a Dashboard Frontend (serving the interface and aggregating data), an API-Host (providing pool data via JSON endpoints), or both. Sites communicate directly with each other, so there is no central monitoring server to bottleneck and the design scales horizontally without redesign.
+The architecture is distributed rather than centralized. Each F5 site can operate as a Dashboard Frontend (serving the interface and aggregating data), an API Host (providing pool data via JSON endpoints), or both. Sites communicate directly with each other, so there is no central monitoring server to bottleneck and the design scales horizontally without redesign.
 
 Traditional monitoring polls everything, stores everything, and filters when queried. This dashboard inverts that model: the client tells the backend exactly what it needs each cycle. If a search for "sharepoint" shows three matching pools out of two hundred configured, the next poll queries only those three pools, and the backend skips the other 197 entirely.
 
@@ -74,18 +74,18 @@ At its core it's a pool status iRule on steroids:    **query member status → d
 
 The dashboard consists of two components:
 
-### Front-end (one or more)
+### Frontend (one or more)
 - Serves the web interface and static assets
 - Handles user authentication via APM
 - Provides local pool monitoring for the frontend site
-- Proxies requests to remote backend API-Hosts
+- Proxies requests to remote backend API Hosts
 
-### API-Host (all other clusters within a topology)
+### API Host (all other clusters within a topology)
 - Exposes JSON API endpoints for pool data
 - Performs DNS resolution and member status checks
 - Provides health monitoring endpoints
 
-**Notional layout of the multi-site topology. Supports multiple Front-ends; scales horizontally as needed**
+**Notional layout of the multi-site topology. Supports multiple Frontends; scales horizontally as needed**
 <img width="2023" height="1137" alt="Image" src="https://github.com/user-attachments/assets/3c4a285a-92f2-408f-938d-6b3e65d42440" />
 
 ---
@@ -108,7 +108,7 @@ The dashboard consists of two components:
 
 ## Getting Started
 
-📋 **[Installation Guide](INSTALLATION.md)** - Step-by-step setup instructions for both Dashboard Front-end and API-Host components
+📋 **[Installation Guide](INSTALLATION.md)** - Step-by-step setup instructions for both Dashboard Frontend and API Host components
 
 📋 **[User Guide](USERGUIDE.md)** - Comprehensive Dashboard User Manual
 
@@ -139,7 +139,7 @@ Dashboard virtual servers and iRules must reside in the `/Common` partition.
 
 ### Call Stack Visualization
 
-The F5 Multisite Dashboard uses a 3-level procedural architecture with automatic memory management and efficient variable scoping. Procedures offer code modularity for easy sharing between Front-end and API-Hosts to maintain operational parity for Dashboard components. It became very apparent early in development that standard iRule "monolithic blocks of code" would be unsustainable long term if we wanted the Front-end and API-Host to operate identically throughout development and feature tuning. Procedures were the logical solution.
+The F5 Multisite Dashboard uses a 3-level procedural architecture with automatic memory management and efficient variable scoping. Procedures offer code modularity for easy sharing between Frontend and API Hosts to maintain operational parity for Dashboard components. It became very apparent early in development that standard iRule "monolithic blocks of code" would be unsustainable long term if we wanted the Frontend and API Host to operate identically throughout development and feature tuning. Procedures were the logical solution.
 
 ```plaintext
 HTTP Request (/api/proxy/pools)

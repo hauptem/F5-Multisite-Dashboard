@@ -8,7 +8,6 @@ This guide provides complete step-by-step installation procedures for both Front
 - [Frontend Installation](#frontend-installation)
 - [API Host Installation](#api-host-installation)
 - [GTM/DNS Listener Configuration](#gtmdns-listener-configuration)
-- [iCall Dashboard Pool Sync Script](#optional-capability-icall-dashboard-pool-sync-script)
 - [Testing and Validation](#testing-and-validation)
 - [Debug System Operation](#debug-system-operation)
 - [Troubleshooting](#troubleshooting)
@@ -20,7 +19,10 @@ This guide provides complete step-by-step installation procedures for both Front
 ## Prerequisites
 
 - F5 BIG-IP with LTM and APM modules provisioned
-- TMOS Version: 17.1 or higher 
+- TMOS 17.x or 21.x series (matches the versions listed in the [README](README.md))
+- Administrative access to the Configuration utility and SSH/tmsh on each device
+- The dashboard release files (iFiles, iRules, and the discovery script) from this repository
+- Optional: GTM/BIG-IP DNS if you want a dedicated dashboard DNS listener for PTR resolution
 
 ---
 
@@ -138,7 +140,7 @@ The dashboard requires several data groups for configuration and access control.
    - **Name**: `datagroup-dashboard-api-keys`
    - **Type**: `String`
 3. Add API key:
-   - **String**: `dashboard-api-key-2025-v17`
+   - **String**: `dashboard-api-key-2026-v20`
 4. Click **Finished**
 
 **Note:** This same key must be configured on all backend BIG-IP systems.
@@ -160,9 +162,21 @@ tmsh save sys config
 
 Pool names are the record keys and sort order is the value. The UI shows pools from lowest to highest sort order within each partition; increments of 10 are recommended for later re-adjustments. Pools in `/Common` use the bare name. Pools in any other partition use the full path:
 
+```text
+web_pool := 10
+app_pool := 20
+/dmz/web-pool := 30
+/secure/db-pool := 40
+```
+
 #### Data Group - /Common/dashboard/datagroup-dashboard-pool-alias
 
-Alias keys match the pool data group exactly, including full paths for partitioned pools
+Alias keys match the pool data group exactly, including full paths for partitioned pools:
+
+```text
+web_pool := Chicago Web Servers
+/dmz/web-pool := DMZ Web Servers
+```
 
 #### Pool Discovery Script
 
@@ -177,11 +191,11 @@ The script discovers pools across all partitions, writes canonical names, and me
 
 Run with `-n` first for a dry run that prints every add, keep, and remove decision without writing anything. After running, customize aliases by modifying the alias data group; the script never overwrites a non-empty alias.
 
-## Optional capability: iCall Dashboard Pool Sync Script
+### Optional: iCall Pool Sync (Frontend)
 
-An iCall script that will periodically refresh the pool and alias datagroups with the current LTM pool configuration.
+An iCall script that periodically refreshes the pool and alias data groups with the current LTM pool configuration. This is the recommended long-term alternative to re-running the discovery script by hand.
 
-📋 **[iCall Script](/iCall%20Datagroup%20Sync/README.md)** - Step-by-step setup instructions for both Dashboard Front-end and API-Host components
+📋 **[iCall Script](/iCall%20Datagroup%20Sync/README.md)** - Setup instructions for the automatic pool and alias data group sync
 
 ---
 
@@ -225,7 +239,7 @@ This pool monitors DNS resolver availability. The Frontend iRule will check memb
    - Click **Add**
 5. Click **Finished**
 
-#### Create a Custom Front-End HTTPS Monitor
+#### Create a Custom Frontend HTTPS Monitor
 
 For health checking of backend APIs:
 
@@ -265,7 +279,7 @@ The DNS resolver enables hostname display for pool members in dashboard response
 Execute the following command, replacing the DNS server IP with your environment's DNS server.
 Note that the iRule will expect 'dashboard-DNS' to exist unless this reference is edited for a different resolver name.
 
-```tcl
+```bash
 create net dns-resolver dashboard-DNS forward-zones add { in-addr.arpa { nameservers add { 192.168.1.53:53 } } }
 ```
 
@@ -277,19 +291,19 @@ create net dns-resolver dashboard-DNS forward-zones add { in-addr.arpa { nameser
 
 #### Verify DNS Resolver Creation
 
-```tcl
+```bash
 list net dns-resolver dashboard-DNS
 ```
 
 #### Save Configuration
 
-```tcl
+```bash
 save sys config
 ```
 
 #### Exit TMSH
 
-```tcl
+```bash
 quit
 ```
 
@@ -447,7 +461,7 @@ Change `"CHICAGO"` to match your Frontend site name from the sites data group. O
 
 ---
 
-### Configure Front-End HTTP compression profile
+### Configure Frontend HTTP Compression Profile
 
 #### Create Frontend Compression Profile
 
@@ -579,7 +593,7 @@ The dashboard requires several data groups for configuration and access control.
 4. Add Frontend IPs:
    - **Address**: `192.168.1.50` (Primary Frontend BIG-IP self-IP)
    - **Address**: `192.168.1.51` (Secondary Frontend BIG-IP self-IP)
-   - Add additional Self-IPs as needed for Front-end monitors 
+   - Add additional Self-IPs as needed for Frontend monitors 
 5. Click **Finished**
 
 #### Data Group - datagroup-dashboard-api-keys
@@ -589,7 +603,7 @@ The dashboard requires several data groups for configuration and access control.
    - **Name**: `datagroup-dashboard-api-keys`
    - **Type**: `String`
 3. Add API key:
-   - **String**: `dashboard-api-key-2025-v17`, **Value**: `Production API Key - Issued 2025-09 - Shared with Frontend`
+   - **String**: `dashboard-api-key-2026-v20`, **Value**: `Production API Key - Issued 2026-07 - Shared with Frontend`
 4. Click **Finished**
 
 #### Create the Dashboard Device-Local Folder (API Host)
@@ -618,11 +632,11 @@ The script discovers pools across all partitions, writes canonical names, and me
 
 Run with `-n` first for a dry run that prints every add, keep, and remove decision without writing anything. After running, customize aliases by modifying the alias data group; the script never overwrites a non-empty alias.
 
-## Optional capability: iCall Dashboard Pool Sync Script
+### Optional: iCall Pool Sync (API Host)
 
-An iCall script that will periodically refresh the pool and alias datagroups with the current LTM pool configuration.
+The same iCall script applies here: it periodically refreshes the pool and alias data groups with the current LTM pool configuration.
 
-📋 **[iCall Script](/iCall%20Datagroup%20Sync/README.md)** - Step-by-step setup instructions for both Dashboard Front-end and API-Host components
+📋 **[iCall Script](/iCall%20Datagroup%20Sync/README.md)** - Setup instructions for the automatic pool and alias data group sync
 
 ---
 
@@ -668,7 +682,7 @@ The DNS resolver enables hostname display for pool members in dashboard response
 Execute the following command, replacing the DNS server IP with your environment's DNS server.
 Note that the iRule will expect 'dashboard-DNS' to exist unless this reference is edited for a different resolver name.
 
-```tcl
+```bash
 create net dns-resolver dashboard-DNS forward-zones add { in-addr.arpa { nameservers add { 192.168.1.53:53 } } }
 ```
 
@@ -680,19 +694,19 @@ create net dns-resolver dashboard-DNS forward-zones add { in-addr.arpa { nameser
 
 #### Verify DNS Resolver Creation
 
-```tcl
+```bash
 list net dns-resolver dashboard-DNS
 ```
 
 #### Save Configuration
 
-```tcl
+```bash
 save sys config
 ```
 
 #### Exit TMSH
 
-```tcl
+```bash
 quit
 ```
 
@@ -878,7 +892,7 @@ Test the health endpoint:
    {
      "status": "healthy",
      "hostname": "NEWYORK-bigip.lab.local",
-     "timestamp": "2025-09-25 14:30:15",
+     "timestamp": "2026-07-20 14:30:15",
      "uptime_seconds": 2678400,
      "version": "2.0",
      "pools_configured": 37,
@@ -915,7 +929,7 @@ Test API key authentication:
 ```bash
 {
   "hostname": "CHICAGO-bigip.lab.local",
-  "timestamp": "2025-01-15 14:30:45",
+  "timestamp": "2026-07-20 14:30:45",
   "debug_enabled": "disabled",
   "instanceId": "inst_abc123",
   "pools": [
