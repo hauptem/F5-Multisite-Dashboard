@@ -18,16 +18,15 @@ Dashboard 2.0 adds multi-partition support.
 
 ### Changes
 
-- The pools and alias datagroups moved to /Common/dashboard, a device-local folder excluded from config sync. Automated datagroup writes no longer leave manual-sync clusters showing Changes Pending
-- The pool name limit in X-Need-Pools headers increased from 100 to 255 characters to accommodate full partition paths
-- Grid and micro view CSS is injected by the UI module and was removed from dashboard.css. Theme customization in the stylesheet can no longer affect grid layout
-- The iCall script validates its datagroup reads and aborts rather than proceeding with empty data, and sanitizes pool descriptions before using them as aliases
-- Malformed pool datagroup entries (for example /dmz/ with no pool name) are logged and skipped rather than rendered
+- The pools and alias datagroups moved to /Common/dashboard, a device-local folder excluded from config sync. Automated datagroup iCall writes no longer leave manual-sync clusters showing 'Changes Pending'
+- The pool name limit in X-Need-Pools headers increased from 100 to 255 characters to accommodate full partition path names
+- Grid and micro view CSS is injected by the UI module and was removed from dashboard.css where it was orphaned in version 1.7. Theme customization in the stylesheet can no longer affect grid layout at all.
+- The iCall script validates its datagroup reads and aborts rather than proceeding with empty data, and sanitizes pool descriptions before installing them as aliases
 
 ### Fixes
 
-- Acknowledging a status change on a route-domain member (10.1.1.1%2) failed silently. Route-domain addresses were misidentified as hostnames by an input check. This bug existed in 1.x but only surfaced in deployments using route domains
-- All external data rendered into the page is now HTML-escaped, including resolved DNS hostnames, backend error messages, and logger entries. Previously a malicious PTR record could inject markup into the dashboard
+- Acknowledging a status change on a route-domain member (10.1.1.1%2) failed silently. Route-domain addresses were misidentified as hostnames by an input check. This bug existed in 1.x but only surfaced in deployments using route domains.
+- All external data rendered into the page is now HTML-escaped, including resolved DNS hostnames, backend error messages, and logger entries.
 
 ## 1.8 (Fall 2025)
 
