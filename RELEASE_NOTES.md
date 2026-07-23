@@ -29,12 +29,6 @@ Dashboard 2.0 adds multi-partition support. The frontend iRule, API-Host iRules,
 - Acknowledging a status change on a route-domain member (10.1.1.1%2) failed silently. Route-domain addresses were misidentified as hostnames by an input check. This bug existed in 1.x but only surfaced in deployments using route domains
 - All external data rendered into the page is now HTML-escaped, including resolved DNS hostnames, backend error messages, and logger entries. Previously a malicious PTR record could inject markup into the dashboard
 
-### Upgrading
-
-Upgrade all components together. On each device, create the /Common/dashboard folder and datagroups and run pool discovery before updating the iRules; an iRule that references the new datagroup location before it exists will fail every request until discovery runs. Expect each API host to be briefly marked down during its migration and to recover within one monitor interval.
-
-The first poll after upgrade establishes new state baselines for partitioned pools, which resets any pending acknowledgments once. Common-only deployments retain their member state, acknowledgments, and sort orders. No other migration steps are required.
-
 ## 1.8 (Fall 2025)
 
 Dashboard 1.8 does not support partitions other than Common. The 1.8 release will remain in the repo as the last stable release before the 2.0 rework.
