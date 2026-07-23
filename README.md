@@ -43,7 +43,7 @@ Dashboard's iCall Sync script no longer trips the 'Changes Pending' flag on manu
 
 ### Upgrading
 
-All dashboard components must be upgraded to 2.0; 1.8 and 2.0 components are not compatible. 
+All dashboard components must be upgraded to 2.0; **1.8 and 2.0 components are not compatible.**
 
 ---
 
