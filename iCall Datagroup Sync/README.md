@@ -11,15 +11,16 @@
 - [Installation Steps](#installation-steps)
 - [Configuration Options](#configuration-options)
 - [Alias Processing](#alias-processing)
-- [Datagroup Recovery and Restore](#optional-datagroup-recovery-and-restore)
 - [License](#license)
 - [Disclaimer](#disclaimer)
 
 ## Overview
 
-In the F5 Multisite Dashboard, there are two datagroups that must be managed when LTM pools are created or deleted from the system: `datagroup-dashboard-pools` and `datagroup-dashboard-pool-alias`. For most organizations, simply managing these datagroups via a pool commissioning/decommissioning process should be sufficient. For larger or more advanced deployments, an automated script that performs datagroup management would be preferable. 
+In the F5 Multisite Dashboard, there are two datagroups that must be managed when LTM pools are created or deleted from the system: `/Common/dashboard/datagroup-dashboard-pools` and `/Common/dashboard/datagroup-dashboard-pool-alias`. For most organizations, simply managing these datagroups via a pool commissioning/decommissioning process should be sufficient. For larger or more advanced deployments, an automated script that performs datagroup management would be preferable. 
 
-This script runs as an iCall event and parses LTM pool configurations periodically. It compares the LTM pool configuration with the dashboard datagroup configuration to identify pools that exist in LTM but not in the dashboard or vice versa. It then rebuilds the two datagroups dynamically and the dashboard will update upon its next poll event. This script should be run on all Dashboard Front-ends and API-Hosts where automatic management of dashboard datagroups is desired. This script was released for Dashboard v1.8.
+This script runs as an iCall event and parses LTM pool configurations periodically across all partitions. It compares the LTM pool configuration with the dashboard datagroup configuration to identify pools that exist in LTM but not in the dashboard or vice versa. It then updates the two datagroups and the dashboard reflects the change on its next poll. Pools in `/Common` are written as bare names; pools in any other partition are written as full paths (`/dmz/web-pool`). The `excluded_partitions` setting is the ongoing control for which partitions appear on the dashboard.
+
+The datagroups live in a device-local folder that is excluded from config sync, so the periodic writes never leave manual-sync clusters showing Changes Pending. Each device runs its own copy of this script and maintains its own datagroups. This script should be run on all Dashboard Front-ends and API-Hosts where automatic management of dashboard datagroups is desired. This version of the script requires Dashboard v2.0.
 
 It is recommended to test and evaluate this script in your demo/lab/preproduction environment before deploying to production. 
 
@@ -27,13 +28,17 @@ It is recommended to test and evaluate this script in your demo/lab/preproductio
 
 ### 1. Create Required Datagroups (if not already created)
 
-The script requires two string-type datagroups. Datagroup names can be customized in the script configuration.
+The script requires two string-type datagroups inside the dashboard device-local folder. Datagroup paths can be customized in the script configuration.
 
 ```bash
-# Create default datagroups
-tmsh create ltm data-group internal datagroup-dashboard-pools type string
-tmsh create ltm data-group internal datagroup-dashboard-pool-alias type string
+# Create the device-local folder (excluded from config sync) and the datagroups
+tmsh create sys folder /Common/dashboard device-group none traffic-group none
+tmsh create ltm data-group internal /Common/dashboard/datagroup-dashboard-pools type string
+tmsh create ltm data-group internal /Common/dashboard/datagroup-dashboard-pool-alias type string
+tmsh save sys config
 ```
+
+If you are migrating from a 1.x install where these datagroups lived directly in `/Common`, create the folder and new datagroups first, then update the iRules, then delete the old datagroups. Updating the iRules before the new datagroups exist and are populated causes every dashboard request to fail until they do.
 
 ### 2. Create Backup Directory
 
@@ -66,24 +71,31 @@ The dashboard-pool-sync.tcl script contains editable parameters that offer vario
 
 - If you have pools that you **do not** wish to display in the dashboard, these can be either explicitly excluded or excluded via a pattern. Note that once you exclude pools they will not be removed from the datagroups if they are already present. The exclusion feature will simply prevent them from being re-added during the iCall script run. You must manually remove excluded pools and aliases from the datagroups once you have set the desired exclusion parameters in this script.
 
+- If you have entire partitions you do not wish to display, list them in `excluded_partitions`. Partition exclusion behaves differently from pool exclusion: it is authoritative, and existing datagroup entries from a newly-excluded partition are removed automatically on the next run. `Common` cannot be excluded.
+
 - The script supports auto-alias generation using the description field of the LTM Pool. If you desire to use your current pool descriptors as dashboard aliases enable this feature. It will not overwrite aliases that are already present.
 
 In vi edit the parameters of the script to suit your needs:
 
 ```tcl
-# Target datagroup names
-set pools_datagroup "datagroup-dashboard-pools"
-set alias_datagroup "datagroup-dashboard-pool-alias"
+# Target datagroup names (device-local folder, excluded from config sync)
+set pools_datagroup "/Common/dashboard/datagroup-dashboard-pools"
+set alias_datagroup "/Common/dashboard/datagroup-dashboard-pool-alias"
 
 # Backup configuration for change management and recovery
 set create_backups 1          ; # 0 = disabled; 1 = enabled
 set max_backups 30            ; # Maximum backup files to retain per datagroup
 set backup_dir "/var/tmp/dashboard_backups"  ; # Backup storage location
 
-# Pool exclusion patterns
+# Pool exclusion patterns (prevent addition; never remove existing entries)
 set excluded_pools {
     "*_test_pool"
     "*_temp_pool"
+}
+
+# Partition exclusion (authoritative: removes existing entries on next run)
+set excluded_partitions {
+    "lab-test"
 }
 
 # Automatic alias generation from pool description fields
@@ -165,7 +177,7 @@ Aliases containing spaces are converted to underscores in order to prevent compl
 - **Pool Description**: "Production Web Servers"
 - **Stored Alias**: "Production_Web_Servers"
 
-Note: The Multisite Dashboard v1.8 Javascript UI Module will now replace added alias underscores with spaces for proper alias display.
+Note: The Multisite Dashboard Javascript UI Module replaces alias underscores with spaces for display.
 
 ### Log Messages
 
@@ -186,7 +198,10 @@ Dashboard sync - No changes required: monitoring 15 pools, excluding 4 patterns
 ```
 ERROR: Dashboard sync - Pools datagroup validation failed: Datagroup prod-pools does not exist
 ERROR: Dashboard sync - Alias datagroup validation failed: Datagroup prod-aliases has wrong type: integer (expected: string)
+ERROR: Dashboard sync aborted - /Common/dashboard/datagroup-dashboard-pools contains 17 records but zero parsed; record iteration is broken on this TMOS version
 ```
+
+The last error is a safety abort: if a populated datagroup reads back as zero records, the script stops rather than renumbering every sort order and clearing every alias.
 
 ### Pool Description Setup
 
@@ -197,284 +212,6 @@ For meaningful auto-generated aliases:
 tmsh modify ltm pool web_prod_443 description "Production Web Servers - HTTPS"
 tmsh modify ltm pool api_gateway_80 description "API Gateway Load Balancer"
 tmsh modify ltm pool db_cluster_3306 description "Production Database Cluster"
-```
-
----
-
-## (OPTIONAL) Datagroup Recovery and Restore
-
-### Install the Restore Script
-
-The restore script provides datagroup recovery capabilities using dashboard-pool-sync backup files in the event that an administrator desires to revert to a previous dashboard datagroup configuration. **This process is only applicable if the backup feature has been enabled.**
-
-**Create the restore script:**
-
-```bash
-# Create the restore script file
-vi /usr/local/bin/dashboard-restore.sh
-```
-
-Copy the complete restore script content and save the file.
-
-**Set permissions:**
-
-```bash
-chmod +x /usr/local/bin/dashboard-restore.sh
-```
-
-### Restore Script Demo
-
-**Environment:**
-- F5 BIG-IP with dashboard pool sync running
-- Current datagroups need to be restored from backup
-
-**Backup Directory Contents:**
-```bash
-/var/tmp/dashboard_backups/
-├── datagroup-dashboard-pools_20251006_115719.backup
-└── datagroup-dashboard-pool-alias_20251006_115719.backup
-```
-
-### Viewing Available Backups
-
-```bash
-[root@f5-bigip-01 ~]# ./dashboard-restore.sh
-=== Dashboard Datagroup Restore Tool ===
-
-Available backups:
-
-  20251006_115719 (2025-10-06 11:57:19)
-
-TIP: Use './dashboard-restore.sh view' to see backup contents before restoring
-
-Enter backup timestamp (YYYYMMDD_HHMMSS) or 'latest' for most recent:
-```
-
-### Viewing Backup Contents
-
-```bash
-[root@f5-bigip-01 ~]# ./dashboard-restore.sh view
-=== Dashboard Datagroup Restore Tool ===
-
-Available backups for viewing:
-
-Recent backups:
-  20251006_115719
-
-Enter timestamp to view (or 'latest' for most recent):
-latest
-============================================
-BACKUP CONTENTS FOR: 20251006_115719
-============================================
-
-POOLS (showing pool name and sort order):
---------------------------------------------
-  Comcast-DNS_udp_pool                10
-  Company-finance_https_pool          20
-  Company-marketing_https_pool        30
-  Company-portal_https_pool           40
-  DISA-OCSP_Pool                      50
-  Google.com_ICMP_pool                60
-  IPv6_Pool                           70
-  LAB-ASM_lorem_http_pool             80
-  Lab-ASM-Hack-it-Server              90
-  MSC_https_pool                      100
-  Microsoft_PowerBI_http_pool         110
-  SRX-Gateway_ICMP_pool               120
-  SRX-Gateway_ssh_pool                130
-  Palo_Alto-Panorama                  140
-  dashboard-api-hosts_https_pool      150
-  dashboard-dns_udp53_pool            160
-  ACAS_Servers                        170
-  Total pools: 17
-
-ALIASES (showing pool name and display alias):
---------------------------------------------
-  Comcast-DNS_udp_pool                
-  Company-finance_https_pool          Sharepoint - Finance Web Front Ends
-  Company-marketing_https_pool        Sharepoint - Marketing Web Front Ends
-  Company-portal_https_pool           Sharepoint - Portal Web Front Ends
-  DISA-OCSP_Pool                      DISA OCSP Server
-  Google.com_ICMP_pool                
-  IPv6_Pool                           
-  LAB-ASM_lorem_http_pool             
-  Lab-ASM-Hack-it-Server              
-  MSC_https_pool                      
-  Microsoft_PowerBI_http_pool         Microsoft PowerBI
-  SRX-Gateway_ICMP_pool               
-  SRX-Gateway_ssh_pool                
-  Palo_Alto-Panorama                  Palo Alto Networks Panorama Servers
-  dashboard-api-hosts_https_pool      
-  dashboard-dns_udp53_pool            
-  ACAS_Servers                        
-  Total aliases: 17
-```
-
-### Successful Restore
-
-```bash
-[root@f5-bigip-01 ~]# ./dashboard-restore.sh 20251006_115719
-=== Dashboard Datagroup Restore Tool ===
-
-Available backups:
-
-  20251006_115719 (2025-10-06 11:57:19)
-
-TIP: Use './dashboard-restore.sh view' to see backup contents before restoring
-
-Will restore from backup: 20251006_115719
-Source files:
-  Pools: /var/tmp/dashboard_backups/datagroup-dashboard-pools_20251006_115719.backup
-  Aliases: /var/tmp/dashboard_backups/datagroup-dashboard-pool-alias_20251006_115719.backup
-
-Target datagroups:
-  Pools: datagroup-dashboard-pools
-  Aliases: datagroup-dashboard-pool-alias
-
-Backup preview:
-============================================
-BACKUP CONTENTS FOR: 20251006_115719
-============================================
-
-POOLS (showing pool name and sort order):
---------------------------------------------
-  Comcast-DNS_udp_pool                10
-  Company-finance_https_pool          20
-  Company-marketing_https_pool        30
-  Company-portal_https_pool           40
-  DISA-OCSP_Pool                      50
-  Google.com_ICMP_pool                60
-  IPv6_Pool                           70
-  LAB-ASM_lorem_http_pool             80
-  Lab-ASM-Hack-it-Server              90
-  MSC_https_pool                      100
-  Microsoft_PowerBI_http_pool         110
-  SRX-Gateway_ICMP_pool               120
-  SRX-Gateway_ssh_pool                130
-  Palo_Alto-Panorama                  140
-  dashboard-api-hosts_https_pool      150
-  dashboard-dns_udp53_pool            160
-  ACAS_Servers                        170
-  Total pools: 17
-
-ALIASES (showing pool name and display alias):
---------------------------------------------
-  Comcast-DNS_udp_pool                
-  Company-finance_https_pool          Sharepoint - Finance Web Front Ends
-  Company-marketing_https_pool        Sharepoint - Marketing Web Front Ends
-  Company-portal_https_pool           Sharepoint - Portal Web Front Ends
-  DISA-OCSP_Pool                      DISA OCSP Server
-  Google.com_ICMP_pool                
-  IPv6_Pool                           
-  LAB-ASM_lorem_http_pool             
-  Lab-ASM-Hack-it-Server              
-  MSC_https_pool                      
-  Microsoft_PowerBI_http_pool         Microsoft PowerBI
-  SRX-Gateway_ICMP_pool               
-  SRX-Gateway_ssh_pool                
-  Palo_Alto-Panorama                  Palo Alto Networks Panorama Servers
-  dashboard-api-hosts_https_pool      
-  dashboard-dns_udp53_pool            
-  ACAS_Servers                        
-  Total aliases: 17
-
-============================================
-WARNING: This will replace current datagroups!
-Type 'YES' to continue with restore:
-YES
-
-Starting restore process...
-
-Verifying target datagroups...
-Building pools datagroup records...
-Building alias datagroup records...
-Restoring pools datagroup...
-Restoring alias datagroup...
-
-============================================
-RESTORE COMPLETED SUCCESSFULLY
-============================================
-Restored from backup: 20251006_115719
-Target datagroups:
-  Pools: datagroup-dashboard-pools
-  Aliases: datagroup-dashboard-pool-alias
-
-Use 'tmsh save sys config' to save the configuration
-
-Restore completed successfully!
-Don't forget to save the configuration: tmsh save sys config
-```
-
-### Debug Version
-
-```bash
-[root@f5-bigip-01 ~]# ./debug_restore_script_full.sh latest
-=== Dashboard Datagroup Restore Tool - DEBUG VERSION ===
-
-[...same interface but with additional debug output...]
-
-DEBUG: Processing pools from /var/tmp/dashboard_backups/datagroup-dashboard-pools_20251006_115719.backup
-DEBUG: Processing name='ACAS_Servers' data='170'
-DEBUG: Added pool record: "ACAS_Servers" { data 170 }
-DEBUG: Processing name='Comcast-DNS_udp_pool' data='10'
-DEBUG: Added pool record:  "Comcast-DNS_udp_pool" { data 10 }
-
-[...detailed processing continues...]
-
-DEBUG: About to execute tmsh command for pools:
-tmsh modify ltm data-group internal "datagroup-dashboard-pools" records replace-all-with { "ACAS_Servers" { data 170 } "Comcast-DNS_udp_pool" { data 10 } [... full command] }
-
-DEBUG: About to execute tmsh command for aliases:
-tmsh modify ltm data-group internal "datagroup-dashboard-pool-alias" records replace-all-with { "ACAS_Servers" { } "Comcast-DNS_udp_pool" { } [... full command] }
-
-Restoring pools datagroup...
-Restoring alias datagroup...
-
-============================================
-RESTORE COMPLETED SUCCESSFULLY
-============================================
-```
-
-### Post-Restore Verification
-
-```bash
-[root@f5-bigip-01 ~]# tmsh save sys config
-Saving running configuration...
- /config/bigip.conf
- /config/bigip_base.conf
- /config/bigip_user.conf
-
-[root@f5-bigip-01 ~]# tmsh list ltm data-group internal datagroup-dashboard-pools 
-ltm data-group internal datagroup-dashboard-pools {
-    records {
-        ACAS_Servers {
-            data 170
-        }
-        Comcast-DNS_udp_pool {
-            data 10
-        }
-        Company-finance_https_pool {
-            data 20
-        }
-        Company-marketing_https_pool {
-            data 30
-        }
-...
-
-[root@f5-bigip-01 ~]# tmsh list ltm data-group internal datagroup-dashboard-pool-alias 
-ltm data-group internal datagroup-dashboard-pool-alias {
-    records {
-        ACAS_Servers {
-        }
-        Comcast-DNS_udp_pool {
-        }
-        Company-finance_https_pool {
-            data Sharepoint_-_Finance_Web_Front_Ends
-        }
-        Company-marketing_https_pool {
-            data Sharepoint_-_Marketing_Web_Front_Ends
-        }
-...
 ```
 
 ## License
