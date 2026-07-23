@@ -1,4 +1,4 @@
-# F5 Multisite Dashboard - iCall Datagroup Sync
+# F5 Multisite Dashboard - iCall Datagroup Sync 2.0
 
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![F5 Compatible](https://img.shields.io/badge/F5%20BIG--IP-compatible-orange)
