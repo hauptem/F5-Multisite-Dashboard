@@ -147,7 +147,7 @@ The dashboard requires several data groups for configuration and access control.
 
 #### Create the Dashboard Device-Local Folder
 
-The pool and alias data groups are written automatically by the discovery tooling, so they live in a device-local folder excluded from config sync. This keeps automated writes from leaving manual-sync clusters showing Changes Pending. Each device maintains its own copy. Create the folder and both data groups from the command line (sub-folder objects cannot be created in the GUI):
+The pool and alias data groups are written automatically by the discovery tooling, so they live in a device-local folder excluded from config sync. This keeps automated writes from leaving manual-sync clusters showing Changes Pending. Each device maintains its own copy, which also means the pool list and aliases never replicate between devices; a hand-edited alias exists only where it was entered. To keep aliases consistent across a cluster, use LTM pool description fields with the iCall script's auto-alias generation, since descriptions do sync with the configuration. Create the folder and both data groups from the command line (sub-folder objects cannot be created in the GUI):
 
 ```bash
 tmsh create sys folder /Common/dashboard device-group none traffic-group none
@@ -608,7 +608,7 @@ The dashboard requires several data groups for configuration and access control.
 
 #### Create the Dashboard Device-Local Folder (API Host)
 
-Same as the Frontend: the pool and alias data groups are machine-written and live in a device-local folder excluded from config sync. Create the folder and data groups before installing the iRule:
+Same as the Frontend: the pool and alias data groups are machine-written and live in a device-local folder excluded from config sync, so they never replicate between devices. Create the folder and data groups before installing the iRule:
 
 ```bash
 tmsh create sys folder /Common/dashboard device-group none traffic-group none
