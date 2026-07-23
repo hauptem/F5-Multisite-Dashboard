@@ -182,7 +182,7 @@ done < <(parse_datagroup_records "$ALIAS_DG")
 # read-back is broken, not that the datagroup is empty. Proceeding would
 # silently renumber every sort order and wipe every alias - the exact
 # failure a broken parser produced during development, indistinguishable
-# from a bootstrap in the output. Fail loud instead
+# from a bootstrap in the output. 
 RAW_RECORD_COUNT=$(tmsh -q list ltm data-group internal "$POOLS_DG" one-line 2>/dev/null | grep -c 'records')
 if [ "$RAW_RECORD_COUNT" -gt 0 ] && [ ${#EXISTING_SORT[@]} -eq 0 ]; then
     echo "ERROR: $POOLS_DG contains records but the parser read zero - aborting"
