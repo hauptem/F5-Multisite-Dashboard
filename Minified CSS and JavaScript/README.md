@@ -1,4 +1,4 @@
-These are pre-minified and tested CSS and Javascript files. 
+These are pre-minified and tested CSS and Javascript files for Dashboard 2.0. 
 
 It is recommended to use the minified versions in a production environment in order to reduce iFile 
 size as much as possible with the caveat that debug capability will no longer exist. Use the non-minified 
