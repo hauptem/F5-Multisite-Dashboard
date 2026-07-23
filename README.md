@@ -45,6 +45,8 @@ Dashboard's iCall Sync script no longer trips the 'Changes Pending' flag on manu
 
 All dashboard components must be upgraded to 2.0; 1.8 and 2.0 components are not compatible. 
 
+---
+
 ## Dashboard Overview
 
 A production incident is unfolding. Your application is degraded. You need to know immediately: which pool members are down, across all your data centers, right now. Not five minutes ago when your sluggish monitoring system last polled. Not "let me login to each F5 and check." 
