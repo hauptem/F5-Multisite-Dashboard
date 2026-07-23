@@ -22,6 +22,8 @@ This script runs as an iCall event and parses LTM pool configurations periodical
 
 The data groups live in a device-local folder that is excluded from config sync, so the periodic writes never leave manual-sync clusters showing Changes Pending. Each device runs its own copy of this script and maintains its own data groups. This script should be run on all Dashboard Frontends and API Hosts where automatic management of dashboard data groups is desired. This version of the script requires Dashboard v2.0.
 
+Because the folder is excluded from config sync, the pool list and aliases never replicate between devices; a hand-edited alias exists only on the device where it was entered. This is by design, and it is the tradeoff for the dashboard never dirtying cluster sync status. To keep aliases consistent across a cluster, use pool description fields with `auto_generate_aliases` enabled: descriptions are part of the synced LTM configuration, so every device independently generates identical aliases from the same source.
+
 It is recommended to test and evaluate this script in your demo/lab/preproduction environment before deploying to production. 
 
 ## Installation Steps
