@@ -130,8 +130,6 @@ DNS resolution only supports IPv4 PTR lookups at this time
 
 Dashboard virtual servers and iRules must reside in the `/Common` partition.
 
-**Dashboard v1.x is not multi-partition compatible.** v1.x and v2.0 components cannot be mixed; all components must be upgraded together.
-
 ### TMOS Version Compatibility
 - TMOS 17.x+ series (all versions)
 - TMOS 21.x+ series (all versions)
