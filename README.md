@@ -1,4 +1,4 @@
-# F5 Multisite Dashboard - README
+# F5 Multisite Dashboard 2.0 (now with partition support!)
 
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![F5 Compatible](https://img.shields.io/badge/F5%20BIG--IP-compatible-orange)
@@ -12,6 +12,40 @@
 ![HTML5](https://img.shields.io/badge/HTML5-Semantic-E34F26?logo=html5&logoColor=white)
 ![No Framework](https://img.shields.io/badge/Framework-Vanilla%20JS-success?logo=javascript&logoColor=white)
 ![REST API](https://img.shields.io/badge/API-JSON%20REST-green)
+
+## What's New in 2.0 (July 23 2026)
+
+Dashboard 2.0 now brings multi-partition support. If your BIG-IPs organize applications into administrative partitions, every one of those pools can now be displayed.
+
+### Monitor pools from any partition
+
+Pools from `/dmz`, `/secure`, or any other partition appear right alongside your Common pools in the same grid. No separate views, no extra configuration in the UI. The grid groups everything by partition automatically: Common pools first, then each partition alphabetically, with your custom pool ordering preserved inside each group.
+
+### Find what you need with search
+
+There is no partition dropdown to manage. The search box does it all:
+
+- Type `dmz` and the grid shows just that partition
+- Type `dmz AND web` to narrow it to specific pools
+- Add `NOT` to drop anything you don't want in the view
+
+The dashboard's scoped polling works with this the same way it always has: whatever your search shows is all the backend processes, so filtering to one partition also lightens the load on the F5.
+
+### Same-named pools stay separate
+
+If `web-pool` exists in both Common and `/dmz`, the dashboard treats them as the two different pools they are. Status changes, acknowledgments, and history are tracked independently, log entries show the full path so there is no guessing which one flapped, and drag reordering keeps each partition's pools grouped together.
+
+### Automatic pool discovery, now partition-aware
+
+The included discovery tooling finds pools across all partitions and keeps the dashboard's pool list current on its own. New pools show up on the dashboard within a minute of being created; deleted pools disappear just as fast. Want to keep a partition off the dashboard entirely? Add it to the exclusion list and it's gone on the next sync, dropdown to datagroup.
+
+### Friendlier to clusters
+
+Dashboard housekeeping no longer trips the Changes Pending flag on manually synced device groups via a reworked iCall method. The automatically maintained pool lists moved to a device-local location that config sync ignores, so the sync status on your clusters only reflects changes a human actually made.
+
+### Upgrading
+
+All dashboard components move to 2.0 together; 1.x and 2.0 pieces don't mix. Common-only deployments keep their member state, acknowledgments, and custom sort orders through the upgrade. The first poll after upgrading establishes fresh baselines for partitioned pools, and that's the whole migration.
 
 ## Overview
 
@@ -90,49 +124,13 @@ The dashboard consists of two components:
 
 ---
 
-## What's New in 2.0
-
-Dashboard 2.0 brings multi-partition support. If your BIG-IPs organize applications into administrative partitions, every one of those pools can now be on the glass.
-
-### Monitor pools from any partition
-
-Pools from `/dmz`, `/secure`, or any other partition appear right alongside your Common pools in the same grid. No separate views, no extra configuration in the UI. The grid groups everything by partition automatically: Common pools first, then each partition alphabetically, with your custom pool ordering preserved inside each group.
-
-### Find what you need with search
-
-There is no partition dropdown to manage. The search box does it all:
-
-- Type `dmz` and the grid shows just that partition
-- Type `dmz AND web` to narrow it to specific pools
-- Add `NOT` to drop anything you don't want in the view
-
-The dashboard's scoped polling works with this the same way it always has: whatever your search shows is all the backend processes, so filtering to one partition also lightens the load on the F5.
-
-### Same-named pools stay separate
-
-If `web-pool` exists in both Common and `/dmz`, the dashboard treats them as the two different pools they are. Status changes, acknowledgments, and history are tracked independently, log entries show the full path so there is no guessing which one flapped, and drag reordering keeps each partition's pools grouped together.
-
-### Automatic pool discovery, now partition-aware
-
-The included discovery tooling finds pools across all partitions and keeps the dashboard's pool list current on its own. New pools show up on the dashboard within a minute of being created; deleted pools disappear just as fast. Want to keep a partition off the dashboard entirely? Add it to the exclusion list and it's gone on the next sync, dropdown to datagroup.
-
-### Friendlier to clusters
-
-Dashboard housekeeping no longer trips the Changes Pending flag on manually synced device groups. The automatically maintained pool lists moved to a device-local location that config sync ignores, so the sync status on your clusters only reflects changes a human actually made.
-
-### Upgrading
-
-All dashboard components move to 2.0 together; 1.x and 2.0 pieces don't mix. Common-only deployments keep their member state, acknowledgments, and custom sort orders through the upgrade. The first poll after upgrading establishes fresh baselines for partitioned pools, and that's the whole migration.
-
----
-
-## Dashboard Current Limitations
+## Dashboard Limitations
 
 DNS resolution only supports IPv4 PTR lookups at this time
 
-Dashboard virtual servers and iRules must reside in the `/Common` partition. Monitored pools can live in any partition as of v2.0.
+Dashboard virtual servers and iRules must reside in the `/Common` partition.
 
-**Dashboard v1.x is not multi-partition compatible.** v1.x and v2.0 components cannot be mixed; all components upgrade together.
+**Dashboard v1.x is not multi-partition compatible.** v1.x and v2.0 components cannot be mixed; all components must be upgraded together.
 
 ### TMOS Version Compatibility
 - TMOS 17.x+ series (all versions)
