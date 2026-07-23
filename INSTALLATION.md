@@ -1031,7 +1031,7 @@ This design allows safe and targeted debugging in production environments where 
 ### Partitioned pools show UNKNOWN
 
 - The data group entry is not in canonical form; partitioned pools must be listed as the full path (`/dmz/web-pool`)
-- Re-run the discovery script, which generates correct entries
+- Re-run the discovery script to generate correct pool name entries
 
 ### DNS resolution not working
 - Verify DNS resolver configuration in LTM
