@@ -47,7 +47,7 @@ Dashboard housekeeping no longer trips the Changes Pending flag on manually sync
 
 All dashboard components move to 2.0 together; 1.x and 2.0 pieces don't mix. Common-only deployments keep their member state, acknowledgments, and custom sort orders through the upgrade. The first poll after upgrading establishes fresh baselines for partitioned pools, and that's the whole migration.
 
-## Overview
+## Dashboard Overview
 
 A production incident is unfolding. Your application is degraded. You need to know immediately: which pool members are down, across all your data centers, right now. Not five minutes ago when your sluggish monitoring system last polled. Not "let me login to each F5 and check." 
 
