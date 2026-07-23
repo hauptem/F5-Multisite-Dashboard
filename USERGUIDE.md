@@ -52,7 +52,7 @@ The header provides essential navigation and site information:
 The central monitoring interface includes:
 
 - **Top Controls Bar**: Search field with savable searches via right-click, Pool Reorder button, Site data Reset button
-- **Pool Grid**: Displays pool status cards in a responsive grid layout
+- **Pool Grid**: Displays pool status cards in a responsive grid layout. Pools are grouped by partition: Common pools first, then each partition alphabetically
 - **Loading/Error States**: Informational messages when appropriate
 
 <img width="1497" height="353" alt="Image" src="https://github.com/user-attachments/assets/ec7d7cd5-b0fe-4df7-b2f6-4ad6821f015f" />
@@ -127,6 +127,7 @@ Pool aliases provide user-friendly names as alternatives to technical LTM pool n
 - **Alias Mode ON (Default)**: Shows pool alias names when available
 - **Alias Mode OFF**: Shows actual LTM pool names
 - **Fallback Behavior**: If no alias exists, always shows actual LTM pool name
+- **Partitioned Pools**: When showing actual pool names, pools outside Common display the full path (`/dmz/dmz-test-pool`) so partition membership is visible at a glance. Common pools show the bare name. When an alias is displayed, hovering the pool header shows the full path in the tooltip
 
 #### Managing Alias Display
 
@@ -198,6 +199,19 @@ NOT down AND Cisco  → Pools with "Cisco" but no "down" members
 changed             → Only pools with pulsing status badges (unacknowledged state changes)
 ```
 
+#### Filtering by Partition
+
+Partition names are searchable, so search is how you filter the grid to a partition. There is no separate partition selector:
+
+```text
+dmz                 → Shows the dmz partition (plus anything else containing "dmz")
+dmz AND web         → Narrows the dmz partition to matching pools
+dmz NOT dmz-relay   → The dmz partition without a pool you don't want in view
+Common              → Shows Common partition pools
+```
+
+Because a search term matches anywhere in the pool data, a partition search can also pick up pools whose name, alias, or member hostnames contain the same text. This is especially noticeable when a partition name overlaps your DNS domain (a `lab` partition in a `lab.local` domain matches every resolved hostname). Use `NOT common` or other `NOT` terms to trim the view. Partition-filtered views scope backend polling to the visible pools, same as any other search.
+
 ### Advanced Search Examples
 
 ```text
@@ -205,7 +219,12 @@ web AND up                          → Pools containing "web" with "up" status 
 centos AND changed NOT disabled     → Changed (alarmed) centos servers (that are not disabled)
 up NOT down                         → Show pools that are fully available with no down members
 down NOT up                         → Show pools that are fully unavailable with no up members
+dmz AND down                        → Pools in the dmz partition with down members
+dmz lab NOT common                  → The dmz and lab partitions, excluding all Common pools
+changed NOT common                  → Alarmed pools outside the Common partition
 ```
+
+**Tip**: Search terms match anywhere in the pool data, so a term like `lab` also matches member hostnames such as `server-1.lab.local`. When a partition search pulls in unrelated pools this way, add `NOT common` (or another `NOT` term) to trim the view down to the partitions you want.
 
 **Note**: Quoted phrases are not supported. Every term is an individual case-insensitive substring match, so `web server` matches pools containing "web" OR "server". If both terms must be present, use `web AND server`. For multi-word aliases, search on the most distinctive single word.
 
@@ -213,6 +232,7 @@ down NOT up                         → Show pools that are fully unavailable wi
 
 The search function examines:
 - Pool names and alias names
+- Partition names
 - Pool status (UP, DOWN, DISABLED, UNKNOWN, EMPTY)
 - Member IP addresses and hostnames
 - Member ports and status
@@ -243,12 +263,15 @@ The search function examines:
 3. **Drop Target**: Drag over another pool table (highlights with dashed border)
 4. **Complete**: Release to swap positions
 
+**Note**: Pools cannot be reordered across partitions. If you drag a pool over one in a different partition, the dashed drop highlight will not appear and releasing does nothing. This is intentional: the grid always groups pools by partition, so a cross-partition swap would have no effect on the layout. Drop targets must be in the same partition as the pool you are dragging.
+
 ### Reorder Behavior
 
 - **Swap Logic**: Dragging Pool A onto Pool B swaps their positions
+- **Partition Groups**: Pools can only be reordered within their own partition. Cross-partition drops are ignored and the drop highlight will not appear over pools in a different partition
 - **Persistence**: New order is automatically saved for session duration
 - **Site-Specific**: Each site maintains its own custom pool order
-- **Fallback**: Without custom order, pools use configured sort order or datagroup listing order
+- **Fallback**: Without custom order, pools use configured sort order or datagroup listing order, applied within each partition
 
 ## Status Change Tracking
 
@@ -366,7 +389,7 @@ Each log entry contains:
 - **Site Name**: Source site identifier
 - **Status Change**: FROM status → TO status
 - **Member**: Affected pool member hostname:port or IP:port
-- **Pool**: Pool name
+- **Pool**: Pool name. Pools outside Common show the full path (/dmz/web-pool) so same-named pools in different partitions are unambiguous
 
 <img width="1494" height="394" alt="Image" src="https://github.com/user-attachments/assets/b35bc2b5-bb60-456c-838d-c77cb9531534" />
 
@@ -528,6 +551,14 @@ Type "down" in the search box. This will show pools that either have DOWN status
 #### How do I find pools that need attention?
 
 Type "changed" in the search box, click the "Changed" button, or press Alt+C. This shows pools with unacknowledged status changes (pulsing badges).
+
+#### How do I see just one partition?
+
+Type the partition name in search. `dmz` shows the dmz partition, and `DisplayAll` is as simple as clearing the search. If the partition name also matches unrelated pool names, add `NOT` terms to trim them out.
+
+#### Two pools have the same name. Which is which?
+
+Pools in different partitions can share a name. When actual pool names are displayed, pools outside Common show their full path (`/dmz/web-pool`) so the two are visibly different. The grid also groups by partition (Common first, then alphabetically), hovering the pool header shows the full path when an alias is displayed, and logger entries always show the full path for pools outside Common.
 
 #### What's the difference between "web app" and "web AND app" in search?
 

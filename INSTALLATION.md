@@ -21,7 +21,7 @@ This guide provides complete step-by-step installation procedures for both Front
 
 - F5 BIG-IP with LTM and APM modules provisioned
 - TMOS Version: 17.1 or higher 
-- **Note:** Version 1.x is not multi-partition compatible; Partition compatibility is planned for version 2.0.
+- **Note:** Version 2.0 supports pools in any partition. Version 1.x is Common-only and 1.x components cannot be mixed with 2.0; all components upgrade together.
 
 ---
 
@@ -45,10 +45,10 @@ Used to define dashboard site list in the dropdown control - the Frontend is typ
 **4. `datagroup-dashboard-api-host` (String)**  
 Used to map remote Site names to API Host Virtual Server IP addresses. e.g. "NEWYORK = 192.168.4.33". It is this mapping that the Frontend uses to map JSON fetch requests to the API hosts.
 
-**5. `datagroup-dashboard-pools` (String)**  
-Used to provide a list of pools to display. **This is an essential step.** LTM does not permit an iRule to determine general elements of TMOS configuration. Therefore we **must** administratively provide configuration attributes in the form of a list of LTM pool names that the dashboard will be permitted to process via LB::status events and subsequently display. This is the one data group that will require management of pools as new pools are implemented or pools are removed from LTM. A bash script has been provided to assist with the initial population of this data group. **NEW: An iCall-based solution for automatic pool and alias datagroup management is now available for use as of version 1.8.**
+**5. `/Common/dashboard/datagroup-dashboard-pools` (String, device-local folder)**  
+Used to provide a list of pools to display. **This is an essential step.** LTM does not permit an iRule to determine general elements of TMOS configuration. Therefore we **must** administratively provide configuration attributes in the form of a list of LTM pool names that the dashboard will be permitted to process via LB::status events and subsequently display. This is the one data group that will require management of pools as new pools are implemented or pools are removed from LTM. A bash script has been provided to assist with the initial population of this data group. An iCall-based solution for automatic pool and alias datagroup management is also available and is the recommended long-term approach.
 
-**6. `datagroup-dashboard-pool-alias` (String)**  
+**6. `/Common/dashboard/datagroup-dashboard-pool-alias` (String, device-local folder)**  
 Used to create alias names for actual pool names. This feature is optional, but the data group itself must exist. This is to permit 'Aliases' or user friendly names to be displayed instead of the actual LTM pool names. This is for environments where a pool name might not provide the best indicator of what the pool actually supports.
 
 **7. `datagroup-dashboard-api-keys` (String)**  
@@ -144,63 +144,49 @@ The dashboard requires several data groups for configuration and access control.
 
 **Note:** This same key must be configured on all backend BIG-IP systems.
 
-#### Data Group - datagroup-dashboard-pools
+#### Create the Dashboard Device-Local Folder
 
-1. Click **Create** (new data group)
-2. Configure data group:
-   - **Name**: `datagroup-dashboard-pools`
-   - **Type**: `String`
-3. Add local pools. You can also add a sort order; the Javascript UI will show pools from lowest to highest. If no sort order is configured the pools will be displayed in the order they appear within the pools data group. (It is recommended to use sort order increments of 10 for later re-adjustments):
-   - **String**: `web_servers_pool`, **Value**: `10`
-   - **String**: `app_servers_pool`, **Value**: `20`
-   - **String**: `database_pool`, **Value**: `30`
-   - **String**: `api_pool`, **Value**: `40`
-4. Click **Finished**
+The pool and alias data groups are written automatically by the discovery tooling, so they live in a device-local folder excluded from config sync. This keeps automated writes from leaving manual-sync clusters showing Changes Pending. Each device maintains its own copy. Create the folder and both data groups from the command line (sub-folder objects cannot be created in the GUI):
 
-#### Data Group - datagroup-dashboard-pool-alias
+```bash
+tmsh create sys folder /Common/dashboard device-group none traffic-group none
+tmsh create ltm data-group internal /Common/dashboard/datagroup-dashboard-pools type string
+tmsh create ltm data-group internal /Common/dashboard/datagroup-dashboard-pool-alias type string
+tmsh save sys config
+```
 
-1. Click **Create** (new data group)
-2. Configure data group:
-   - **Name**: `datagroup-dashboard-pool-alias`
-   - **Type**: `String`
-3. Add pool aliases:
-   - **String**: `web_servers_pool`, **Value**: `Web Servers`
-   - **String**: `app_servers_pool`, **Value**: `Application Tier`
-   - **String**: `database_pool`, **Value**: `Database Cluster`
-   - **String**: `api_pool`, **Value**: `API Gateway`
-4. Click **Finished**
+**The order matters.** Create the folder and data groups and populate them before installing or updating the iRules. The iRules reference these data groups at runtime and every request fails with a TCL error until they exist.
+
+#### Data Group - /Common/dashboard/datagroup-dashboard-pools
+
+Pool names are the record keys and sort order is the value. The UI shows pools from lowest to highest sort order within each partition; increments of 10 are recommended for later re-adjustments. Pools in `/Common` use the bare name. Pools in any other partition use the full path:
+
+```bash
+tmsh modify ltm data-group internal /Common/dashboard/datagroup-dashboard-pools records add { web_servers_pool { data 10 } app_servers_pool { data 20 } /dmz/web_servers_pool { data 30 } }
+```
+
+A `/Common` pool must not be listed both bare and as `/Common/name`; that is two entries for one pool and produces a duplicate grid tile. The discovery script (below) generates correct entries automatically and is the recommended way to populate this data group.
+
+#### Data Group - /Common/dashboard/datagroup-dashboard-pool-alias
+
+Alias keys match the pool data group exactly, including full paths for partitioned pools:
+
+```bash
+tmsh modify ltm data-group internal /Common/dashboard/datagroup-dashboard-pool-alias records add { web_servers_pool { data "Web Servers" } /dmz/web_servers_pool { data "DMZ Web Servers" } }
+```
 
 #### Automated Pool Discovery
 
-Use this script to automatically discover and populate existing pools into both pool data groups:
+Use the included discovery script to populate both pool data groups automatically:
 
-```bash
-#!/bin/bash
-# Automated Pool Discovery Script
-# This script discovers all existing pools and populates the dashboard data groups
-# Get all pool names from /Common partition (removing /Common/ prefix)
-POOLS=$(tmsh list ltm pool one-line | grep -o "ltm pool [^{]*" | awk '{print $3}' | sed 's|^/Common/||' | tr '\n' ' ')
-echo "Discovered pools: $POOLS"
-# Populate dashboard-pools data group with auto-incrementing sort order (by 10s)
-POOL_RECORDS=""
-SORT_ORDER=10
-for POOL in $POOLS; do
-    POOL_RECORDS="$POOL_RECORDS \"$POOL\" { data \"$SORT_ORDER\" }"
-    ((SORT_ORDER+=10))
-done
-# Apply to data groups
-tmsh modify ltm data-group internal datagroup-dashboard-pools records replace-all-with { $POOL_RECORDS }
-# Initialize empty aliases (can be customized later)
-ALIAS_RECORDS=""
-for POOL in $POOLS; do
-    ALIAS_RECORDS="$ALIAS_RECORDS \"$POOL\" { data \"\" }"
-done
-tmsh modify ltm data-group internal datagroup-dashboard-pool-alias records replace-all-with { $ALIAS_RECORDS }
-echo "Pool data groups populated successfully!"
-echo "Total pools configured: $(echo $POOLS | wc -w)"
-```
+📋 **[Pool Discovery Script](dashboard_pool_discovery_v2.sh)**
 
-**Note:** After running this script, you can manually customize aliases by modifying the `datagroup-dashboard-pool-alias` data group to provide user-friendly display names.
+The script discovers pools across all partitions, writes canonical names (bare for `/Common`, full path otherwise), and merges with existing records: hand-tuned sort orders and aliases survive re-runs, new pools append after the current maximum, and removed pools are logged. Edit the two settings at the top before running:
+
+- `EXCLUDE_PARTITIONS`: partitions to hide from the dashboard entirely (`Common` cannot be excluded)
+- `EXCLUDE_POOLS`: individual pools to skip, such as the dashboard's own utility pools
+
+Run with `-n` first for a dry run that prints every add, keep, and remove decision without writing anything. After running, customize aliases by modifying the alias data group; the script never overwrites a non-empty alias.
 
 ## Optional capability: iCall Dashboard Pool Sync Script
 
@@ -576,10 +562,10 @@ Used to restrict access to authorized dashboard Frontend Self-IPs to the API Hos
 **2. `datagroup-dashboard-api-keys` (String)**  
 Used to authenticate Frontends to the API host
 
-**3. `datagroup-dashboard-pools` (String)**  
+**3. `/Common/dashboard/datagroup-dashboard-pools` (String, device-local folder)**  
 Used to provide a local list of pools to display
 
-**4. `datagroup-dashboard-pool-alias` (String)**  
+**4. `/Common/dashboard/datagroup-dashboard-pool-alias` (String, device-local folder)**  
 Used to create alias names for actual configuration pool names
 
 **5. `dashboard-dns_udp53_pool` (LTM Pool)**  
@@ -617,63 +603,31 @@ The dashboard requires several data groups for configuration and access control.
    - **String**: `dashboard-api-key-2025-v17`, **Value**: `Production API Key - Issued 2025-09 - Shared with Frontend`
 4. Click **Finished**
 
-#### Data Group - datagroup-dashboard-pools
+#### Create the Dashboard Device-Local Folder (API Host)
 
-1. Click **Create** (new data group)
-2. Configure data group:
-   - **Name**: `datagroup-dashboard-pools`
-   - **Type**: `String`
-3. Add local pools (recommended to use sort order increments of 10 for later adjustment):
-   - **String**: `web2_servers_pool`, **Value**: `10`
-   - **String**: `app2_servers_pool`, **Value**: `20`
-   - **String**: `database2_pool`, **Value**: `30`
-   - **String**: `api2_pool`, **Value**: `40`
-4. Click **Finished**
+Same as the Frontend: the pool and alias data groups are machine-written and live in a device-local folder excluded from config sync. Create the folder and data groups before installing the iRule:
 
-#### Data Group - datagroup-dashboard-pool-alias
+```bash
+tmsh create sys folder /Common/dashboard device-group none traffic-group none
+tmsh create ltm data-group internal /Common/dashboard/datagroup-dashboard-pools type string
+tmsh create ltm data-group internal /Common/dashboard/datagroup-dashboard-pool-alias type string
+tmsh save sys config
+```
 
-1. Click **Create** (new data group)
-2. Configure data group:
-   - **Name**: `datagroup-dashboard-pool-alias`
-   - **Type**: `String`
-3. Add pool aliases:
-   - **String**: `web2_servers_pool`, **Value**: `Web Servers`
-   - **String**: `app2_servers_pool`, **Value**: `Application Tier`
-   - **String**: `database2_pool`, **Value**: `Database Cluster`
-   - **String**: `api2_pool`, **Value**: `API Gateway`
-4. Click **Finished**
+Populate them with the discovery script (below) or manually. Pool names follow the canonical format: bare name for `/Common` pools, full path (`/dmz/web-pool`) for pools in any other partition. Alias keys match the pool entries exactly.
 
 #### Automated Pool Discovery
 
-Use this script to automatically discover and populate existing pools into both pool data groups:
+Use the included discovery script to populate both pool data groups automatically:
 
-```bash
-#!/bin/bash
-# Automated Pool Discovery Script
-# This script discovers all existing pools and populates the dashboard data groups
-# Get all pool names from /Common partition (removing /Common/ prefix)
-POOLS=$(tmsh list ltm pool one-line | grep -o "ltm pool [^{]*" | awk '{print $3}' | sed 's|^/Common/||' | tr '\n' ' ')
-echo "Discovered pools: $POOLS"
-# Populate dashboard-pools data group with auto-incrementing sort order (by 10s)
-POOL_RECORDS=""
-SORT_ORDER=10
-for POOL in $POOLS; do
-    POOL_RECORDS="$POOL_RECORDS \"$POOL\" { data \"$SORT_ORDER\" }"
-    ((SORT_ORDER+=10))
-done
-# Apply to data groups
-tmsh modify ltm data-group internal datagroup-dashboard-pools records replace-all-with { $POOL_RECORDS }
-# Initialize empty aliases (can be customized later)
-ALIAS_RECORDS=""
-for POOL in $POOLS; do
-    ALIAS_RECORDS="$ALIAS_RECORDS \"$POOL\" { data \"\" }"
-done
-tmsh modify ltm data-group internal datagroup-dashboard-pool-alias records replace-all-with { $ALIAS_RECORDS }
-echo "Pool data groups populated successfully!"
-echo "Total pools configured: $(echo $POOLS | wc -w)"
-```
+📋 **[Pool Discovery Script](dashboard_pool_discovery_v2.sh)**
 
-**Note:** After running this script, you can manually customize aliases by modifying the `datagroup-dashboard-pool-alias` data group to provide user-friendly display names.
+The script discovers pools across all partitions, writes canonical names (bare for `/Common`, full path otherwise), and merges with existing records: hand-tuned sort orders and aliases survive re-runs, new pools append after the current maximum, and removed pools are logged. Edit the two settings at the top before running:
+
+- `EXCLUDE_PARTITIONS`: partitions to hide from the dashboard entirely (`Common` cannot be excluded)
+- `EXCLUDE_POOLS`: individual pools to skip, such as the dashboard's own utility pools
+
+Run with `-n` first for a dry run that prints every add, keep, and remove decision without writing anything. After running, customize aliases by modifying the alias data group; the script never overwrites a non-empty alias.
 
 ## Optional capability: iCall Dashboard Pool Sync Script
 
@@ -937,7 +891,7 @@ Test the health endpoint:
      "hostname": "NEWYORK-bigip.lab.local",
      "timestamp": "2025-09-25 14:30:15",
      "uptime_seconds": 2678400,
-     "version": "1.8",
+     "version": "2.0",
      "pools_configured": 37,
      "message": "API endpoint is operational with 37 pools configured"
    }
@@ -977,6 +931,7 @@ Test API key authentication:
   "instanceId": "inst_abc123",
   "pools": [
     {
+      "partition": "Common",
       "name": "web_pool",
       "alias": "Chicago Web Servers",
       "sort_order": 150,
@@ -1063,6 +1018,21 @@ This design allows safe and targeted debugging in production environments where 
 ### API authentication failure when selecting a backend site
 - Verify API keys match between Frontend and backend
 - Check `datagroup-dashboard-api-keys` configuration on both clusters
+
+### Dashboard reports a pool "is missing the partition field"
+
+- A v1.x iRule is still serving the selected site; v2.0 requires the partition field on every pool record
+- Verify both the Frontend and the site's API Host are running the v2.0 iRules and that iFiles were updated together
+
+### TCL errors referencing /Common/dashboard data groups
+
+- The iRule was installed or updated before the device-local folder and data groups were created
+- Create the folder and both data groups, run the discovery script, and the site recovers within one monitor interval
+
+### Partitioned pools show UNKNOWN
+
+- The data group entry is not in canonical form; partitioned pools must be listed as the full path (`/dmz/web-pool`)
+- Re-run the discovery script, which generates correct entries
 
 ### DNS resolution not working
 - Verify DNS resolver configuration in LTM
