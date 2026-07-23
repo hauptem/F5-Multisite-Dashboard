@@ -28,6 +28,8 @@ Dashboard 2.0 adds multi-partition support.
 - Acknowledging a status change on a route-domain member (10.1.1.1%2) failed silently. Route-domain addresses were misidentified as hostnames by an input check. This bug existed in 1.x but only surfaced in deployments using route domains.
 - All external data rendered into the page is now HTML-escaped, including resolved DNS hostnames, backend error messages, and logger entries.
 
+---
+
 ## 1.8 (Fall 2025)
 
 Dashboard 1.8 does not support partitions other than Common. The 1.8 release will remain in the repo as the last stable release before the 2.0 rework.
