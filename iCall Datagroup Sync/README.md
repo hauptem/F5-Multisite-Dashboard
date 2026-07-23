@@ -1,8 +1,7 @@
 # F5 Multisite Dashboard - iCall Datagroup Sync 2.0
 
 ![License](https://img.shields.io/badge/license-MIT-green)
-![F5 Compatible](https://img.shields.io/badge/F5%20BIG--IP-compatible-orange)
-![TMOS Version](https://img.shields.io/badge/TMOS-15.0%2B-red)
+![TMOS Version](https://img.shields.io/badge/TMOS-17.x%20%7C%2021.x-red)
 ![F5 LTM](https://img.shields.io/badge/F5-LTM%20Module-FF6600?logo=f5&logoColor=white)
 
 ## Table of Contents
@@ -11,38 +10,39 @@
 - [Installation Steps](#installation-steps)
 - [Configuration Options](#configuration-options)
 - [Alias Processing](#alias-processing)
+- [Operation and Logging](#operation-and-logging)
 - [License](#license)
 - [Disclaimer](#disclaimer)
 
 ## Overview
 
-In the F5 Multisite Dashboard, there are two datagroups that must be managed when LTM pools are created or deleted from the system: `/Common/dashboard/datagroup-dashboard-pools` and `/Common/dashboard/datagroup-dashboard-pool-alias`. For most organizations, simply managing these datagroups via a pool commissioning/decommissioning process should be sufficient. For larger or more advanced deployments, an automated script that performs datagroup management would be preferable. 
+In the F5 Multisite Dashboard, there are two data groups that must be managed when LTM pools are created or deleted from the system: `/Common/dashboard/datagroup-dashboard-pools` and `/Common/dashboard/datagroup-dashboard-pool-alias`. For most organizations, simply managing these data groups via a pool commissioning/decommissioning process should be sufficient. For larger or more advanced deployments, an automated script that performs data group management would be preferable. 
 
-This script runs as an iCall event and parses LTM pool configurations periodically across all partitions. It compares the LTM pool configuration with the dashboard datagroup configuration to identify pools that exist in LTM but not in the dashboard or vice versa. It then updates the two datagroups and the dashboard reflects the change on its next poll. Pools in `/Common` are written as bare names; pools in any other partition are written as full paths (`/dmz/web-pool`). The `excluded_partitions` setting is the ongoing control for which partitions appear on the dashboard.
+This script runs as an iCall event and parses LTM pool configurations periodically across all partitions. It compares the LTM pool configuration with the dashboard data group configuration to identify pools that exist in LTM but not in the dashboard or vice versa. It then updates the two data groups and the dashboard reflects the change on its next poll. Pools in `/Common` are written as bare names; pools in any other partition are written as full paths (`/dmz/web-pool`). The `excluded_partitions` setting is the ongoing control for which partitions appear on the dashboard.
 
-The datagroups live in a device-local folder that is excluded from config sync, so the periodic writes never leave manual-sync clusters showing Changes Pending. Each device runs its own copy of this script and maintains its own datagroups. This script should be run on all Dashboard Front-ends and API-Hosts where automatic management of dashboard datagroups is desired. This version of the script requires Dashboard v2.0.
+The data groups live in a device-local folder that is excluded from config sync, so the periodic writes never leave manual-sync clusters showing Changes Pending. Each device runs its own copy of this script and maintains its own data groups. This script should be run on all Dashboard Frontends and API Hosts where automatic management of dashboard data groups is desired. This version of the script requires Dashboard v2.0.
 
 It is recommended to test and evaluate this script in your demo/lab/preproduction environment before deploying to production. 
 
 ## Installation Steps
 
-### 1. Create Required Datagroups (if not already created)
+### 1. Create Required Data Groups (if not already created)
 
-The script requires two string-type datagroups inside the dashboard device-local folder. Datagroup paths can be customized in the script configuration.
+The script requires two string-type data groups inside the dashboard device-local folder. Data group paths can be customized in the script configuration.
 
 ```bash
-# Create the device-local folder (excluded from config sync) and the datagroups
+# Create the device-local folder (excluded from config sync) and the data groups
 tmsh create sys folder /Common/dashboard device-group none traffic-group none
 tmsh create ltm data-group internal /Common/dashboard/datagroup-dashboard-pools type string
 tmsh create ltm data-group internal /Common/dashboard/datagroup-dashboard-pool-alias type string
 tmsh save sys config
 ```
 
-If you are migrating from a 1.x install where these datagroups lived directly in `/Common`, create the folder and new datagroups first, then update the iRules, then delete the old datagroups. Updating the iRules before the new datagroups exist and are populated causes every dashboard request to fail until they do.
+If you are migrating from a 1.x install where these data groups lived directly in `/Common`, create the folder and new data groups first, then update the iRules, then delete the old data groups. Updating the iRules before the new data groups exist and are populated causes every dashboard request to fail until they do.
 
 ### 2. Create Backup Directory
 
-This step can be skipped if you do not plan to use the datagroup backup feature.
+This step can be skipped if you do not plan to use the data group backup feature. If you skip it, also set `create_backups 0` in the script parameters (Step 4), since backups are enabled in the example configuration.
 
 ```bash
 # Create backup directory
@@ -65,13 +65,13 @@ When the editor opens, paste the complete 'dashboard-pool-sync.tcl' script conte
 
 The dashboard-pool-sync.tcl script contains editable parameters that offer various functional options.
 
-- If custom datagroup names are used for your dashboard configurations they can be edited
+- If custom data group names are used for your dashboard configurations they can be edited
 
-- If datagroup backups are desired, this can be enabled and the number of backup files and the backup location can be set
+- If data group backups are desired, this can be enabled and the number of backup files and the backup location can be set
 
-- If you have pools that you **do not** wish to display in the dashboard, these can be either explicitly excluded or excluded via a pattern. Note that once you exclude pools they will not be removed from the datagroups if they are already present. The exclusion feature will simply prevent them from being re-added during the iCall script run. You must manually remove excluded pools and aliases from the datagroups once you have set the desired exclusion parameters in this script.
+- If you have pools that you **do not** wish to display in the dashboard, these can be either explicitly excluded or excluded via a pattern. Note that once you exclude pools they will not be removed from the data groups if they are already present. The exclusion feature will simply prevent them from being re-added during the iCall script run. You must manually remove excluded pools and aliases from the data groups once you have set the desired exclusion parameters in this script.
 
-- If you have entire partitions you do not wish to display, list them in `excluded_partitions`. Partition exclusion behaves differently from pool exclusion: it is authoritative, and existing datagroup entries from a newly-excluded partition are removed automatically on the next run. `Common` cannot be excluded.
+- If you have entire partitions you do not wish to display, list them in `excluded_partitions`. Partition exclusion behaves differently from pool exclusion: it is authoritative, and existing data group entries from a newly-excluded partition are removed automatically on the next run. `Common` cannot be excluded.
 
 - The script supports auto-alias generation using the description field of the LTM Pool. If you desire to use your current pool descriptors as dashboard aliases enable this feature. It will not overwrite aliases that are already present.
 
@@ -105,7 +105,7 @@ set auto_generate_aliases 1   ; # 0 = disabled; 1 = enabled
 set description_max_length 255 ; # Maximum characters in generated alias
 ```
 
-### 5. Edit the script definition and handler in tmsh
+### 5. Create the script definition and handler in tmsh
 
 Note: The script must be created before the handler.
 
@@ -145,11 +145,13 @@ sys icall script dashboard-pool-sync {
 tmsh save sys config
 ```
 
-### 7. Repeat this process on other devices in the cluster:
+### 7. Repeat this process on other devices in the cluster
 
 - Create the `/var/tmp/dashboard_backups` directory
 - Create the `/config/icallscripts/dashboard` directory
 - Create the `dashboard-pool-sync.tcl` script
+
+The iCall script and handler objects created in Step 5 are part of the BIG-IP configuration and replicate to peers via config sync, so they do not need to be recreated. The directories and the `.tcl` file live on the local filesystem, which config sync does not touch, so those must be created on every device by hand.
 
 
 ## Configuration Options
@@ -179,6 +181,19 @@ Aliases containing spaces are converted to underscores in order to prevent compl
 
 Note: The Multisite Dashboard Javascript UI Module replaces alias underscores with spaces for display.
 
+### Pool Description Setup
+
+For meaningful auto-generated aliases:
+
+```bash
+# Add descriptive LTM pool descriptions
+tmsh modify ltm pool web_prod_443 description "Production Web Servers - HTTPS"
+tmsh modify ltm pool api_gateway_80 description "API Gateway Load Balancer"
+tmsh modify ltm pool db_cluster_3306 description "Production Database Cluster"
+```
+
+## Operation and Logging
+
 ### Log Messages
 
 **Successful Synchronization:**
@@ -201,18 +216,7 @@ ERROR: Dashboard sync - Alias datagroup validation failed: Datagroup prod-aliase
 ERROR: Dashboard sync aborted - /Common/dashboard/datagroup-dashboard-pools contains 17 records but zero parsed; record iteration is broken on this TMOS version
 ```
 
-The last error is a safety abort: if a populated datagroup reads back as zero records, the script stops rather than renumbering every sort order and clearing every alias.
-
-### Pool Description Setup
-
-For meaningful auto-generated aliases:
-
-```bash
-# Add descriptive LTM pool descriptions
-tmsh modify ltm pool web_prod_443 description "Production Web Servers - HTTPS"
-tmsh modify ltm pool api_gateway_80 description "API Gateway Load Balancer"
-tmsh modify ltm pool db_cluster_3306 description "Production Database Cluster"
-```
+The last error is a safety abort: if a populated data group reads back as zero records, the script stops rather than renumbering every sort order and clearing every alias.
 
 ## License
 
