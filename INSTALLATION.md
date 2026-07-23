@@ -179,7 +179,7 @@ tmsh modify ltm data-group internal /Common/dashboard/datagroup-dashboard-pool-a
 
 Use the included discovery script to populate both pool data groups automatically:
 
-📋 **[Pool Discovery Script](dashboard_pool_discovery_v2.sh)**
+📋 **[Pool Discovery Script](dashboard_pool_discovery.sh)**
 
 The script discovers pools across all partitions, writes canonical names (bare for `/Common`, full path otherwise), and merges with existing records: hand-tuned sort orders and aliases survive re-runs, new pools append after the current maximum, and removed pools are logged. Edit the two settings at the top before running:
 
