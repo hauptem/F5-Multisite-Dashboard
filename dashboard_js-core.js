@@ -1,11 +1,11 @@
 // Multi-Site Dashboard JavaScript - CORE MODULE
-// Dashboard Version: 1.8
-// Dashboard JSON:    1.8
+// Dashboard Version: 2.0
+// Dashboard JSON:    2.0
 // Author: Eric Haupt
 // License: MIT
-// Copyright (c) 2025 Eric Haupt
+//
+// Copyright (c) 2026 Eric Haupt
 // Released under the MIT License. See LICENSE file for details.
-// https://github.com/hauptem/F5-Multisite-Dashboard
 //
 // Description: Core coordination functionality including initialization, themes, 
 // timers, view modes, wake lock management, and alias functionality
@@ -30,6 +30,47 @@ window.Dashboard = {
     config: {
         availableThemes: ['theme1', 'theme2', 'theme3']
     }
+};
+
+/**
+ * Escape a value for safe interpolation into HTML markup or attributes
+ * Pool names, aliases, DNS hostnames, and backend error fields flow into
+ * innerHTML strings; escaping at the interpolation point prevents markup
+ * injection from any of those sources. Escapes quotes as well, so the
+ * result is safe inside double- or single-quoted attribute values
+ * @param {*} value - Value to escape; non-strings are coerced
+ * @returns {string} HTML-safe string
+ */
+Dashboard.core.escapeHtml = function(value) {
+  if (value === null || value === undefined) {
+    return '';
+  }
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+};
+
+/**
+ * Reconstruct the canonical pool name from a pool record's partition and name
+ * The canonical name is the single pool identity used across state keys,
+ * optimization headers, DOM data attributes, and merge operations: the bare
+ * name for Common pools, the full path for every other partition. The
+ * partition field is a hard requirement of the 2.0 response schema - there
+ * are no mixed versions by policy, so its absence is a deployment error and
+ * fails loud here rather than degrading into bare-name key collisions
+ * @param {Object} pool - Pool record with partition and name fields
+ * @returns {string} Canonical pool name
+ */
+Dashboard.core.getCanonicalPoolName = function(pool) {
+  if (!pool || !pool.partition || !pool.name) {
+    throw new Error('Pool record missing partition or name field: ' +
+      (pool && pool.name ? pool.name : 'unknown') +
+      ' - frontend and API host iRules must be Dashboard 2.0 multi-partition versions');
+  }
+  return pool.partition === 'Common' ? pool.name : '/' + pool.partition + '/' + pool.name;
 };
 
 /**
@@ -65,7 +106,11 @@ Dashboard.core.getInstanceState = function() {
 };
 
 /**
- * Create getter/setter for Dashboard.state that routes to instance-specific state
+ * Route Dashboard.state through the instance-specific container
+ * Every Dashboard.state read or write anywhere in the codebase resolves
+ * through this property to the current instance's container. Modules never
+ * reference instance isolation directly - they use Dashboard.state and get
+ * per-tab scoping for free
  */
 Object.defineProperty(Dashboard, 'state', {
   get: function() {
@@ -358,7 +403,7 @@ Dashboard.core.performSafetyCheck = function() {
             Dashboard.core.safeBindGlobalFunctions();
         }
         
-        // ADDED: Ensure post-initialization operations completed
+        // Ensure post-initialization operations completed
         if (Dashboard.state.currentSite && !Dashboard.state.countdownTimer) {
             if (window.dashboardConfig && window.dashboardConfig.debugEnabled) {
                 console.log('Core: Safety check - ensuring post-initialization operations completed');
@@ -447,13 +492,15 @@ Dashboard.core.setupEventDelegation = function() {
       const poolContainer = target.closest('.pool-container');
       
       if (row && poolContainer) {
-        const actualPoolName = poolContainer.getAttribute('data-pool-name');
+        // Canonical name is the identity - bare names duplicate across
+        // partitions and would acknowledge the wrong pool's member
+        const canonicalName = poolContainer.getAttribute('data-canonical-name');
         
-        if (actualPoolName) {
+        if (canonicalName) {
           try {
             const cacheKey = Dashboard.core.getStorageKey('currentPoolData_' + Dashboard.state.currentSite);
             const currentData = JSON.parse(sessionStorage.getItem(cacheKey) || '{}');
-            const pool = currentData.pools ? currentData.pools.find(p => p.name === actualPoolName) : null;
+            const pool = currentData.pools ? currentData.pools.find(p => Dashboard.core.getCanonicalPoolName(p) === canonicalName) : null;
             
             if (pool && pool.members) {
               const sortedMembers = pool.members.sort(function(a, b) {
@@ -473,11 +520,11 @@ Dashboard.core.setupEventDelegation = function() {
                 const actualMember = sortedMembers[rowIndex];
                 
                 if (window.dashboardConfig && window.dashboardConfig.debugEnabled) {
-                  console.log('Core: Acknowledging member change for', actualPoolName, actualMember.ip + ':' + actualMember.port);
+                  console.log('Core: Acknowledging member change for', canonicalName, actualMember.ip + ':' + actualMember.port);
                 }
                 
                 if (Dashboard.data && Dashboard.data.acknowledgeMemberChange) {
-                  Dashboard.data.acknowledgeMemberChange(actualPoolName, actualMember.ip, actualMember.port);
+                  Dashboard.data.acknowledgeMemberChange(canonicalName, actualMember.ip, actualMember.port);
                 } else {
                   console.error('Core: Dashboard.data.acknowledgeMemberChange not available');
                 }
@@ -697,6 +744,9 @@ Dashboard.core.handleWakeLockError = function(err) {
 
 /**
  * Fallback method for browsers without Wake Lock API
+ * A 30-second no-op title write plus an occasional lightweight health
+ * request keeps the tab registered as active, which discourages aggressive
+ * background-tab throttling where the real Wake Lock API is unavailable
  */
 Dashboard.core.enableFallbackWakeLock = function() {
     const instanceState = Dashboard.core.getInstanceState();

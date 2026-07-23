@@ -1,11 +1,11 @@
 // Multi-Site Dashboard JavaScript - DATA MODULE
-// Dashboard Version: 1.8
-// Dashboard JSON:    1.8
+// Dashboard Version: 2.0
+// Dashboard JSON:    2.0
 // Author: Eric Haupt
 // License: MIT
-// Copyright (c) 2025 Eric Haupt
+//
+// Copyright (c) 2026 Eric Haupt
 // Released under the MIT License. See LICENSE file for details.
-// https://github.com/hauptem/F5-Multisite-Dashboard
 //
 // Description: Data management, state tracking, pool reordering functionality, 
 // DNS hostname caching, and alias mode persistence
@@ -85,12 +85,13 @@ Dashboard.data.init = function() {
 };
 
 /**
- * Initialize hostname cache data structure (sessionStorage only)
+ * Initialize hostname cache configuration
+ * Resolved hostnames live in sessionStorage only; this object carries the
+ * size limits and key prefix used by the direct read/write functions
  */
 Dashboard.data.initializeHostnameCache = function() {
   const instanceData = Dashboard.data.getInstanceData();
   
-  // Remove in-memory cache - only keep configuration
   instanceData.hostnameCache = {
     maxEntries: 5000,
     chunkSize: 64,
@@ -107,7 +108,8 @@ Dashboard.data.initializeHostnameCache = function() {
 // =============================================================================
 
 /**
- * MODIFIED: Update member states with dual key tracking for hostname support
+ * Update member states from an API response, storing each member under an
+ * IP-based primary key with a hostname-based secondary key for lookups
  * @param {Object} data - Pool data from API response (includes hostname fields)
  */
 Dashboard.data.updateMemberStates = function(data) {
@@ -133,11 +135,16 @@ Dashboard.data.updateMemberStates = function(data) {
       return;
     }
     
+    // Canonical name is the state-key prefix. Bare names duplicate across
+    // partitions; canonical prefixes keep same-named pools' baselines,
+    // acknowledgments, and history fully isolated
+    const canonicalPoolName = Dashboard.core.getCanonicalPoolName(pool);
+    
     pool.members.forEach(function(member) {
       // Generate both IP-based (primary) and hostname-based (secondary) keys
       const memberIP = Dashboard.data.extractMemberIP(member);
       const keys = Dashboard.data.generateMemberKeys(
-        pool.name, 
+        canonicalPoolName, 
         memberIP, 
         member.port, 
         member.hostname
@@ -149,7 +156,11 @@ Dashboard.data.updateMemberStates = function(data) {
       // Always use primary key (IP-based) for state storage
       let currentState = instanceData.memberStates[primaryKey];
       
-      // Check if we need to migrate from old hostname-based key
+      // Migrate state stored under a hostname key to the IP key. DNS results
+      // arrive after members are first seen, so a member can be keyed by
+      // hostname from an earlier cycle; without this reconciliation its
+      // baseline and acknowledgment state would silently reset the moment
+      // the same member reappears under its IP key
       if (!currentState && secondaryKey && instanceData.memberStates[secondaryKey]) {
         if (window.dashboardConfig && window.dashboardConfig.debugEnabled) {
           console.log('Data: Migrating state from hostname key to IP key:', secondaryKey, '->', primaryKey);
@@ -200,7 +211,7 @@ Dashboard.data.updateMemberStates = function(data) {
             previousStatus,
             member.status,
             displayMember,
-            pool.name,
+            canonicalPoolName,
             siteName,
             hostname
           );
@@ -245,17 +256,17 @@ Dashboard.data.updateMemberStates = function(data) {
 };
 
 /**
- * MODIFIED: Check if member status has changed with dual key lookup support
- * @param {string} poolName - Name of the pool
+ * Check if member status has changed, with dual key lookup support
+ * @param {string} canonicalPoolName - Name of the pool (canonical: bare for Common, full path otherwise)
  * @param {string} memberAddress - Either IP address or hostname
  * @param {string} memberPort - Port of the member
  * @returns {boolean} True if status needs acknowledgment
  */
-Dashboard.data.hasMemberStatusChanged = function(poolName, memberAddress, memberPort) {
+Dashboard.data.hasMemberStatusChanged = function(canonicalPoolName, memberAddress, memberPort) {
   const instanceData = Dashboard.data.getInstanceData();
   
   // Try primary key first (IP-based)
-  let memberKey = Dashboard.data.generateMemberKey(poolName, memberAddress, memberPort);
+  let memberKey = Dashboard.data.generateMemberKey(canonicalPoolName, memberAddress, memberPort);
   
   // Check cache first for O(1) lookup performance
   if (instanceData.memberStateCache.has(memberKey)) {
@@ -265,7 +276,7 @@ Dashboard.data.hasMemberStatusChanged = function(poolName, memberAddress, member
   let memberState = instanceData.memberStates[memberKey];
   
   // If not found and memberAddress looks like a hostname, search by secondary key
-  if (!memberState && !memberAddress.match(/^\d+\.\d+\.\d+\.\d+$/) && !memberAddress.includes('::') && !memberAddress.startsWith('[')) {
+  if (!memberState && !memberAddress.match(/^\d+\.\d+\.\d+\.\d+(%\d+)?$/) && !memberAddress.includes('::') && !memberAddress.startsWith('[')) {
     // This might be a hostname, search through all states for matching secondary key
     for (const [key, state] of Object.entries(instanceData.memberStates)) {
       if (state.secondaryKey === memberKey) {
@@ -294,26 +305,29 @@ Dashboard.data.hasMemberStatusChanged = function(poolName, memberAddress, member
 
 /**
  * Acknowledge status change with dual key lookup support
- * @param {string} poolName - Name of the pool
+ * @param {string} canonicalPoolName - Name of the pool (canonical: bare for Common, full path otherwise)
  * @param {string} memberAddress - Either IP address or hostname
  * @param {string} memberPort - Port of the member
  */
-Dashboard.data.acknowledgeMemberChange = function(poolName, memberAddress, memberPort) {
+Dashboard.data.acknowledgeMemberChange = function(canonicalPoolName, memberAddress, memberPort) {
   const instanceData = Dashboard.data.getInstanceData();
   
-  // Safety check: ensure we're not trying to acknowledge with a hostname
-  if (!memberAddress.match(/^\d+\.\d+\.\d+\.\d+$/) && !memberAddress.includes(':') && !memberAddress.startsWith('[')) {
+  // Safety check: ensure we're not trying to acknowledge with a hostname.
+  // Route-domain members (172.16.32.1%2) are valid IPs and must pass -
+  // the anchored IPv4 test alone rejects them and silently breaks
+  // acknowledgment for every route-domain member
+  if (!memberAddress.match(/^\d+\.\d+\.\d+\.\d+(%\d+)?$/) && !memberAddress.includes(':') && !memberAddress.startsWith('[')) {
     console.error('Data: acknowledgeMemberChange called with hostname instead of IP address:', memberAddress);
     console.error('Data: This indicates a bug in the event handling - should always use actual IP addresses');
     return;
   }
   
   // Try to find the member state using either IP or hostname
-  let memberKey = Dashboard.data.generateMemberKey(poolName, memberAddress, memberPort);
+  let memberKey = Dashboard.data.generateMemberKey(canonicalPoolName, memberAddress, memberPort);
   let memberState = instanceData.memberStates[memberKey];
   
   // If not found and looks like hostname, search by secondary key
-  if (!memberState && !memberAddress.match(/^\d+\.\d+\.\d+\.\d+$/) && !memberAddress.includes('::') && !memberAddress.startsWith('[')) {
+  if (!memberState && !memberAddress.match(/^\d+\.\d+\.\d+\.\d+(%\d+)?$/) && !memberAddress.includes('::') && !memberAddress.startsWith('[')) {
     for (const [key, state] of Object.entries(instanceData.memberStates)) {
       if (state.secondaryKey === memberKey) {
         memberState = state;
@@ -418,18 +432,18 @@ Dashboard.data.resetAllMemberStates = function() {
 
 /**
  * Get member state information including recent history (hostname-aware)
- * @param {string} poolName - Name of the pool
+ * @param {string} canonicalPoolName - Name of the pool (canonical: bare for Common, full path otherwise)
  * @param {string} memberAddress - Either IP address or hostname
  * @param {string} memberPort - Port of the member
  * @returns {Object|null} Member state object or null if not found
  */
-Dashboard.data.getMemberState = function(poolName, memberAddress, memberPort) {
+Dashboard.data.getMemberState = function(canonicalPoolName, memberAddress, memberPort) {
   const instanceData = Dashboard.data.getInstanceData();
-  let memberKey = Dashboard.data.generateMemberKey(poolName, memberAddress, memberPort);
+  let memberKey = Dashboard.data.generateMemberKey(canonicalPoolName, memberAddress, memberPort);
   let memberState = instanceData.memberStates[memberKey];
   
   // If not found and looks like hostname, search by secondary key
-  if (!memberState && !memberAddress.match(/^\d+\.\d+\.\d+\.\d+$/) && !memberAddress.includes('::') && !memberAddress.startsWith('[')) {
+  if (!memberState && !memberAddress.match(/^\d+\.\d+\.\d+\.\d+(%\d+)?$/) && !memberAddress.includes('::') && !memberAddress.startsWith('[')) {
     for (const [key, state] of Object.entries(instanceData.memberStates)) {
       if (state.secondaryKey === memberKey) {
         return state;
@@ -442,14 +456,14 @@ Dashboard.data.getMemberState = function(poolName, memberAddress, memberPort) {
 
 /**
  * Get recent change history for a member (hostname-aware)
- * @param {string} poolName - Name of the pool
+ * @param {string} canonicalPoolName - Name of the pool (canonical: bare for Common, full path otherwise)
  * @param {string} memberAddress - Either IP address or hostname
  * @param {string} memberPort - Port of the member
  * @param {number} count - Number of recent changes to get
  * @returns {Array} Array of recent changes, newest first
  */
-Dashboard.data.getMemberHistory = function(poolName, memberAddress, memberPort, count = 10) {
-  const memberState = Dashboard.data.getMemberState(poolName, memberAddress, memberPort);
+Dashboard.data.getMemberHistory = function(canonicalPoolName, memberAddress, memberPort, count = 10) {
+  const memberState = Dashboard.data.getMemberState(canonicalPoolName, memberAddress, memberPort);
   if (!memberState || !memberState.history) {
     return [];
   }
@@ -521,8 +535,10 @@ Dashboard.data.updateCustomOrder = function(draggedPool, targetPool) {
   const currentOrder = {};
   
   containers.forEach(function(container, index) {
-    const poolName = container.getAttribute('data-pool-name');
-    currentOrder[poolName] = index;
+    // data-canonical-name is the identity attribute; data-pool-name is the
+    // bare name and duplicates across partitions
+    const canonicalPoolName = container.getAttribute('data-canonical-name');
+    currentOrder[canonicalPoolName] = index;
   });
   
   const draggedIndex = currentOrder[draggedPool];
@@ -533,13 +549,13 @@ Dashboard.data.updateCustomOrder = function(draggedPool, targetPool) {
   }
   
   const newOrder = {};
-  Object.keys(currentOrder).forEach(function(poolName) {
-    if (poolName === draggedPool) {
-      newOrder[poolName] = targetIndex;
-    } else if (poolName === targetPool) {
-      newOrder[poolName] = draggedIndex;
+  Object.keys(currentOrder).forEach(function(canonicalPoolName) {
+    if (canonicalPoolName === draggedPool) {
+      newOrder[canonicalPoolName] = targetIndex;
+    } else if (canonicalPoolName === targetPool) {
+      newOrder[canonicalPoolName] = draggedIndex;
     } else {
-      newOrder[poolName] = currentOrder[poolName];
+      newOrder[canonicalPoolName] = currentOrder[canonicalPoolName];
     }
   });
   
@@ -702,7 +718,9 @@ Dashboard.data.getHostnameCacheSize = function() {
 };
 
 /**
- * Load hostname cache from sessionStorage for current site (no-op now - cache is accessed directly)
+ * Report hostname cache readiness for the current site
+ * Cache reads go directly to sessionStorage; this function is retained so
+ * call sites keep a stable lifecycle hook
  */
 Dashboard.data.loadHostnameCache = function() {
   if (window.dashboardConfig && window.dashboardConfig.debugEnabled) {
@@ -712,10 +730,11 @@ Dashboard.data.loadHostnameCache = function() {
 };
 
 /**
- * Save hostname cache to sessionStorage for current site (no-op now - cache is saved on each update)
+ * Report the hostname cache size for the current site
+ * Cache writes persist on each update inside setHostnameInCache; this
+ * function is retained so call sites keep a stable lifecycle hook
  */
 Dashboard.data.saveHostnameCache = function() {
-  // No-op - cache is saved directly on each update
   if (window.dashboardConfig && window.dashboardConfig.debugEnabled) {
     const cacheSize = Dashboard.data.getHostnameCacheSize();
     console.log('Data: Hostname cache current size for site', Dashboard.state.currentSite, ':', cacheSize, 'entries');
@@ -723,10 +742,11 @@ Dashboard.data.saveHostnameCache = function() {
 };
 
 /**
- * Prune hostname cache when it exceeds limits (no-op now - pruning happens during setHostnameInCache)
+ * Report that hostname cache pruning is automatic
+ * Pruning runs inside setHostnameInCache when maxEntries is exceeded; this
+ * function is retained so call sites keep a stable lifecycle hook
  */
 Dashboard.data.pruneHostnameCache = function() {
-  // No-op - pruning happens automatically in setHostnameInCache
   if (window.dashboardConfig && window.dashboardConfig.debugEnabled) {
     console.log('Data: Hostname cache pruning handled automatically during updates');
   }
@@ -1349,8 +1369,21 @@ Dashboard.data.handleDragOver = function(e) {
     e.preventDefault();
   }
   
+  // Only highlight valid targets: drops are constrained to the source
+  // pool's partition group, and withholding the drag-over highlight is
+  // the operator's cue that a cross-partition target won't accept
+  const instanceData = Dashboard.data.getInstanceData();
+  const targetContainer = e.target.closest('.pool-container');
+  if (instanceData.draggedElement && targetContainer) {
+    const draggedPartition = instanceData.draggedElement.getAttribute('data-partition-name');
+    if (draggedPartition !== targetContainer.getAttribute('data-partition-name')) {
+      e.dataTransfer.dropEffect = 'none';
+      return false;
+    }
+  }
+  
   e.dataTransfer.dropEffect = 'move';
-  e.target.closest('.pool-container').classList.add('drag-over');
+  targetContainer.classList.add('drag-over');
   
   return false;
 };
@@ -1369,8 +1402,22 @@ Dashboard.data.handleDrop = function(e) {
   dropTarget.classList.remove('drag-over');
   
   if (instanceData.draggedElement !== dropTarget) {
-    const draggedPoolName = instanceData.draggedElement.getAttribute('data-pool-name');
-    const targetPoolName = dropTarget.getAttribute('data-pool-name');
+    // Drops are only valid within the source pool's partition group. The
+    // grid sorts partition-first, so a cross-partition swap would write
+    // order values that the partition grouping immediately overrides -
+    // silently accepted, visually ignored. Rejecting keeps cause and
+    // effect visible to the operator
+    const draggedPartition = instanceData.draggedElement.getAttribute('data-partition-name');
+    const targetPartition = dropTarget.getAttribute('data-partition-name');
+    if (draggedPartition !== targetPartition) {
+      if (window.dashboardConfig && window.dashboardConfig.debugEnabled) {
+        console.log('Data: Ignoring cross-partition drop:', draggedPartition, '->', targetPartition);
+      }
+      return;
+    }
+    
+    const draggedPoolName = instanceData.draggedElement.getAttribute('data-canonical-name');
+    const targetPoolName = dropTarget.getAttribute('data-canonical-name');
     
     Dashboard.data.updateCustomOrder(draggedPoolName, targetPoolName);
     
@@ -1481,30 +1528,32 @@ Dashboard.data.parseMemberAddress = function(memberText) {
 
 /**
  * Generate consistent member key for both IPv4, IPv6, and hostname addresses
- * @param {string} poolName - Pool name
+ * @param {string} canonicalPoolName - Pool name (canonical: bare for Common, full path otherwise)
  * @param {string} ip - IP address, IPv6 address, or hostname
  * @param {string} port - Port number
  * @returns {string} Consistent member key
  */
-Dashboard.data.generateMemberKey = function(poolName, ip, port) {
-  let normalizedIp = ip;
-  return poolName + '_' + normalizedIp + ':' + port;
+Dashboard.data.generateMemberKey = function(canonicalPoolName, ip, port) {
+  return canonicalPoolName + '_' + ip + ':' + port;
 };
 
 /**
- * NEW: Generate both IP-based and hostname-based member keys for comprehensive lookup
- * @param {string} poolName - Pool name
+ * Generate both IP-based and hostname-based member keys
+ * The IP key is authoritative for state storage because IPs are stable
+ * across polls; the hostname key exists so lookups made from displayed
+ * addresses still resolve to the same state after DNS resolution
+ * @param {string} canonicalPoolName - Pool name (canonical: bare for Common, full path otherwise)
  * @param {string} ip - IP address
  * @param {string} port - Port number
  * @param {string} hostname - Hostname (optional)
  * @returns {Object} Object with primaryKey (IP-based) and secondaryKey (hostname-based)
  */
-Dashboard.data.generateMemberKeys = function(poolName, ip, port, hostname = null) {
-  const primaryKey = poolName + '_' + ip + ':' + port;
+Dashboard.data.generateMemberKeys = function(canonicalPoolName, ip, port, hostname = null) {
+  const primaryKey = canonicalPoolName + '_' + ip + ':' + port;
   let secondaryKey = null;
   
-  if (hostname && hostname !== ip && hostname !== null && hostname !== undefined) {
-    secondaryKey = poolName + '_' + hostname + ':' + port;
+  if (hostname && hostname !== ip) {
+    secondaryKey = canonicalPoolName + '_' + hostname + ':' + port;
   }
   
   return { primaryKey, secondaryKey };

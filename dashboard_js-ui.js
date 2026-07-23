@@ -1,11 +1,11 @@
 // Multi-Site Dashboard JavaScript - UI MODULE
-// Dashboard Version: 1.8
-// Dashboard JSON:    1.8
+// Dashboard Version: 2.0
+// Dashboard JSON:    2.0
 // Author: Eric Haupt
 // License: MIT
-// Copyright (c) 2025 Eric Haupt
+//
+// Copyright (c) 2026 Eric Haupt
 // Released under the MIT License. See LICENSE file for details.
-// https://github.com/hauptem/F5-Multisite-Dashboard
 //
 // Description: UI rendering, search filtering, visual state management, 
 // MACRO/MICRO view mode support, search recall and save, and integrated grid management
@@ -178,6 +178,10 @@ Dashboard.ui.initializeTopControlsBar = function() {
 
 /**
  * Inject grid-related CSS into the document
+ * This module is the sole owner of grid and micro-view structural rules.
+ * The layout is theme-agnostic and performance tuned, and it lives here
+ * rather than in dashboard.css precisely so that theme work in the
+ * stylesheet cannot alter grid structure or behavior
  */
 Dashboard.ui.addGridStyles = function() {
   if (document.getElementById('dashboard-grid-styles')) {
@@ -460,7 +464,9 @@ Dashboard.ui.renderPoolData = function(data) {
   const isShowingNoSite = noSiteMessage && window.getComputedStyle(noSiteMessage).display !== 'none';
   const isShowingLoading = loadingMessage && window.getComputedStyle(loadingMessage).display !== 'none';
   
-  // Block rendering if dashboard is in an inappropriate state
+  // Block rendering while an error, loading, or no-site message is showing.
+  // A late-arriving poll response must not paint pool data over a state the
+  // operator needs to see and act on
   if (isShowingError || isShowingNoSite || isShowingLoading) {
     if (shouldDebug) {
       console.log('UI: renderPoolData blocked - dashboard is in error/loading/no-site state');
@@ -472,7 +478,7 @@ Dashboard.ui.renderPoolData = function(data) {
   if (data.hostname) {
     const headerSiteInfo = document.getElementById('header-site-info');
     if (headerSiteInfo) {
-      headerSiteInfo.innerHTML = 'Displaying data from: <strong><a href="https://' + data.hostname + '" target="_blank" style="color: inherit; text-decoration: underline;">' + data.hostname + '</a></strong> | Last updated: ' + (data.timestamp || 'Unknown');
+      headerSiteInfo.innerHTML = 'Displaying data from: <strong><a href="https://' + Dashboard.core.escapeHtml(data.hostname) + '" target="_blank" style="color: inherit; text-decoration: underline;">' + Dashboard.core.escapeHtml(data.hostname) + '</a></strong> | Last updated: ' + Dashboard.core.escapeHtml(data.timestamp || 'Unknown');
       headerSiteInfo.style.display = 'block';
       if (shouldDebug) {
         console.log('UI: Updated header site info with hostname:', data.hostname);
@@ -493,7 +499,7 @@ Dashboard.ui.renderPoolData = function(data) {
       }
       
       const siteName = Dashboard.state.currentSite || 'the selected site';
-      Dashboard.ui.showError('Configuration Error: No pools configured for monitoring on site <strong>' + siteName + '</strong>.<br><br>Please configure pools in the datagroup to enable monitoring.');
+      Dashboard.ui.showError('Configuration Error: No pools configured for monitoring on site <strong>' + Dashboard.core.escapeHtml(siteName) + '</strong>.<br><br>Please configure pools in the datagroup to enable monitoring.');
       
       document.getElementById('loading-message').style.display = 'none';
       return;
@@ -540,33 +546,55 @@ Dashboard.ui.renderPoolData = function(data) {
     }
   }
   
-  // Sort pools by custom order first, then by sort_order field
+  // Sort: Common partition first, then partition A-Z, then custom order,
+  // sort_order, and name within the partition. Partition comparison leads so
+  // the grid always groups by partition regardless of per-pool ordering
   const sortedPools = data.pools.sort(function(a, b) {
+    if (a.partition !== b.partition) {
+      if (a.partition === 'Common') return -1;
+      if (b.partition === 'Common') return 1;
+      return a.partition.localeCompare(b.partition);
+    }
+    
     const instanceData = Dashboard.data.getInstanceData();
     if (instanceData.customOrder && Object.keys(instanceData.customOrder).length > 0) {
-      const orderA = instanceData.customOrder[a.name] !== undefined ? instanceData.customOrder[a.name] : 999;
-      const orderB = instanceData.customOrder[b.name] !== undefined ? instanceData.customOrder[b.name] : 999;
-      return orderA - orderB;
+      // Custom order is keyed by canonical name (written by the reorder
+      // DOM reads); bare-name lookups would miss every partitioned entry
+      const canonicalA = Dashboard.core.getCanonicalPoolName(a);
+      const canonicalB = Dashboard.core.getCanonicalPoolName(b);
+      const orderA = instanceData.customOrder[canonicalA] !== undefined ? instanceData.customOrder[canonicalA] : 999;
+      const orderB = instanceData.customOrder[canonicalB] !== undefined ? instanceData.customOrder[canonicalB] : 999;
+      if (orderA !== orderB) {
+        return orderA - orderB;
+      }
     }
     
     const orderA = a.sort_order !== undefined ? a.sort_order : 999;
     const orderB = b.sort_order !== undefined ? b.sort_order : 999;
-    return orderA - orderB;
+    if (orderA !== orderB) {
+      return orderA - orderB;
+    }
+    return a.name.localeCompare(b.name);
   });
   
   // Check if we need to do a full rebuild or can update existing containers
   const existingContainers = document.querySelectorAll('.pool-container');
+  // Canonical identity for the rebuild comparison - header text is the
+  // display name and duplicates across partitions
   const existingPoolNames = Array.from(existingContainers).map(container => {
-    const poolHeader = container.querySelector('th');
-    return poolHeader ? poolHeader.textContent.trim() : '';
+    return container.getAttribute('data-canonical-name') || '';
   }).filter(name => name);
   
-  const newPoolNames = sortedPools.map(pool => pool.name);
+  const newPoolNames = sortedPools.map(pool => Dashboard.core.getCanonicalPoolName(pool));
+  // Rebuild strategy is pinned to full rebuild. The incremental path below
+  // is retained for future use but has not been verified against view mode
+  // transitions, so every render rebuilds the grid and relies on
+  // capture/restoreScrollPositions to keep the experience seamless
   const needsFullRebuild = existingPoolNames.length !== newPoolNames.length || 
                           !existingPoolNames.every(name => newPoolNames.includes(name)) ||
                           !newPoolNames.every(name => existingPoolNames.includes(name)) ||
-                          (Dashboard.data && Dashboard.data.getInstanceData().reorderMode) || // Force full rebuild when reorder mode is active
-                          true; // Force full rebuild for view mode changes
+                          (Dashboard.data && Dashboard.data.getInstanceData().reorderMode) ||
+                          true;
   
   if (needsFullRebuild) {
     // Full rebuild needed - use original method with scroll preservation
@@ -585,8 +613,8 @@ Dashboard.ui.renderPoolData = function(data) {
     sortedPools.forEach(function(pool) {
       const poolHtml = Dashboard.ui.createPoolContainerHTML(pool);
       
-      // Don't apply search filter during HTML rebuild - always build visible containers
-      // Let applyPoolFilter handle the filtering separately after rebuild
+      // Build every container visible; applyPoolFilter owns visibility and
+      // runs immediately after the rebuild
       newContent += poolHtml;
       visibleCount++;
     });
@@ -623,8 +651,8 @@ Dashboard.ui.renderPoolData = function(data) {
       // Find existing container by data-pool-name attribute (actual pool name)
       let existingContainer = null;
       existingContainers.forEach(container => {
-        const containerPoolName = container.getAttribute('data-pool-name');
-        if (containerPoolName && containerPoolName === pool.name) {
+        const containerPoolName = container.getAttribute('data-canonical-name');
+        if (containerPoolName && containerPoolName === Dashboard.core.getCanonicalPoolName(pool)) {
           existingContainer = container;
         }
       });
@@ -831,9 +859,10 @@ Dashboard.ui.checkPoolForMemberChanges = function(pool) {
     return false;
   }
   
-  // Always use actual pool name for state checking
+  // Canonical name for state checking - state keys are canonical-prefixed
+  const canonicalName = Dashboard.core.getCanonicalPoolName(pool);
   return pool.members.some(function(member) {
-    return Dashboard.data.hasMemberStatusChanged(pool.name, member.ip, member.port);
+    return Dashboard.data.hasMemberStatusChanged(canonicalName, member.ip, member.port);
   });
 };
 
@@ -926,14 +955,19 @@ Dashboard.ui.createPoolContainerHTML = function(pool) {
     }
   }
   
-  return '<div class="pool-container" data-pool-name="' + pool.name + '">' +
+  const esc = Dashboard.core.escapeHtml;
+  // data-canonical-name is the identity attribute for all state operations
+  // and selectors; data-pool-name (bare) and data-partition-name exist for
+  // display and partition-filter logic
+  const canonicalName = Dashboard.core.getCanonicalPoolName(pool);
+  return '<div class="pool-container" data-pool-name="' + esc(pool.name) + '" data-partition-name="' + esc(pool.partition) + '" data-canonical-name="' + esc(canonicalName) + '">' +
     '<div class="table-container">' +
       '<table>' +
         '<thead>' +
           '<tr>' +
-            '<th title="' + displayTooltip + '">' + displayName + '</th>' +
+            '<th title="' + esc(displayTooltip) + '">' + esc(displayName) + '</th>' +
             '<th>' +
-              '<span class="status-badge ' + statusClass + poolHasChangesClass + '" title="' + statusTooltip + '">' +
+              '<span class="status-badge ' + statusClass + poolHasChangesClass + '" title="' + esc(statusTooltip) + '">' +
                 '<span class="status-indicator"></span>' + statusText +
               '</span>' +
             '</th>' +
@@ -982,17 +1016,18 @@ Dashboard.ui.createMemberRowHTML = function(poolData, member) {
       memberTooltip = 'Unknown member status: ' + member.status;
   }
   
-  // Always use actual pool name from poolData for state tracking
+  // Canonical name for state tracking - state keys are canonical-prefixed
+  const canonicalPoolName = Dashboard.core.getCanonicalPoolName(poolData);
   const hasChanged = Dashboard.data && Dashboard.data.hasMemberStatusChanged ? 
-    Dashboard.data.hasMemberStatusChanged(poolData.name, member.ip, member.port) : false;
+    Dashboard.data.hasMemberStatusChanged(canonicalPoolName, member.ip, member.port) : false;
   const stateChangedClass = hasChanged ? ' state-changed' : '';
   const clickableClass = hasChanged ? ' clickable' : '';
   
   // Get member state for enhanced tooltip
   if (hasChanged && Dashboard.data && Dashboard.data.getMemberState) {
-    const memberState = Dashboard.data.getMemberState(poolData.name, member.ip, member.port);
+    const memberState = Dashboard.data.getMemberState(canonicalPoolName, member.ip, member.port);
     if (memberState && Dashboard.data.getMemberHistory) {
-      const recentHistory = Dashboard.data.getMemberHistory(poolData.name, member.ip, member.port, 1);
+      const recentHistory = Dashboard.data.getMemberHistory(canonicalPoolName, member.ip, member.port, 1);
       if (recentHistory.length > 0) {
         const lastChange = recentHistory[0];
         const changeTime = new Date(lastChange.timestamp);
@@ -1031,9 +1066,10 @@ Dashboard.ui.createMemberRowHTML = function(poolData, member) {
     }
   }
   
+  const esc = Dashboard.core.escapeHtml;
   return '<tr>' +
-    '<td title="' + ipAddressTooltip + '">' + memberDisplay + '</td>' +
-    '<td><span class="status-badge ' + memberStatusClass + stateChangedClass + clickableClass + '" title="' + memberTooltip + '">' +
+    '<td title="' + esc(ipAddressTooltip) + '">' + esc(memberDisplay) + '</td>' +
+    '<td><span class="status-badge ' + memberStatusClass + stateChangedClass + clickableClass + '" title="' + esc(memberTooltip) + '">' +
       '<span class="status-indicator"></span>' + memberStatusText +
     '</span></td>' +
   '</tr>';
@@ -1453,8 +1489,13 @@ Dashboard.ui.captureScrollPositions = function() {
     const tbody = container.querySelector('tbody');
     
     if (poolHeader && tbody) {
-      const poolName = poolHeader.textContent.trim();
-      scrollPositions[poolName] = tbody.scrollTop;
+      // Key by canonical identity - header text is the display name (bare
+      // name or alias) and duplicates across partitions, which would
+      // cross-contaminate scroll positions between same-named pools
+      const canonicalName = container.getAttribute('data-canonical-name');
+      if (canonicalName) {
+        scrollPositions[canonicalName] = tbody.scrollTop;
+      }
     }
   });
   
@@ -1478,8 +1519,9 @@ Dashboard.ui.restoreScrollPositions = function(scrollPositions) {
     const tbody = container.querySelector('tbody');
     
     if (poolHeader && tbody) {
-      const poolName = poolHeader.textContent.trim();
-      const savedScrollPosition = scrollPositions[poolName];
+      // Canonical key mirrors captureScrollPositions
+      const canonicalName = container.getAttribute('data-canonical-name');
+      const savedScrollPosition = canonicalName ? scrollPositions[canonicalName] : undefined;
       
       if (savedScrollPosition !== undefined && savedScrollPosition > 0) {
         // Set scroll position immediately to prevent visual jump
@@ -1571,8 +1613,11 @@ Dashboard.ui.getVisiblePoolNames = function() {
       currentData.pools.forEach(function(poolData) {
         // Use existing shouldShowPool logic to determine visibility
         if (Dashboard.ui.shouldShowPool(poolData.name, poolData)) {
-          // Use actual pool name (not alias) for backend processing
-          visiblePools.push(poolData.name);
+          // Canonical name - the iRule validates header names by exact
+          // string equality against canonical datagroup entries; a bare
+          // name for a partitioned pool would fail every match and
+          // silently collapse scoped polling to full-site fetches
+          visiblePools.push(Dashboard.core.getCanonicalPoolName(poolData));
         }
       });
     }
@@ -1615,8 +1660,11 @@ Dashboard.ui.applyPoolFilter = function(filterTerm) {
     // Test the pool data directly with shouldShowPool
     const shouldShow = Dashboard.ui.shouldShowPool(poolData.name, poolData);
     
-    // Find the DOM container for this pool by data-pool-name attribute (always uses actual pool name)
-    const container = document.querySelector(`.pool-container[data-pool-name="${poolData.name}"]`);
+    // Find the DOM container by canonical identity - bare names duplicate
+    // across partitions and the first querySelector match would toggle the
+    // wrong tile, leaving its twin permanently unfiltered
+    const canonicalName = Dashboard.core.getCanonicalPoolName(poolData);
+    const container = document.querySelector(`.pool-container[data-canonical-name="${canonicalName}"]`);
     
     if (container) {
       if (shouldShow) {
@@ -1724,16 +1772,20 @@ Dashboard.ui.shouldShowPool = function(poolName, poolData = null) {
         // Check for special "CHANGED" keyword
         if (term === 'changed') {
           if (poolData.members && Dashboard.data && Dashboard.data.hasMemberStatusChanged) {
+            const canonicalName = Dashboard.core.getCanonicalPoolName(poolData);
             return poolData.members.some(member => 
-              Dashboard.data.hasMemberStatusChanged(poolData.name, member.ip, member.port)
+              Dashboard.data.hasMemberStatusChanged(canonicalName, member.ip, member.port)
             );
           }
           return false;
         }
         
-        // Search only the actual pool data, never displayed names
+        // Search the actual pool data, never displayed names
         // Check actual pool name
         if (poolData.name && poolData.name.toLowerCase().includes(term)) return true;
+        // Check partition name - typing a partition filters the grid to it;
+        // with partition-first sorting this replaces a dedicated selector
+        if (poolData.partition && poolData.partition.toLowerCase().includes(term)) return true;
         // Check pool alias
         if (poolData.alias && poolData.alias !== null && poolData.alias !== 'null' && poolData.alias.toLowerCase().includes(term)) return true;
         // Check pool status
@@ -2068,34 +2120,6 @@ Dashboard.ui.updateContextMenuContent = function() {
 };
 
 /**
- * Handle context menu clicks
- * @param {Event} event - Click event
- */
-Dashboard.ui.handleContextMenuClick = function(event) {
-  event.stopPropagation();
-  
-  const target = event.target;
-  const slot = target.getAttribute('data-slot');
-  const parentAction = target.getAttribute('data-parent-action');
-  
-  if (slot && parentAction) {
-    const slotNumber = parseInt(slot);
-    
-    if (parentAction === 'save') {
-      // Save current search to slot
-      const searchInput = document.getElementById('poolSearchInput');
-      const currentSearch = searchInput ? searchInput.value : '';
-      Dashboard.ui.saveSavedSearch(slotNumber, currentSearch);
-    } else if (parentAction === 'load') {
-      // Load search from slot
-      Dashboard.ui.applySavedSearch(slotNumber);
-    }
-    
-    Dashboard.ui.hideSearchContextMenu();
-  }
-};
-
-/**
  * Hide search context menu
  */
 Dashboard.ui.hideSearchContextMenu = function() {
@@ -2426,8 +2450,9 @@ Dashboard.ui.getPoolDisplayName = function(pool) {
     return pool.alias.replace(/_/g, ' ');
   }
   
-  // Fall back to pool name
-  return pool.name;
+  // Fall back to the canonical name: bare for Common, full path for other
+  // partitions, so partitioned pools are identifiable at a glance
+  return Dashboard.core.getCanonicalPoolName(pool);
 };
 
 /**
@@ -2436,9 +2461,9 @@ Dashboard.ui.getPoolDisplayName = function(pool) {
  * @returns {string} Tooltip text showing the non-displayed name
  */
 Dashboard.ui.getPoolDisplayTooltip = function(pool) {
-  // If showing alias, tooltip shows the actual pool name
+  // If showing alias, tooltip shows the canonical pool name
   if (Dashboard.state.currentAliasMode && pool.alias && pool.alias !== null && pool.alias !== 'null') {
-    return 'Pool Name: ' + pool.name;
+    return 'Pool Name: ' + Dashboard.core.getCanonicalPoolName(pool);
   }
   
   // If showing pool name, tooltip shows alias if available (convert underscores to spaces)
@@ -2447,7 +2472,7 @@ Dashboard.ui.getPoolDisplayTooltip = function(pool) {
   }
   
   // No alias available
-  return 'Pool Name: ' + pool.name;
+  return 'Pool Name: ' + Dashboard.core.getCanonicalPoolName(pool);
 };
 /**
  * Ensure backward compatibility with logger functions for legacy code support

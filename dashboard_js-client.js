@@ -1,11 +1,11 @@
 // Multi-Site Dashboard JavaScript - CLIENT MODULE
-// Dashboard Version: 1.8
-// Dashboard JSON:    1.8
+// Dashboard Version: 2.0
+// Dashboard JSON:    2.0
 // Author: Eric Haupt
 // License: MIT
-// Copyright (c) 2025 Eric Haupt
+//
+// Copyright (c) 2026 Eric Haupt
 // Released under the MIT License. See LICENSE file for details.
-// https://github.com/hauptem/F5-Multisite-Dashboard
 //
 // Description: HTTP communication layer for external API calls, settings persistence,
 // DNS operations, and request lifecycle management
@@ -193,11 +193,11 @@ Dashboard.client.loadPoolData = function(forceDNSResolution = false) {
     const currentData = JSON.parse(sessionStorage.getItem(cacheKey) || '{}');
     
     if (currentData.pools && Dashboard.data && Dashboard.data.getAllIPsForDNSResolution) {
-      // Check if search filtering is active to determine scoping
+      // DNS resolution respects search visibility: with a filter active,
+      // only visible pool members are packaged into X-Need-DNS headers
       const uiInstanceState = Dashboard.ui && Dashboard.ui.getInstanceState ? Dashboard.ui.getInstanceState() : null;
       const shouldRespectVisibility = uiInstanceState && uiInstanceState.searchFilterActive && uiInstanceState.searchFilter;
       
-      // Pass visibility flag to getAllIPsForDNSResolution
       const allIPs = Dashboard.data.getAllIPsForDNSResolution(currentData, shouldRespectVisibility);
       
       if (allIPs.length > 0 && Dashboard.data.buildNeedDNSHeaders) {
@@ -268,7 +268,7 @@ Dashboard.client.loadPoolData = function(forceDNSResolution = false) {
     }
     
     // =============================================================================
-    // DNS: Merge server response with client hostname cache 
+    // DNS: Merge server response with client hostname cache (with safety checks)
     // =============================================================================
     let processedData = data;
     try {
@@ -326,25 +326,41 @@ Dashboard.client.loadPoolData = function(forceDNSResolution = false) {
     // =============================================================================
     // DATA MERGE LOGIC: Handle filtered vs full responses
     // =============================================================================
+    // Hard requirement: every pool record carries the partition field. There
+    // are no mixed versions by policy, so an absent field means a 1.x iRule
+    // is still deployed somewhere - a deployment error that must fail loud
+    // here, not degrade quietly into bare-name key collisions downstream
+    if (processedData.pools && processedData.pools.length > 0) {
+      const missingPartition = processedData.pools.find(p => !p.partition);
+      if (missingPartition) {
+        throw new Error('Pool "' + (missingPartition.name || 'unknown') +
+          '" is missing the partition field - the selected site is not running the Dashboard 2.0 multi-partition iRule');
+      }
+    }
     // Check if this was a filtered request by seeing if pool headers were sent
     const wasFilteredRequest = Object.keys(fetchHeaders).some(h => h.startsWith('X-Need-Pools-'));
     
     if (wasFilteredRequest) {
-      // Filtered response - merge with existing data to preserve non-requested pools
+      // Merge invariant: sessionStorage always holds a complete site
+      // snapshot. A filtered response covers only the requested pools, so
+      // it is folded into the existing dataset rather than replacing it -
+      // otherwise pools outside the current filter would vanish on render.
+      // Merge identity is the canonical name: bare names duplicate across
+      // partitions and would merge two distinct pools into one record
       try {
         const cacheKey = Dashboard.core.getStorageKey('currentPoolData_' + Dashboard.state.currentSite);
         const existingData = JSON.parse(sessionStorage.getItem(cacheKey) || '{}');
         
         if (existingData.pools && Array.isArray(existingData.pools)) {
-          // Create a map of existing pools by name for quick lookup
+          // Create a map of existing pools by canonical name for quick lookup
           const existingPoolsMap = {};
           existingData.pools.forEach(pool => {
-            existingPoolsMap[pool.name] = pool;
+            existingPoolsMap[Dashboard.core.getCanonicalPoolName(pool)] = pool;
           });
           
           // Update existing pools with new data from filtered response
           processedData.pools.forEach(updatedPool => {
-            existingPoolsMap[updatedPool.name] = updatedPool;
+            existingPoolsMap[Dashboard.core.getCanonicalPoolName(updatedPool)] = updatedPool;
           });
           
           // Rebuild pools array from the updated map
@@ -760,7 +776,7 @@ Dashboard.client.changeRefreshInterval = function(interval) {
 // =============================================================================
 
 /**
- * User-initiated DNS resolution function
+ * Resolve DNS hostnames for the current site on operator request
  */
 Dashboard.client.resolveDNS = function() {
   // Check if a site is selected before proceeding
@@ -780,7 +796,7 @@ Dashboard.client.resolveDNS = function() {
 };
 
 /**
- * User-initiated DNS cache flush function
+ * Flush the DNS hostname cache for the current site on operator request
  */
 Dashboard.client.flushDNSCache = function() {
   // Check if a site is selected before proceeding with UI updates
@@ -905,7 +921,7 @@ Dashboard.client.mergeWithHostnameCache = function(apiResponse) {
         const ip = member.ip;
         
         if (member.hostname === null) {
-          // Try to get cached hostname from sessionStorage
+          // Backend sent no hostname - fill from the sessionStorage cache
           const cachedHostname = Dashboard.data.getHostnameFromCache(ip);
           if (cachedHostname) {
             member.hostname = cachedHostname;
@@ -913,13 +929,10 @@ Dashboard.client.mergeWithHostnameCache = function(apiResponse) {
           } else {
             cacheMisses++;
           }
-        } else if (member.hostname !== null) {
-          // Update sessionStorage cache with new hostname
+        } else {
+          // Backend resolved a hostname - record it for future cycles
           Dashboard.data.setHostnameInCache(ip, member.hostname);
           newEntries++;
-        } else {
-          // No hostname available (neither cached nor resolved)
-          cacheMisses++;
         }
       });
     }
@@ -936,7 +949,7 @@ Dashboard.client.mergeWithHostnameCache = function(apiResponse) {
 };
 
 /**
- * Enhanced JSON response processing with standardized error handling
+ * Parse a fetch response as JSON, converting HTTP failures to typed errors
  * @param {Response} response - Fetch API response object
  * @returns {Promise} Promise resolving to parsed JSON data
  */
@@ -973,7 +986,7 @@ Dashboard.client.processJSONResponse = function(response) {
 };
 
 /**
- * Standardized AJAX POST request for settings with error handling
+ * Send a settings value to the backend as a form-encoded POST
  * @param {string} endpoint - URL endpoint for the request
  * @param {string} parameter - Parameter name for the POST body
  * @param {string} value - Parameter value for the POST body
@@ -998,7 +1011,7 @@ Dashboard.client.sendSettingsRequest = function(endpoint, parameter, value) {
 };
 
 /**
- * Enhanced pool data request with instance identification and response validation
+ * Request pool data for the current site, tagging the request with the instance ID and validating the response
  * @param {Object} requestHeaders - Additional headers for the request
  * @param {AbortSignal} signal - AbortController signal for request cancellation
  * @returns {Promise} Promise resolving to pool data response
@@ -1014,7 +1027,9 @@ Dashboard.client.sendPoolDataRequest = function(requestHeaders = {}, signal = nu
   // Add instance ID header for backend identification
   headers['X-Instance-ID'] = Dashboard.core.instanceID;
   
-  // Send instance-specific selected site as header
+  // Site selection is instance state, never server state. The backend is
+  // stateless per request, so the selected site rides on every request as a
+  // header for the frontend iRule to route local versus remote
   headers['X-Selected-Site'] = Dashboard.state.currentSite || '';
   
   const requestOptions = {
@@ -1073,7 +1088,7 @@ Dashboard.client.validateInstanceResponse = function(data) {
 };
 
 /**
- * Standardized error message processing for user display
+ * Convert a fetch error into a user-facing message with debug detail
  * @param {Error} error - Error object from fetch operation
  * @returns {Object} Processed error information for UI display
  */
@@ -1088,21 +1103,21 @@ Dashboard.client.processErrorForDisplay = function(error) {
       console.log('Client: Processing standardized JSON error response');
     }
     
-    // Use the detailed backend error message
-    userMessage = errorData.message || 'An error occurred on the selected site.';
+    // Use the detailed backend error message, escaped for the HTML error panel
+    userMessage = Dashboard.core.escapeHtml(errorData.message || 'An error occurred on the selected site.');
     
     // Add debugging information if available
     if (errorData.hostname) {
-      debugInfo += '<br><strong>Source:</strong> ' + errorData.hostname;
+      debugInfo += '<br><strong>Source:</strong> ' + Dashboard.core.escapeHtml(errorData.hostname);
     }
     if (errorData.timestamp) {
-      debugInfo += '<br><strong>Time:</strong> ' + errorData.timestamp;
+      debugInfo += '<br><strong>Time:</strong> ' + Dashboard.core.escapeHtml(errorData.timestamp);
     }
     if (errorData.error) {
-      debugInfo += '<br><strong>Error Type:</strong> ' + errorData.error;
+      debugInfo += '<br><strong>Error Type:</strong> ' + Dashboard.core.escapeHtml(errorData.error);
     }
     if (errorData.version) {
-      debugInfo += '<br><strong>API Version:</strong> ' + errorData.version;
+      debugInfo += '<br><strong>API Version:</strong> ' + Dashboard.core.escapeHtml(errorData.version);
     }
     
   } else {
@@ -1119,7 +1134,7 @@ Dashboard.client.processErrorForDisplay = function(error) {
       userMessage = 'The selected site returned invalid data format.';
     }
     
-    debugInfo = '<br><br><strong>Error details:</strong> ' + error.message;
+    debugInfo = '<br><br><strong>Error details:</strong> ' + Dashboard.core.escapeHtml(error.message);
   }
   
   return {

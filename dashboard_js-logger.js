@@ -1,11 +1,11 @@
 // Multi-Site Dashboard JavaScript - LOGGER MODULE
-// Dashboard Version: 1.8
-// Dashboard JSON:    1.8
+// Dashboard Version: 2.0
+// Dashboard JSON:    2.0
 // Author: Eric Haupt
 // License: MIT
-// Copyright (c) 2025 Eric Haupt
+//
+// Copyright (c) 2026 Eric Haupt
 // Released under the MIT License. See LICENSE file for details.
-// https://github.com/hauptem/F5-Multisite-Dashboard
 //
 // Description: Dedicated logger functionality with resizable UI, state 
 // persistence, memory management, wake lock integration, session storage and copy
@@ -59,7 +59,8 @@ Dashboard.logger.init = function() {
   Dashboard.logger.safeInitLogger();
   Dashboard.logger.registerWithUI();
   
-  // Enable logging in data module always (now that we have session storage)
+  // Logging stays enabled regardless of logger visibility; entries persist
+  // to session storage so the logger shows history when opened later
   if (Dashboard.data && Dashboard.data.enableLogger) {
     Dashboard.data.enableLogger();
   }
@@ -155,66 +156,6 @@ Dashboard.logger.initLogger = function() {
   if (window.dashboardConfig && window.dashboardConfig.debugEnabled) {
     console.log('Logger: Logger interface created successfully');
   }
-};
-
-/**
- * Toggle expanded view with dynamic tooltip update
- */
-Dashboard.logger.toggleExpand = function() {
-  const logger = Dashboard.logger.state.container;
-  const expandBtn = logger ? logger.querySelector('.expand-btn') : null;
-  
-  if (!logger || !expandBtn) return;
-  
-  if (!Dashboard.logger.state.expanded) {
-    // Save current dimensions (only width and height)
-    const computedStyle = window.getComputedStyle(logger);
-    Dashboard.logger.state.previousDimensions = {
-      width: computedStyle.width,
-      height: computedStyle.height
-    };
-    
-    // Expand - keep centered positioning
-    logger.style.width = 'calc(100vw - 40px)';
-    logger.style.height = '50vh';
-    logger.style.left = '50%';
-    logger.style.transform = 'translateX(-50%)';
-    logger.style.bottom = '20px';
-    logger.style.right = 'auto';
-    
-    expandBtn.textContent = 'Restore';
-    expandBtn.style.background = 'rgba(255,165,0,0.3)';
-    expandBtn.style.borderColor = 'rgba(255,165,0,0.5)';
-    Dashboard.logger.state.expanded = true;
-    
-    // Force tooltip update with a slight delay to ensure DOM update
-    setTimeout(() => {
-      expandBtn.setAttribute('title', 'Restore logger window');
-    }, 10);
-  } else {
-    // Restore - keep centered positioning
-    const prev = Dashboard.logger.state.previousDimensions;
-    if (prev) {
-      logger.style.width = prev.width;
-      logger.style.height = prev.height;
-    }
-    logger.style.left = '50%';
-    logger.style.transform = 'translateX(-50%)';
-    logger.style.bottom = '90px';
-    logger.style.right = 'auto';
-    
-    expandBtn.style.background = 'rgba(255,255,255,0.2)';
-    expandBtn.style.borderColor = 'rgba(255,255,255,0.3)';
-    expandBtn.textContent = 'Expand';
-    Dashboard.logger.state.expanded = false;
-    
-    // Force tooltip update with a slight delay to ensure DOM update
-    setTimeout(() => {
-      expandBtn.setAttribute('title', 'Expand logger window');
-    }, 10);
-  }
-  
-  Dashboard.logger.saveLoggerState();
 };
 
 /**
@@ -381,8 +322,13 @@ Dashboard.logger.addLogEntry = function(fromStatus, toStatus, member, pool, site
   const statusChangeStr = (' ' + fromStatusPadded + ' →' + ' ' + toStatusPadded + ' ');
   const memberStr = (fullMember.substring(0, 48) + '\u00A0'.repeat(48)).substring(0, 48);
   
-  // Build line with colored symbol and white text
-  const textPart = `${timeStr} │ ${siteStr} │ ${statusChangeStr} │ ${memberStr} │ ${pool}`;
+  // Build line with colored symbol and white text. Dynamic fields are
+  // escaped here because this HTML is written to innerHTML both live and
+  // on re-injection from sessionStorage; the member field carries resolved
+  // DNS hostnames, which are external data. Escaping after padding keeps
+  // the alignment math on raw character counts
+  const esc = Dashboard.core.escapeHtml;
+  const textPart = `${timeStr} │ ${esc(siteStr)} │ ${esc(statusChangeStr)} │ ${esc(memberStr)} │ ${esc(pool)}`;
   const logEntryHTML = `<span style="color: ${symbolColor};">${statusChar}</span> <span style="color: #ffffff;">${textPart}</span>`;
   
   // Create log entry object for session storage
@@ -1084,7 +1030,7 @@ Dashboard.logger.applyLoggerState = function() {
     content.style.fontSize = Dashboard.logger.state.fontSize + 'px';
   }
   
-  // Enable/disable data logging - keep enabled always now
+  // Logging remains enabled regardless of visibility state
   if (Dashboard.logger.state.visible && Dashboard.data && Dashboard.data.enableLogger) {
     Dashboard.data.enableLogger();
   }
