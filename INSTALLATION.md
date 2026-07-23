@@ -21,7 +21,7 @@ This guide provides complete step-by-step installation procedures for both Front
 
 - F5 BIG-IP with LTM and APM modules provisioned
 - TMOS Version: 17.1 or higher 
-- **Note:** Version 2.0 supports pools in any partition. Version 1.x is Common-only and 1.x components cannot be mixed with 2.0; all components upgrade together.
+- **Note:** Version 2.0 supports pools in any partition. 1.x components cannot be mixed with 2.0; you must upgrade all components when installing 2.0.
 
 ---
 
