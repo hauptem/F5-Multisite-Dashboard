@@ -7,14 +7,14 @@ Dashboard 2.0 adds multi-partition support.
 ### New Features
 
 - Pools in any partition can be monitored alongside Common pools in a single grid
-- Partitioned pools are identified by their full path (/dmz/web-pool) in datagroups, aliases, and optimization headers. Common pools continue to use the bare name
-- The grid groups pools by partition: Common first, then remaining partitions alphabetically. Sort order and drag reordering apply within each partition
-- In actual name display mode, partitioned pools show their full path so partition membership is visible at a glance. Alias display is unchanged, and the tooltip on an aliased pool shows the full path
-- Partition names are searchable and search is the partition filter. dmz shows that partition, dmz AND web narrows it, NOT excludes unwanted matches. There is no separate partition selector
+- Partitioned pools are identified by their full path (/dmz/web-pool) in datagroups, aliases, and optimization headers. Common pools continue to use the bare pool name
+- The UI grid groups pools by partition: Common first, then remaining partitions alphabetically. Sort order and drag reordering apply only within each partition
+- In actual name display mode, partitioned pools show their full path so partition membership is visible at a glance. Alias display is unchanged, and the tooltip on an aliased pool shows the full pool name
+- Partition names are searchable.
 - Status changes, acknowledgments, and history are tracked per partition. Two pools with the same name in different partitions are fully independent
 - Logger entries show the full path for partitioned pools
-- The iCall sync script discovers pools in all partitions. A new excluded_partitions setting removes entire partitions from the dashboard; excluded partitions are cleaned out of the datagroups on the next sync run
-- The bash discovery script supports the same multi-partition discovery and exclusions, merges with existing datagroup content instead of rebuilding it, and adds a dry-run flag (-n)
+- The iCall sync script discovers pools in all partitions. A new excluded_partitions setting removes entire partitions from the dashboard
+- The single use bash discovery script supports the same multi-partition discovery and exclusions, merges with existing datagroup content instead of rebuilding it, and adds a dry-run flag (-n)
 
 ### Changes
 
