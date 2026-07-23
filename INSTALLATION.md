@@ -605,13 +605,13 @@ tmsh save sys config
 
 Populate them with the discovery script (below) or manually. Pool names follow the canonical format: bare name for `/Common` pools, full path (`/dmz/web-pool`) for pools in any other partition. Alias keys match the pool entries exactly.
 
-#### Automated Pool Discovery
+#### Pool Discovery Script
 
 Use the included discovery script to populate both pool data groups automatically:
 
-📋 **[Pool Discovery Script](dashboard_pool_discovery_v2.sh)**
+📋 **[Pool Discovery Script](dashboard_pool_discovery.sh)**
 
-The script discovers pools across all partitions, writes canonical names (bare for `/Common`, full path otherwise), and merges with existing records: hand-tuned sort orders and aliases survive re-runs, new pools append after the current maximum, and removed pools are logged. Edit the two settings at the top before running:
+The script discovers pools across all partitions, writes canonical names, and merges with existing records: hand-tuned sort orders and aliases survive re-runs, new pools append after the current maximum, and removed pools are logged. Edit the two settings at the top before running:
 
 - `EXCLUDE_PARTITIONS`: partitions to hide from the dashboard entirely (`Common` cannot be excluded)
 - `EXCLUDE_POOLS`: individual pools to skip, such as the dashboard's own utility pools
