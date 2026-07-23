@@ -9,7 +9,6 @@
 # Description:
 #   This iRule provides a multi-site pool monitoring dashboard frontend meant to work with
 #   Dashboard API hosts as remote back-end sites serving pool data and DNS.
-#   Dashboard v1.x is not multi-partition compatible. 
 #   
 # Dashboard Front-End Critical Dependencies:
 #
@@ -25,10 +24,10 @@
 #    4. Front-end LTM datagroup: datagroup-dashboard-api-host
 #		Type: String, Used to map remote Site name to IP address
 #
-#    5. Front-end LTM datagroup: /Common/dashboard/datagroup-dashboard-pools (device-local folder, excluded from config sync)
+#    5. Front-end LTM datagroup: /Common/dashboard/datagroup-dashboard-pools
 #		Type: String, Used to provide a list of pools to display
 #
-#    6. Front-end LTM datagroup: /Common/dashboard/datagroup-dashboard-pool-alias (device-local folder, excluded from config sync)
+#    6. Front-end LTM datagroup: /Common/dashboard/datagroup-dashboard-pool-alias
 #		Type: String, Used to create alias names for actual pool names
 #
 #    7. Front-end LTM datagroup: datagroup-dashboard-api-keys
@@ -52,17 +51,9 @@
 #        dashboard_js-data.js   - Javascript Data Module
 #        dashboard_js-ui.js     - Javascript UI Module
 #        dashboard_js-logger.js - Javascript Logs Module
-#        dashboard_logo.png  - logo image file
-#        dashboard.css       - Dashboard CSS with themes
+#        dashboard_logo.png     - logo image file
+#        dashboard.css          - Dashboard CSS with themes
 #
-
-#
-#   NOTE: Bare pool names in datagroup-dashboard-pools resolve relative to the
-#   virtual server's partition. The bare-equals-Common convention holds while
-#   this virtual server is deployed in /Common; deploying it in another
-#   partition silently repoints every bare entry at that partition.
-#
-
 when RULE_INIT {
 # ======================================================================================================
 # USER CONFIGURATION VARIABLES - Set Debug, DNS, Dashboard pool names, Resolver name, and Front-End Name
