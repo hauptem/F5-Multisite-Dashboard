@@ -1,9 +1,5 @@
 # Release Notes
 
-## 1.8 (Fall 2025)
-
-Dashboard 1.8 does not support partitions other than Common. The 1.8 release will remain in the repo as the last stable release before the 2.0 rework.
-
 ## 2.0 (July 2026)
 
 Dashboard 2.0 adds multi-partition support. The frontend iRule, API-Host iRules, iCall script, iFiles, and datagroups must all be upgraded together. **1.8 and 2.0 components are not compatible with each other.**
@@ -38,3 +34,7 @@ Dashboard 2.0 adds multi-partition support. The frontend iRule, API-Host iRules,
 Upgrade all components together. On each device, create the /Common/dashboard folder and datagroups and run pool discovery before updating the iRules; an iRule that references the new datagroup location before it exists will fail every request until discovery runs. Expect each API host to be briefly marked down during its migration and to recover within one monitor interval.
 
 The first poll after upgrade establishes new state baselines for partitioned pools, which resets any pending acknowledgments once. Common-only deployments retain their member state, acknowledgments, and sort orders. No other migration steps are required.
+
+## 1.8 (Fall 2025)
+
+Dashboard 1.8 does not support partitions other than Common. The 1.8 release will remain in the repo as the last stable release before the 2.0 rework.
