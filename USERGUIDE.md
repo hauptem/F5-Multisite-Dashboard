@@ -222,10 +222,6 @@ dmz lab NOT common                  → The dmz and lab partitions, excluding al
 changed NOT common                  → Alarmed pools outside the Common partition
 ```
 
-**Tip**: Search terms match anywhere in the pool data, so a term like `lab` also matches member hostnames such as `server-1.lab.local`. When a partition search pulls in unrelated pools this way, add `NOT common` (or another `NOT` term) to trim the view down to the partitions you want.
-
-**Note**: Quoted phrases are not supported. Every term is an individual case-insensitive substring match, so `web server` matches pools containing "web" OR "server". If both terms must be present, use `web AND server`. For multi-word aliases, search on the most distinctive single word.
-
 ### Search Scope
 
 The search function examines:
