@@ -201,7 +201,7 @@ changed             → Only pools with pulsing status badges (unacknowledged st
 
 #### Filtering by Partition
 
-Partition names are searchable, so search is how you filter the grid to a partition. There is no separate partition selector:
+Partition names are searchable:
 
 ```text
 dmz                 → Shows the dmz partition (plus anything else containing "dmz")
@@ -209,8 +209,6 @@ dmz AND web         → Narrows the dmz partition to matching pools
 dmz NOT dmz-relay   → The dmz partition without a pool you don't want in view
 Common              → Shows Common partition pools
 ```
-
-Because a search term matches anywhere in the pool data, a partition search can also pick up pools whose name, alias, or member hostnames contain the same text. This is especially noticeable when a partition name overlaps your DNS domain (a `lab` partition in a `lab.local` domain matches every resolved hostname). Use `NOT common` or other `NOT` terms to trim the view. Partition-filtered views scope backend polling to the visible pools, same as any other search.
 
 ### Advanced Search Examples
 
@@ -263,7 +261,7 @@ The search function examines:
 3. **Drop Target**: Drag over another pool table (highlights with dashed border)
 4. **Complete**: Release to swap positions
 
-**Note**: Pools cannot be reordered across partitions. If you drag a pool over one in a different partition, the dashed drop highlight will not appear and releasing does nothing. This is intentional: the grid always groups pools by partition, so a cross-partition swap would have no effect on the layout. Drop targets must be in the same partition as the pool you are dragging.
+**Note**: Pools cannot be reordered across partitions. If you drag a pool over one in a different partition, the dashed drop highlight will not appear and releasing does nothing.
 
 ### Reorder Behavior
 
