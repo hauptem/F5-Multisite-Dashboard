@@ -18,7 +18,7 @@ Dashboard 2.0 adds multi-partition support.
 
 ### Changes
 
-- The pools and alias datagroups moved to /Common/dashboard, a device-local folder excluded from config sync. Automated datagroup iCall writes no longer leave manual-sync clusters showing 'Changes Pending'
+- The pools and alias datagroups moved to /Common/dashboard, a device-local folder excluded from config sync. Automated datagroup iCall writes no longer leave manual-sync clusters showing 'Changes Pending' when iCall makes a change. Note that this method shift also means pool names and aliases will not sync. Therefore it is recommended to use the "derive aliases from pool description" feature if you desire sync.
 - The pool name limit in X-Need-Pools headers increased from 100 to 255 characters to accommodate full partition path names
 - Grid and micro view CSS is injected by the UI module and was removed from dashboard.css where it was orphaned in version 1.7. Theme customization in the stylesheet can no longer affect grid layout at all.
 - The iCall script validates its datagroup reads and aborts rather than proceeding with empty data, and sanitizes pool descriptions before installing them as aliases
