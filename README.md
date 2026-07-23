@@ -17,6 +17,8 @@
 
 Dashboard 2.0 now brings multi-partition support. If your BIG-IPs organize applications into administrative partitions, every one of those pools can now be displayed. If you already have Dashboard 1.8 up and running, 2.0 brings no functional changes other than a re-worked iCall method that no longer causes cluster Sync notifications when the script makes a change. If you dont have partitions then staying on 1.8 is the right move.
 
+- [Release Notes](RELEASE_NOTES.md) 
+
 ### Monitor pools from any partition
 
 Pools from `/dmz`, `/secure`, or any other partition appear right alongside your Common pools in the same grid. The grid groups everything by partition automatically: Common pools first, then each partition alphabetically, with your custom pool ordering preserved inside each group.
