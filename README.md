@@ -29,8 +29,6 @@ There is no partition dropdown to manage. The search box does it all:
 - Type `dmz AND web` to narrow it to specific pools
 - Add `NOT` to drop anything you don't want in the view
 
-The dashboard's scoped polling works with this the same way it always has: whatever your search shows is all the backend processes, so filtering to one partition also lightens the load on the F5.
-
 ### Same-named pools stay separate
 
 If `web-pool` exists in both Common and `/dmz`, the dashboard treats them as the two different pools they are. Status changes, acknowledgments, and history are tracked independently, log entries show the full path so there is no guessing which one flapped, and drag reordering keeps each partition's pools grouped together.
