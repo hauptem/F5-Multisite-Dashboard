@@ -74,7 +74,7 @@ At its core it's a pool status iRule on steroids:    **query member status → d
 
 The dashboard consists of two components:
 
-### Front-end (one - or more as desired)
+### Front-end (one or more)
 - Serves the web interface and static assets
 - Handles user authentication via APM
 - Provides local pool monitoring for the frontend site
