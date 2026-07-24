@@ -191,7 +191,7 @@ The script discovers pools across all partitions, writes canonical names, and me
 
 Run with `-n` first for a dry run that prints every add, keep, and remove decision without writing anything. After running, customize aliases by modifying the alias data group; the script never overwrites a non-empty alias.
 
-### Optional: iCall Pool Sync (Frontend)
+### Optional: iCall Pool Sync
 
 An iCall script that periodically refreshes the pool and alias data groups with the current LTM pool configuration. This is the recommended long-term alternative to re-running the discovery script by hand.
 
@@ -632,7 +632,7 @@ The script discovers pools across all partitions, writes canonical names, and me
 
 Run with `-n` first for a dry run that prints every add, keep, and remove decision without writing anything. After running, customize aliases by modifying the alias data group; the script never overwrites a non-empty alias.
 
-### Optional: iCall Pool Sync (API Host)
+### Optional: iCall Pool Sync
 
 The same iCall script applies here: it periodically refreshes the pool and alias data groups with the current LTM pool configuration.
 
