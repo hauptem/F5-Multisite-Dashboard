@@ -202,9 +202,6 @@ changed             → Only pools with pulsing status badges (unacknowledged st
 ```
 
 #### Filtering by Partition
-
-Partition names are searchable:
-
 ```text
 dmz                 → Shows the dmz partition (plus anything else containing "dmz")
 dmz AND web         → Narrows the dmz partition to matching pools
