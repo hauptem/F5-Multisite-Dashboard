@@ -1,7 +1,5 @@
 # Multi-Site Dashboard v2.0 Release Notes
 
-Breaking release. Frontend iRule, API-Host iRules, iCall script, all iFiles, and all datagroups upgrade together - no mixed 1.x/2.0 components anywhere.
-
 **Multi-Partition Support**
 - Pools from any partition display in the single grid. The full path (/dmz/web-pool) is the pool identifier in datagroups, alias lookups, and optimization headers; Common pools keep the bare name, so Common-only deployments carry their member state, acknowledgments, and sort orders through the upgrade unchanged
 - Grid groups by partition: Common first, remaining partitions A-Z. Custom order and sort_order apply within each partition
