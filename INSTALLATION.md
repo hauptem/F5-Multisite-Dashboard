@@ -19,7 +19,7 @@ This guide provides complete step-by-step installation procedures for both Front
 ## Prerequisites
 
 - F5 BIG-IP with LTM and APM modules provisioned
-- TMOS 17.x or 21.x series (matches the versions listed in the [README](README.md))
+- TMOS 17.x or 21.x series
 - Administrative access to the Configuration utility and SSH/tmsh on each device
 - The dashboard release files (iFiles, iRules, and the discovery script) from this repository
 - Optional: GTM/BIG-IP DNS if you want a dedicated dashboard DNS listener for PTR resolution
