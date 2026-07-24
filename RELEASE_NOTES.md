@@ -26,7 +26,3 @@
 - Acknowledging a status change on a route-domain member (10.1.1.1%2) silently failed - an input check misread route-domain addresses as hostnames and rejected the acknowledgment. Present since 1.x; partitioned deployments were the first to use route domains and hit it
 - Duplicate Dashboard.logger.toggleExpand definition removed. The module defined the function twice and the second silently overrode the first; the dead copy is gone and behavior is unchanged
 - Grid and micro-view structural CSS removed from dashboard.css and all Theme1 color variants. The rules duplicated the set injected at runtime by the UI module, which already won by source order; the UI module is now the sole owner of grid structure and theme work in the stylesheet cannot break grid layout
-
-**Upgrading**
-- Sequence per device: create the /Common/dashboard folder and datagroups, run pool discovery, then update the iRules and iFiles. An iRule updated before the datagroups exist fails every request - including health monitor probes - until discovery runs, so expect the site to be marked down briefly and recover within one monitor interval
-- First poll after upgrade re-baselines member state for partitioned pools and resets pending acknowledgments once. Common pool state keys are unchanged from 1.x. No other migration steps
