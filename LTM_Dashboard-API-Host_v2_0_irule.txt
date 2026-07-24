@@ -63,6 +63,8 @@ when RULE_INIT {
 # ======================================================================================================
     # JSON Schema version
     set static::json_version "2.0"
+    # Rule load time - used to report uptime_seconds in /api/health
+    set static::rule_init_epoch [clock seconds]
     # Hostname is fixed per device - resolve and escape once at rule load
     set static::bigip_hostname [info hostname]
     regsub -all {"} $static::bigip_hostname {\"} static::bigip_hostname_escaped
@@ -110,18 +112,28 @@ when HTTP_REQUEST {
 # ======================================================================================================
     if { [HTTP::uri] eq "/api/health" } {
         set current_timestamp [clock format [clock seconds] -format "%Y-%m-%d %H:%M:%S"]
-        set uptime_seconds [clock seconds]
+        # Seconds since this iRule loaded (config load/reload), not device boot
+        set uptime_seconds [expr {[clock seconds] - $static::rule_init_epoch}]
         set version $static::json_version
-        # Get pool configuration from datagroup with error handling
-        set available_pools [class names $static::dashboard_pools_dg]
-        set pools_configured [llength $available_pools]
-        # Determine health status based on endpoint configuration
-        if { $pools_configured > 0 } {
-            set health_status "healthy"
-            set health_message "API endpoint is operational with $pools_configured pools configured"
-        } else {
+        # Get pool configuration from datagroup with error handling - a
+        # missing datagroup (device-local folder not yet created on this
+        # device) must surface as a clean unhealthy response, not a TCL
+        # runtime error and connection reset
+        if { [catch {class names $static::dashboard_pools_dg} available_pools] } {
+            set available_pools {}
+            set pools_configured 0
             set health_status "unhealthy"
-            set health_message "API endpoint has no pools configured for monitoring"
+            set health_message "Pools datagroup $static::dashboard_pools_dg not found - verify the device-local dashboard folder and datagroups exist on this device"
+        } else {
+            set pools_configured [llength $available_pools]
+            # Determine health status based on endpoint configuration
+            if { $pools_configured > 0 } {
+                set health_status "healthy"
+                set health_message "API endpoint is operational with $pools_configured pools configured"
+            } else {
+                set health_status "unhealthy"
+                set health_message "API endpoint has no pools configured for monitoring"
+            }
         }
         # Escape health message for JSON safety
         regsub -all {"} $health_message {\"} message_escaped
@@ -171,26 +183,35 @@ when HTTP_REQUEST {
                 set dns_result [call process_headers $client_debug_enabled "dns" $static::dns_enabled $dns_available]
                 set need_dns_list [lindex $dns_result 0]
                 set need_dns_lookup [lindex $dns_result 1]
-                } else {
-                    set need_dns_list {}
-                    set need_dns_lookup ""
-                    }
             } else {
                 set need_dns_list {}
                 set need_dns_lookup ""
+            }
+        } else {
+            set need_dns_list {}
+            set need_dns_lookup ""
+            if { $client_debug_enabled } {
                 log local0. "DEBUG: DNS unavailable - using IP-only mode for this request"
+            }
         }
         # Initialize response data
         set current_timestamp [clock format [clock seconds] -format "%Y-%m-%d %H:%M:%S"]
-		# Extract instance ID from request header for response inclusion
-		set instance_id ""
-		if { [HTTP::header exists "X-Instance-ID"] } {
-			set instance_id [HTTP::header "X-Instance-ID"]
-			if { $client_debug_enabled } {
-				log local0. "DEBUG: Request instance ID: $instance_id"
-				}
-             }
-        set available_pools [class names $static::dashboard_pools_dg]
+        # Extract instance ID from request header for response inclusion
+        set instance_id ""
+        if { [HTTP::header exists "X-Instance-ID"] } {
+            set instance_id [HTTP::header "X-Instance-ID"]
+            if { $client_debug_enabled } {
+                log local0. "DEBUG: Request instance ID: $instance_id"
+            }
+        }
+        # A missing pools datagroup (device-local folder not yet created on
+        # this device) must surface as a clean 503, not a TCL runtime error
+        # and connection reset
+        if { [catch {class names $static::dashboard_pools_dg} available_pools] } {
+            call send_error_response 503 "Configuration Error" "Pools datagroup $static::dashboard_pools_dg not found - verify the device-local dashboard folder and datagroups exist on this device" "Pools datagroup $static::dashboard_pools_dg not found"
+            return
+        }
+        array set dns_request_cache {}
         if { $client_debug_enabled } {
             log local0. "DEBUG: Starting pool data collection - [llength $available_pools] pools configured"
         }

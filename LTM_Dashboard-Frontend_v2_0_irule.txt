@@ -142,39 +142,47 @@ when HTTP_REQUEST {
             # Only call if NEED-POOL headers exist
             if { [HTTP::header exists "X-Need-Pools-Count"] } {
                 set filtered_pools [call process_headers $client_debug_enabled "pools"]
-        } else {
+            } else {
                 set filtered_pools {}
-        }
-        # Only call if NEED-POOL headers exist
-        if { $static::dns_enabled && $dns_available } {
-            if { [HTTP::header exists "X-Need-DNS-Count"] } {
-                set dns_result [call process_headers $client_debug_enabled "dns" $static::dns_enabled $dns_available]
-                set need_dns_lookup [lindex $dns_result 1]
+            }
+            # Only call if NEED-DNS headers exist and DNS is available
+            if { $static::dns_enabled && $dns_available } {
+                if { [HTTP::header exists "X-Need-DNS-Count"] } {
+                    set dns_result [call process_headers $client_debug_enabled "dns" $static::dns_enabled $dns_available]
+                    set need_dns_lookup [lindex $dns_result 1]
                 } else {
                     set need_dns_lookup ""
-                    }
+                }
             } else {
                 set need_dns_lookup ""
-                log local0. "DEBUG: DNS unavailable - using IP-only mode for this request"
+                if { $client_debug_enabled } {
+                    log local0. "DEBUG: DNS unavailable - using IP-only mode for this request"
+                }
             }
             # Pool data collection using memory-optimized procedures
             set current_timestamp [clock format [clock seconds] -format "%Y-%m-%d %H:%M:%S"]
-			# Extract instance ID from request header for response inclusion
-			set instance_id ""
-			if { [HTTP::header exists "X-Instance-ID"] } {
-					set instance_id [HTTP::header "X-Instance-ID"]
-					if { $client_debug_enabled } {
-						log local0. "DEBUG: Request instance ID: $instance_id"
-						}
+            # Extract instance ID from request header for response inclusion
+            set instance_id ""
+            if { [HTTP::header exists "X-Instance-ID"] } {
+                set instance_id [HTTP::header "X-Instance-ID"]
+                if { $client_debug_enabled } {
+                    log local0. "DEBUG: Request instance ID: $instance_id"
                 }
-            set available_pools [class names $static::dashboard_pools_dg]
+            }
+            # A missing pools datagroup (device-local folder not yet created
+            # on this device) must surface as a clean 503, not a TCL runtime
+            # error and connection reset
+            if { [catch {class names $static::dashboard_pools_dg} available_pools] } {
+                call send_error_response 503 "Configuration Error" "Pools datagroup $static::dashboard_pools_dg not found - verify the device-local dashboard folder and datagroups exist on this device" "Pools datagroup $static::dashboard_pools_dg not found"
+                return
+            }
             array set dns_request_cache {}
             if { $client_debug_enabled } {
                 log local0. "DEBUG: Starting pool data collection - [llength $available_pools] pools configured"
             }
             set pools_data [call collect_all_pool_data $available_pools $static::dns_enabled $dns_available $need_dns_lookup $client_debug_enabled $filtered_pools dns_request_cache $static::dashboard_dns_resolver]
             # Build JSON response
-            set pools_json "\{\"hostname\":\"$static::bigip_hostname\",\"timestamp\":\"$current_timestamp\",\"debug_enabled\":\"[expr {$client_debug_enabled ? "enabled" : "disabled"}]\",\"instanceId\":\"$instance_id\",\"pools\":\[$pools_data\]\}"
+            set pools_json "\{\"hostname\":\"$static::bigip_hostname_escaped\",\"timestamp\":\"$current_timestamp\",\"debug_enabled\":\"[expr {$client_debug_enabled ? "enabled" : "disabled"}]\",\"instanceId\":\"$instance_id\",\"pools\":\[$pools_data\]\}"
             if { $client_debug_enabled } {
                 log local0. "DEBUG: JSON Response processing completed - [string length $pools_json] bytes response"
             }
