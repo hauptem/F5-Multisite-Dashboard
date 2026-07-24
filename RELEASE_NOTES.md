@@ -4,7 +4,7 @@
 - Pools from any partition display in the single grid. The full path (/dmz/web-pool) is the pool identifier in datagroups, alias lookups, and optimization headers; Common pools keep the bare name, so Common-only deployments carry their member state, acknowledgments, and sort orders through the upgrade unchanged
 - Grid groups by partition: Common first, remaining partitions A-Z. Custom order and sort_order apply within each partition
 - Actual-name display shows the full path for pools outside Common so partition membership is visible at a glance. Alias display is unchanged; the tooltip on an aliased pool shows the full path
-- Partition names are searchable and search is the partition filter - dmz shows the partition, dmz AND web narrows it, NOT trims unwanted matches. No partition selector was added. Search terms match anywhere in pool data, so a partition name that overlaps member hostnames (a lab partition in a lab.local domain) pulls in extra pools; NOT common cleans that up
+- Partition names are searchable and search is the partition filter
 - Member state, acknowledgments, and history are keyed per partition. The same pool name with the same member IP:port in two partitions tracks independently - a flap in one never marks or acknowledges the other
 - Logger entries show the full path for partitioned pools
 - Reordering is constrained to the pool's own partition group. Cross-partition drops are ignored and the drop highlight is withheld from invalid targets, since the partition grouping would override the swapped order anyway
