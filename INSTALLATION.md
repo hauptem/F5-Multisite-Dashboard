@@ -642,7 +642,7 @@ An iCall script can also be installed for automatic management of the pools data
 
 A menu-driven tool available in powershell or bash script which will allow export, import, day to day management, and syncing (fleet option). This tool supersedes the datagroup backup and recovery script that was available for Dashboard 1.x
 
-📋 **[iCall Script](/iCall%20Datagroup%20Sync/README.md)**https://github.com/hauptem/F5-SSL-Orchestrator-Tools/tree/main/DGCat-Admin
+[DGCat-Admin](https://github.com/hauptem/F5-SSL-Orchestrator-Tools/tree/main/DGCat-Admin) | 
 
 ---
 
