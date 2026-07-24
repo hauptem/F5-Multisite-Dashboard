@@ -209,8 +209,7 @@ dmz NOT dmz-relay   → The dmz partition without a pool you don't want in view
 Common              → Shows Common partition pools
 ```
 
-### Advanced Search Examples
-
+#### Advanced Search Examples
 ```text
 web AND up                          → Pools containing "web" with "up" status or members
 centos AND changed NOT disabled     → Changed (alarmed) centos servers (that are not disabled)
