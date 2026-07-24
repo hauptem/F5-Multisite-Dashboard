@@ -197,6 +197,12 @@ An iCall script that periodically refreshes the pool and alias data groups with 
 
 📋 **[iCall Script](/iCall%20Datagroup%20Sync/README.md)** - Setup instructions for the automatic pool and alias data group sync
 
+### Optional: Datagroup Backup/Restore/Management tool DGCat-Admin
+
+A menu-driven tool available in powershell or bash script which will allow export, import, day to day management, and syncing (fleet option). This tool supersedes the datagroup backup and recovery script that was available for Dashboard 1.x
+
+[ DGCat-Admin - Datagroup Management Tool ](https://github.com/hauptem/F5-SSL-Orchestrator-Tools/tree/main/DGCat-Admin) 
+
 ---
 
 ### Create Required Pools
@@ -642,7 +648,7 @@ An iCall script can also be installed for automatic management of the pools data
 
 A menu-driven tool available in powershell or bash script which will allow export, import, day to day management, and syncing (fleet option). This tool supersedes the datagroup backup and recovery script that was available for Dashboard 1.x
 
-[DGCat-Admin](https://github.com/hauptem/F5-SSL-Orchestrator-Tools/tree/main/DGCat-Admin) | 
+[ DGCat-Admin - Datagroup Management Tool ](https://github.com/hauptem/F5-SSL-Orchestrator-Tools/tree/main/DGCat-Admin) 
 
 ---
 
