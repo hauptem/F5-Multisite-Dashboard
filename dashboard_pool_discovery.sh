@@ -1,5 +1,5 @@
 #!/bin/bash
-# Automated Pool Discovery Script - Multi-Partition
+# Pool Discovery Script - Multi-Partition
 # Dashboard Version 2.0
 #
 # Discovers pools across all partitions and populates the dashboard datagroups
