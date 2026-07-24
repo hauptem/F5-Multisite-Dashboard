@@ -1,35 +1,34 @@
-# Release Notes
+# Multi-Site Dashboard v2.0 Release Notes
 
-## 2.0 (July 2026)
+Breaking release. Frontend iRule, API-Host iRules, iCall script, all iFiles, and all datagroups upgrade together - no mixed 1.x/2.0 components anywhere.
 
-Dashboard 2.0 adds multi-partition support.
-
-### New Features
-
-- Pools in any partition can be monitored alongside Common pools in a single grid
-- Partitioned pools are identified by their full path (/dmz/web-pool) in datagroups, aliases, and optimization headers. Common pools continue to use the bare pool name
-- The UI grid groups pools by partition: Common first, then remaining partitions alphabetically. Sort order and drag reordering apply only within each partition
-- In actual name display mode, partitioned pools show their full path so partition membership is visible at a glance. Alias display is unchanged, and the tooltip on an aliased pool shows the full pool name
-- Partition names are searchable.
-- Status changes, acknowledgments, and history are tracked per partition. Two pools with the same name in different partitions are fully independent
+**Multi-Partition Support**
+- Pools from any partition display in the single grid. The full path (/dmz/web-pool) is the pool identifier in datagroups, alias lookups, and optimization headers; Common pools keep the bare name, so Common-only deployments carry their member state, acknowledgments, and sort orders through the upgrade unchanged
+- Grid groups by partition: Common first, remaining partitions A-Z. Custom order and sort_order apply within each partition
+- Actual-name display shows the full path for pools outside Common so partition membership is visible at a glance. Alias display is unchanged; the tooltip on an aliased pool shows the full path
+- Partition names are searchable and search is the partition filter - dmz shows the partition, dmz AND web narrows it, NOT trims unwanted matches. No partition selector was added. Search terms match anywhere in pool data, so a partition name that overlaps member hostnames (a lab partition in a lab.local domain) pulls in extra pools; NOT common cleans that up
+- Member state, acknowledgments, and history are keyed per partition. The same pool name with the same member IP:port in two partitions tracks independently - a flap in one never marks or acknowledges the other
 - Logger entries show the full path for partitioned pools
-- The iCall sync script discovers pools in all partitions. A new excluded_partitions setting removes entire partitions from the dashboard
-- The single use bash discovery script supports the same multi-partition discovery and exclusions, merges with existing datagroup content instead of rebuilding it, and adds a dry-run flag (-n)
+- Reordering is constrained to the pool's own partition group. Cross-partition drops are ignored and the drop highlight is withheld from invalid targets, since the partition grouping would override the swapped order anyway
+- iRule pool parsing is folder-safe: partition is the second path segment, pool name is every trailing segment rejoined, so /Common/appA/web-pool yields appA/web-pool instead of colliding every pool in a folder onto one name. Malformed entries (/dmz/, //pool) log PARTITION_ERROR and are skipped
+- Header pool-name limit raised 100 to 255 for full paths. Over-length names were silently dropped from the filtered list; an emptied list falls back to full-site polling, quietly defeating the scoped-poll optimization
+- JSON response carries a partition field on every pool. The client hard-requires it and reports a deployment error naming the pool when it is absent - a missing field means a 1.x iRule is still serving that site
 
-### Changes
+**Datagroups and Discovery**
+- The pools and alias datagroups moved to /Common/dashboard, a device-local folder excluded from config sync. Automated datagroup writes no longer leave manual-sync clusters showing Changes Pending; each device's sync maintains its own copy. The iRules reference the new location through static variables, which mcpd's dependency validation cannot see - nothing prevents deleting a datagroup an iRule still needs, so upgrade order matters (see Upgrading)
+- iCall: discovers pools across all partitions and writes canonical names. New excluded_partitions setting hides entire partitions; exclusion is authoritative and existing entries from a newly-excluded partition are removed on the next run. Pool exclusion patterns remain add-only and never remove existing entries. Common cannot be excluded
+- iCall: aborts when a populated datagroup reads back as zero records instead of proceeding - proceeding would renumber every sort order and clear every alias while logging a summary indistinguishable from a bootstrap
+- iCall: pool descriptions used for alias auto-generation are stripped of braces, quotes, backslashes, and semicolons; these embed unquoted in the generated tmsh record syntax and one decorated description previously corrupted the entire datagroup write
+- bash discovery script: multi-partition discovery with the same exclusion controls, merge semantics that preserve hand-tuned sort orders and aliases across runs (the previous version rebuilt both from scratch on every run), a dry-run flag (-n) that prints every add/keep/remove decision without writing, and an abort on the same populated-but-zero-parsed condition as the iCall
 
-- The pools and alias datagroups moved to /Common/dashboard, a device-local folder excluded from config sync. Automated datagroup iCall writes no longer leave manual-sync clusters showing 'Changes Pending' when iCall makes a change. Note that this method shift also means pool names and aliases will not sync. Therefore it is recommended to use the "derive aliases from pool description" feature if you desire sync.
-- The pool name limit in X-Need-Pools headers increased from 100 to 255 characters to accommodate full partition path names
-- Grid and micro view CSS is injected by the UI module and was removed from dashboard.css where it was orphaned in version 1.7. Theme customization in the stylesheet can no longer affect grid layout at all.
-- The iCall script validates its datagroup reads and aborts rather than proceeding with empty data, and sanitizes pool descriptions before installing them as aliases
+**Security**
+- All external data rendered into the page is HTML-escaped: pool names, aliases, tooltips, member addresses, backend error fields, and logger lines including their sessionStorage re-injection. Resolved DNS hostnames previously flowed into innerHTML unescaped, so a hostile PTR record could inject markup into the dashboard
 
-### Fixes
+**Bug Fixes**
+- Acknowledging a status change on a route-domain member (10.1.1.1%2) silently failed - an input check misread route-domain addresses as hostnames and rejected the acknowledgment. Present since 1.x; partitioned deployments were the first to use route domains and hit it
+- Duplicate Dashboard.logger.toggleExpand definition removed. The module defined the function twice and the second silently overrode the first; the dead copy is gone and behavior is unchanged
+- Grid and micro-view structural CSS removed from dashboard.css and all Theme1 color variants. The rules duplicated the set injected at runtime by the UI module, which already won by source order; the UI module is now the sole owner of grid structure and theme work in the stylesheet cannot break grid layout
 
-- Acknowledging a status change on a route-domain member (10.1.1.1%2) failed silently. Route-domain addresses were misidentified as hostnames by a UI input check. This bug existed in 1.x but only surfaced in deployments using route domains with domain identifiers.
-- All external data rendered into the dashboard page is now HTML-escaped, including resolved DNS hostnames, backend error messages, and logger entries.
-
----
-
-## 1.8 (Fall 2025)
-
-Dashboard 1.8 does not support partitions other than Common. The 1.8 release will remain in the repo as the last stable release before the 2.0 rework.
+**Upgrading**
+- Sequence per device: create the /Common/dashboard folder and datagroups, run pool discovery, then update the iRules and iFiles. An iRule updated before the datagroups exist fails every request - including health monitor probes - until discovery runs, so expect the site to be marked down briefly and recover within one monitor interval
+- First poll after upgrade re-baselines member state for partitioned pools and resets pending acknowledgments once. Common pool state keys are unchanged from 1.x. No other migration steps
