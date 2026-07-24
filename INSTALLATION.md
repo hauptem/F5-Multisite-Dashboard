@@ -617,7 +617,7 @@ tmsh create ltm data-group internal /Common/dashboard/datagroup-dashboard-pool-a
 tmsh save sys config
 ```
 
-Populate them with the discovery script (below) or manually. Pool names follow the canonical format: bare name for `/Common` pools, full path (`/dmz/web-pool`) for pools in any other partition. Alias keys match the pool entries exactly.
+Populate them with the single-run discovery script (below) or manually. Pool names follow the canonical format: bare name for `/Common` pools, full path (`/dmz/web-pool`) for pools in any other partition. Alias keys match the pool entries exactly.
 
 #### Pool Discovery Script
 
@@ -634,9 +634,15 @@ Run with `-n` first for a dry run that prints every add, keep, and remove decisi
 
 ### Optional: iCall Pool Sync
 
-The same iCall script applies here: it periodically refreshes the pool and alias data groups with the current LTM pool configuration.
+An iCall script can also be installed for automatic management of the pools datagroup. It periodically refreshes the pool and alias data groups with the current LTM pool configuration.
 
 📋 **[iCall Script](/iCall%20Datagroup%20Sync/README.md)** - Setup instructions for the automatic pool and alias data group sync
+
+### Optional: Datagroup Backup/Restore/Management tool DGCat-Admin
+
+A menu-driven tool available in powershell or bash script which will allow export, import, day to day management, and syncing (fleet option). This tool supersedes the datagroup backup and recovery script that was available for Dashboard 1.x
+
+📋 **[iCall Script](/iCall%20Datagroup%20Sync/README.md)**https://github.com/hauptem/F5-SSL-Orchestrator-Tools/tree/main/DGCat-Admin
 
 ---
 
