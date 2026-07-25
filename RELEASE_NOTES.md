@@ -20,7 +20,7 @@
 - bash discovery script: multi-partition discovery with the same exclusion controls, merge semantics that preserve hand-tuned sort orders and aliases across runs (the previous version rebuilt both from scratch on every run), a dry-run flag (-n) that prints every add/keep/remove decision without writing, and an abort on the same populated-but-zero-parsed condition as the iCall
 
 **Security**
-- All external data rendered into the page is HTML-escaped: pool names, aliases, tooltips, member addresses, backend error fields, and logger lines including their sessionStorage re-injection. Resolved DNS hostnames previously flowed into innerHTML unescaped, so a hostile PTR record could inject markup into the dashboard
+- All external data rendered into the page is HTML-escaped: pool names, aliases, tooltips, member addresses, backend error fields, and logger lines including their sessionStorage re-injection. 
 
 **Bug Fixes**
 - Acknowledging a status change on a route-domain member (10.1.1.1%2) silently failed - an input check misread route-domain addresses as hostnames and rejected the acknowledgment. Present since 1.x; partitioned deployments were the first to use route domains and hit it
