@@ -11,7 +11,9 @@ Dashboard 2.0 brought multi-partition support. Dashboard 2.1 is a bugfix and mai
 
 ### Upgrading
 
-When upgrading dashboard versions, ensure to install the same version for all files: CSS, Javascript, and iRules. **Mixing dashboard files with different versions is not recommended.** See release notes for details.
+When upgrading dashboard versions, ensure to install the same version for all files: CSS, Javascript, and iRules. 
+
+**Mixing dashboard files with different versions is not recommended.** See release notes for details.
 
 - [Release Notes](RELEASE_NOTES.md) 
 
