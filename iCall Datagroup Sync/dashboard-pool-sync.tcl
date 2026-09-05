@@ -1,5 +1,5 @@
 # iCall Script: dashboard-pool-sync
-# Dashboard Version 2.0 - Multi-Partition
+# Dashboard Version 2.1 - Multi-Partition
 # Purpose: Automatically synchronize dashboard datagroups with LTM pools across all partitions
 # Features: Partition exclusion, pool exclusion, error handling, file-based backups, LTM Pool description parsing
 # Author: Eric Haupt
@@ -120,6 +120,12 @@ if {[catch {
     tmsh::log "ERROR: Dashboard sync - Failed to get pool configuration: $error_msg"
     return 1
 }
+# Guard: an empty result is a discovery failure, not an empty device. Proceeding
+# would treat every datagroup entry as a vanished pool and remove it
+if {[llength $current_pools] == 0} {
+    tmsh::log "ERROR: Dashboard sync aborted - No pools discovered; datagroups not modified"
+    return 1
+}
 # Build filtered list of LTM pool data with descriptions
 # Each entry contains: {canonical_name pool_description}
 set ltm_pool_data {}
@@ -179,6 +185,12 @@ foreach pool $current_pools {
         # Store as list for later processing: {name description}
         lappend ltm_pool_data [list $canonical_name $pool_description]
     }
+}
+# Guard: every discovered pool excluded is a configuration error, and the
+# removal pass below would empty the datagroups
+if {[llength $ltm_pool_data] == 0} {
+    tmsh::log "ERROR: Dashboard sync aborted - All [llength $current_pools] discovered pools are excluded; datagroups not modified"
+    return 1
 }
 # DATAGROUP ANALYSIS
 # Read current datagroup contents to determine required changes
