@@ -69,10 +69,10 @@ This variable must be equal to 1 for the Frontend iRule to trigger and needs to 
 
 **12. iFiles:**
 
-- `dashboard_js-core.js` **Javascript Core Module** Core coordination functionality including initialization, themes switching, timers, MACRO/MICRO view modes, wake lock management, and alias switching
+- `dashboard_js-core.js` **Javascript Core Module** Initialization, instance state, event delegation, timers, wake lock management, and the theme, view mode, and alias toggles
 - `dashboard_js-client.js` **Javascript Client Module** HTTP communication layer for JSON fetch API calls, settings persistence, DNS operations, and fetch request lifecycle management
-- `dashboard_js-data.js` **Javascript Data Module** Data management, instance tracking, state tracking, pool reordering functionality, and DNS hostname caching
-- `dashboard_js-ui.js` **Javascript UI Module** UI rendering, search filtering, visual state management, MACRO/MICRO view mode support, search recall and save, and integrated pool grid management
+- `dashboard_js-data.js` **Javascript Data Module** Member state tracking, custom pool order, DNS hostname caching, and per-site preference persistence
+- `dashboard_js-ui.js` **Javascript UI Module** Grid rendering, search filtering and saved searches, drag-and-drop pool reordering, visual state management, and keyboard shortcuts
 - `dashboard_js-logger.js` **Javascript Logger Module** Dedicated logger with resizable UI, state persistence, memory management, wake lock integration, session storage and copy
 - `dashboard.css` **Dashboard CSS with 3 themes** AGLight (theme1) which is reminiscent of AdminGUI, Monochrome Grey (theme2), and Amber (theme3)
 - `dashboard_logo.png` any 53px by 53px png logo image
@@ -906,7 +906,7 @@ Test the health endpoint:
      "hostname": "NEWYORK-bigip.lab.local",
      "timestamp": "2026-07-20 14:30:15",
      "uptime_seconds": 2678400,
-     "version": "2.0",
+     "version": "2.1",
      "pools_configured": 37,
      "message": "API endpoint is operational with 37 pools configured"
    }
@@ -1036,8 +1036,8 @@ This design allows safe and targeted debugging in production environments where 
 
 ### Dashboard reports a pool "is missing the partition field"
 
-- A v1.x iRule is still serving the selected site; v2.0 requires the partition field on every pool record
-- Verify both the Frontend and the site's API Host are running the v2.0 iRules and that iFiles were updated together
+- A v1.x iRule is still serving the selected site; v2.x requires the partition field on every pool record
+- Verify both the Frontend and the site's API Host are running the v2.x iRules and that iFiles were updated together
 
 ### TCL errors referencing /Common/dashboard data groups
 
