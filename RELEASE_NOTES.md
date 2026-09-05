@@ -17,7 +17,6 @@
 - Member addresses display without the route domain suffix (60.1.1.1:443, not 60.1.1.1%1:443) in the grid and the logger. The address tooltip, state keys, acknowledgments, and DNS requests keep the full address
 - beforeunload cleanup was registered before the handler was defined. The fallback wake lock no longer sends HEAD /api/health to the Frontend, which has no such route. Bottom-bar buttons are matched by class, not by button text
 - Modules cleaned up: drag-and-drop moved from data to ui, view mode persistence from core to data, mergeWithHostnameCache from client to data. The queue and shims for a missing logger module are gone (the logger is a required iFile), along with the unused retry, parse, stub, and incremental-render code. No behavior change
-- The Frontend serves the JS modules with max-age=86400, so browsers may run 2.0 modules against 2.1 iRules for up to a day. The response schema is unchanged and the combination works
 
 **Scripts**
 - bash discovery: the two tmsh modify writes are checked. A failed write previously printed the success summary and exited 0
