@@ -5,7 +5,7 @@
 ![F5 iRules](https://img.shields.io/badge/F5-iRules%20(Tcl)-FF6600?logo=f5&logoColor=white)
 ![No Framework](https://img.shields.io/badge/Framework-Vanilla%20JS-success?logo=javascript&logoColor=white)
 
-## What's New in 2.0 
+## What's New in 2.x 
 
 Dashboard 2.0 brought multi-partition support. Dashboard 2.1 is a bugfix and maintenance release. No new features have been added, but the client javascript modules have been made more performant with regard to memory and error handling.
 
