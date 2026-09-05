@@ -1,3 +1,28 @@
+# Multi-Site Dashboard v2.1 Release Notes
+
+**iRules**
+- send_error_response now logs its debug_message argument when the client is debug-listed. Eight call sites passed diagnostic text that was never written anywhere
+- Non-integer sort_order values in datagroup-dashboard-pools broke the JSON for the whole site response. Guarded with string is integer -strict, fallback 999
+- Non-integer order values in datagroup-dashboard-sites aborted page generation in lsort -integer. Same guard
+- JSON schema version 2.1
+
+**JavaScript**
+- Member state was keyed without a site component and never cleared on site change, so switching sites logged false status changes for any member IP:port that existed at both. changeSite saves the outgoing site's states and custom order, clears them, and loads the incoming site's
+- sessionStorage keys were prefixed with a per-load instance ID, so nothing survived a reload and every reload left the previous load's entries behind. Keys now use a fixed dashboard_ prefix
+- Hostname cache reads and writes are one per poll instead of one per member. Logger entries are held in memory and flushed once per tick instead of rewriting the full log per entry; a mass outage on a large site previously ran the tab out of memory
+- Sites without a saved view mode open in the cookie preference; site selection previously forced micro
+- Reset State also clears the current site's stored member states
+- Resolve with more than 3200 unique member IPs sends the first 3200 and warns in the console. The iRule rejects more than 50 headers, so such a request previously resolved nothing
+- Storage quota: saving member states at quota recursed into its own emergency cleanup until the tab died. Cleanup now runs once, evicts other sites' stored states, and retries. The outgoing site's pool snapshot is dropped on site change, and a failed snapshot write is logged instead of surfacing as a poll error
+- Member addresses display without the route domain suffix (60.1.1.1:443, not 60.1.1.1%1:443) in the grid and the logger. The address tooltip, state keys, acknowledgments, and DNS requests keep the full address
+- beforeunload cleanup was registered before the handler was defined. The fallback wake lock no longer sends HEAD /api/health to the Frontend, which has no such route. Bottom-bar buttons are matched by class, not by button text
+- Modules cleaned up: drag-and-drop moved from data to ui, view mode persistence from core to data, mergeWithHostnameCache from client to data. The queue and shims for a missing logger module are gone (the logger is a required iFile), along with the unused retry, parse, stub, and incremental-render code. No behavior change
+- The Frontend serves the JS modules with max-age=86400, so browsers may run 2.0 modules against 2.1 iRules for up to a day. The response schema is unchanged and the combination works
+
+**Scripts**
+- bash discovery: the two tmsh modify writes are checked. A failed write previously printed the success summary and exited 0
+- iCall: aborts without writing when discovery returns no pools or every pool is excluded. Both cases previously removed every datagroup entry
+
 # Multi-Site Dashboard v2.0 Release Notes
 
 **Multi-Partition Support**
