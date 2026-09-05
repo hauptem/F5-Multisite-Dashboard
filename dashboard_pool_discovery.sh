@@ -1,6 +1,6 @@
 #!/bin/bash
-# Pool Discovery Script - Multi-Partition
-# Dashboard Version 2.0
+# Automated Pool Discovery Script - Multi-Partition
+# Dashboard Version 2.1
 #
 # Discovers pools across all partitions and populates the dashboard datagroups
 # with canonical names: bare name for /Common pools, full path for all others.
@@ -154,6 +154,9 @@ declare -A EXISTING_ALIAS
 # record names and data values only when they contain special characters,
 # so both quoted ("web-pool" { data "10" }) and unquoted
 # (web-pool { data 10 }) forms must parse, plus empty records (name { }).
+# Emits name<TAB>value lines - BIG-IP bash predates 4.3 namerefs, so the
+# caller reads pairs into its own array. Names cannot contain whitespace
+# (F5 object naming) and values cannot contain tabs, so the delimiter is safe
 parse_datagroup_records() {
     local DG="$1"
     local LINE NAME VALUE
@@ -179,7 +182,7 @@ done < <(parse_datagroup_records "$ALIAS_DG")
 # read-back is broken, not that the datagroup is empty. Proceeding would
 # silently renumber every sort order and wipe every alias - the exact
 # failure a broken parser produced during development, indistinguishable
-# from a bootstrap in the output. 
+# from a bootstrap in the output. Fail loud instead
 RAW_RECORD_COUNT=$(tmsh -q list ltm data-group internal "$POOLS_DG" one-line 2>/dev/null | grep -c 'records')
 if [ "$RAW_RECORD_COUNT" -gt 0 ] && [ ${#EXISTING_SORT[@]} -eq 0 ]; then
     echo "ERROR: $POOLS_DG contains records but the parser read zero - aborting"
@@ -262,8 +265,10 @@ if [ $DRY_RUN -eq 1 ]; then
     exit 0
 fi
 
-tmsh modify ltm data-group internal "$POOLS_DG" records replace-all-with { $POOL_RECORDS }
-tmsh modify ltm data-group internal "$ALIAS_DG" records replace-all-with { $ALIAS_RECORDS }
+tmsh modify ltm data-group internal "$POOLS_DG" records replace-all-with { $POOL_RECORDS } \
+    || { echo "ERROR: write to $POOLS_DG failed - alias datagroup not modified"; exit 1; }
+tmsh modify ltm data-group internal "$ALIAS_DG" records replace-all-with { $ALIAS_RECORDS } \
+    || { echo "ERROR: write to $ALIAS_DG failed - pools datagroup was written; rerun to realign"; exit 1; }
 
 echo "Pool datagroups populated successfully"
 echo "Total pools configured: $POOL_COUNT ($KEPT_COUNT kept existing sort order, $NEW_COUNT new)"

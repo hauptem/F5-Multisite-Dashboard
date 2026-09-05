@@ -1,14 +1,14 @@
 // Multi-Site Dashboard JavaScript - UI MODULE
-// Dashboard Version: 2.0
-// Dashboard JSON:    2.0
+// Dashboard Version: 2.1
+// Dashboard JSON:    2.1
 // Author: Eric Haupt
 // License: MIT
 //
 // Copyright (c) 2026 Eric Haupt
 // Released under the MIT License. See LICENSE file for details.
 //
-// Description: UI rendering, search filtering, visual state management, 
-// MACRO/MICRO view mode support, search recall and save, and integrated grid management
+// Description: Grid rendering, search filtering and saved searches, drag-and-drop
+// pool reordering, visual state management, and keyboard shortcuts
 
 // =============================================================================
 // MODULE INITIALIZATION
@@ -32,6 +32,8 @@ Dashboard.ui.getInstanceState = function() {
       searchFilter: '',
       searchFilterActive: false,
       hiddenPoolCount: 0,
+      reorderMode: false,
+      draggedElement: null,
       bottomBarVisible: true,
       savedSearches: {},
       resizeTimeout: null
@@ -77,9 +79,6 @@ Dashboard.ui.init = function() {
   
   // Initialize responsive handling
   Dashboard.ui.initializeResponsiveHandling();
-  
-  // Logger compatibility
-  Dashboard.ui.ensureLoggerCompatibility();
   
   if (window.dashboardConfig && window.dashboardConfig.debugEnabled) {
     console.log('UI: Initialization complete with grid integration');
@@ -334,29 +333,6 @@ Dashboard.ui.addGridStyles = function() {
 };
 
 /**
- * Calculate optimal number of columns based on content and viewport
- * @param {number} visiblePools - Number of visible pools
- * @param {number} viewportWidth - Current viewport width
- * @returns {number} Optimal number of columns
- */
-Dashboard.ui.calculateOptimalColumns = function(visiblePools, viewportWidth) {
-  // Minimum viable pool width = ~300px
-  const minPoolWidth = 300;
-  const gridGap = 20;
-  const containerPadding = 32; // 16px each side
-  
-  // Calculate maximum possible columns based on viewport
-  const availableWidth = viewportWidth - containerPadding;
-  const maxViewportColumns = Math.floor((availableWidth + gridGap) / (minPoolWidth + gridGap));
-  
-  // Determine optimal columns
-  const maxContentColumns = Math.min(visiblePools, 4); // Never more than 4 or visible pool count
-  const optimalColumns = Math.min(maxViewportColumns, maxContentColumns);
-  
-  return Math.max(1, optimalColumns); // Always at least 1 column
-};
-
-/**
  * Update grid columns based on clip detection 
  */
 Dashboard.ui.updateDynamicGrid = function() {
@@ -577,242 +553,41 @@ Dashboard.ui.renderPoolData = function(data) {
     return a.name.localeCompare(b.name);
   });
   
-  // Check if we need to do a full rebuild or can update existing containers
-  const existingContainers = document.querySelectorAll('.pool-container');
-  // Canonical identity for the rebuild comparison - header text is the
-  // display name and duplicates across partitions
-  const existingPoolNames = Array.from(existingContainers).map(container => {
-    return container.getAttribute('data-canonical-name') || '';
-  }).filter(name => name);
+  // Every render rebuilds the grid; capture/restoreScrollPositions keep the
+  // member tables from jumping
+  const savedScrollPositions = Dashboard.ui.captureScrollPositions();
   
-  const newPoolNames = sortedPools.map(pool => Dashboard.core.getCanonicalPoolName(pool));
-  // Rebuild strategy is pinned to full rebuild. The incremental path below
-  // is retained for future use but has not been verified against view mode
-  // transitions, so every render rebuilds the grid and relies on
-  // capture/restoreScrollPositions to keep the experience seamless
-  const needsFullRebuild = existingPoolNames.length !== newPoolNames.length || 
-                          !existingPoolNames.every(name => newPoolNames.includes(name)) ||
-                          !newPoolNames.every(name => existingPoolNames.includes(name)) ||
-                          (Dashboard.data && Dashboard.data.getInstanceData().reorderMode) ||
-                          true;
+  // Build every container visible; applyPoolFilter owns visibility and runs
+  // immediately after the rebuild
+  let newContent = '';
+  sortedPools.forEach(function(pool) {
+    newContent += Dashboard.ui.createPoolContainerHTML(pool);
+  });
   
-  if (needsFullRebuild) {
-    // Full rebuild needed - use original method with scroll preservation
-    if (window.dashboardConfig && window.dashboardConfig.debugEnabled) {
-      console.log('UI: Full pool grid rebuild required');
-    }
-    
-    // Capture scroll positions before DOM update
-    const savedScrollPositions = Dashboard.ui.captureScrollPositions();
-    
-    // Build new content with immediate filtering applied
-    let newContent = '';
-    let visibleCount = 0;
-    let hiddenCount = 0;
-    
-    sortedPools.forEach(function(pool) {
-      const poolHtml = Dashboard.ui.createPoolContainerHTML(pool);
-      
-      // Build every container visible; applyPoolFilter owns visibility and
-      // runs immediately after the rebuild
-      newContent += poolHtml;
-      visibleCount++;
-    });
-    
-    // Update content in one operation
-    if (poolsGrid) {
-      poolsGrid.innerHTML = newContent;
-      poolsGrid.style.display = 'grid';
-    }
-    
-    // Restore scroll positions after DOM update
-    Dashboard.ui.restoreScrollPositions(savedScrollPositions);
-    
-    // Re-apply search filter after full rebuild to ensure correct filtering
-    const instanceState = Dashboard.ui.getInstanceState();
-    if (instanceState.searchFilterActive && instanceState.searchFilter) {
-      Dashboard.ui.applyPoolFilter(instanceState.searchFilter);
-    } else {
-      // Update search status for no active filter
-      Dashboard.ui.updateSearchStatus(visibleCount, 0, '');
-      instanceState.hiddenPoolCount = 0;
-    }
-    
+  if (poolsGrid) {
+    poolsGrid.innerHTML = newContent;
+    poolsGrid.style.display = 'grid';
+  }
+  
+  Dashboard.ui.restoreScrollPositions(savedScrollPositions);
+  
+  const instanceState = Dashboard.ui.getInstanceState();
+  if (instanceState.searchFilterActive && instanceState.searchFilter) {
+    Dashboard.ui.applyPoolFilter(instanceState.searchFilter);
   } else {
-    // Incremental update - preserve scroll positions naturally
-    if (window.dashboardConfig && window.dashboardConfig.debugEnabled) {
-      console.log('UI: Incremental pool update - scroll positions preserved');
-    }
-    
-    let visibleCount = 0;
-    let hiddenCount = 0;
-    
-    sortedPools.forEach(function(pool, index) {
-      // Find existing container by data-pool-name attribute (actual pool name)
-      let existingContainer = null;
-      existingContainers.forEach(container => {
-        const containerPoolName = container.getAttribute('data-canonical-name');
-        if (containerPoolName && containerPoolName === Dashboard.core.getCanonicalPoolName(pool)) {
-          existingContainer = container;
-        }
-      });
-      
-      if (existingContainer) {
-        // Update pool header display name based on alias mode
-        const poolHeader = existingContainer.querySelector('th');
-        if (poolHeader) {
-          const displayName = Dashboard.ui.getPoolDisplayName(pool);
-          const tooltip = Dashboard.ui.getPoolDisplayTooltip(pool);
-          
-          // Update display name and tooltip
-          poolHeader.textContent = displayName;
-          poolHeader.title = tooltip;
-          
-          if (shouldDebug) {
-            console.log('UI: Updated pool header for', pool.name, 'to display:', displayName);
-          }
-        }
-        
-        // Update existing container content without touching scroll position
-        const tbody = existingContainer.querySelector('tbody');
-        if (tbody) {
-          // Save current scroll position
-          const currentScrollPosition = tbody.scrollTop;
-          
-          // Update tbody content
-          let memberRows = '';
-          if (pool.members && pool.members.length > 0) {
-            // Sort members by IP address, then by port
-            const sortedMembers = pool.members.sort(function(a, b) {
-              const ipComparison = Dashboard.ui.compareIPAddresses(a.ip, b.ip);
-              if (ipComparison !== 0) {
-                return ipComparison;
-              }
-              
-              const portA = parseInt(a.port, 10);
-              const portB = parseInt(b.port, 10);
-              return portA - portB;
-            });
-            
-            sortedMembers.forEach(function(member) {
-              const memberHTML = Dashboard.ui.createMemberRowHTML(pool, member);
-              memberRows += memberHTML;
-            });
-          } else {
-            if (pool.status === 'UNKNOWN') {
-              memberRows = '<tr><td colspan="2" class="error-message">Pool not found or is no longer configured</td></tr>';
-            } else {
-              memberRows = '<tr><td colspan="2" class="error-message">No pool members configured</td></tr>';
-            }
-          }
-          
-          tbody.innerHTML = memberRows;
-          
-          // Restore scroll position immediately
-          tbody.scrollTop = currentScrollPosition;
-        }
-        
-        // Update pool status badge with MICRO view mode alarm logic
-        const statusBadge = existingContainer.querySelector('.status-badge');
-        if (statusBadge) {
-          let statusClass, statusText, statusTooltip;
-          
-          switch(pool.status) {
-            case 'UP':
-              statusClass = 'status-up';
-              statusText = 'UP';
-              statusTooltip = pool.up_members === pool.total_members ? 
-                'Pool is fully available' : 
-                'Pool available - ' + pool.up_members + ' of ' + pool.total_members + ' members up';
-              break;
-            case 'DOWN':
-              statusClass = 'status-down';
-              statusText = 'DOWN';
-              statusTooltip = 'All pool members are unavailable';
-              break;
-            case 'DISABLED':
-              statusClass = 'status-disabled';
-              statusText = 'DISABLED';
-              statusTooltip = pool.down_members === 0 ? 
-                'All members are disabled' : 
-                'No available members - ' + pool.down_members + ' down, ' + pool.disabled_members + ' disabled';
-              break;
-            case 'EMPTY':
-              statusClass = 'status-unknown';
-              statusText = 'EMPTY';
-              statusTooltip = 'Pool has no members configured';
-              break;
-            case 'UNKNOWN':
-              statusClass = 'status-unknown';
-              statusText = 'UNKNOWN';
-              statusTooltip = pool.error || 'Pool not found or is no longer configured';
-              break;
-            default:
-              statusClass = 'status-unknown';
-              statusText = 'UNKNOWN';
-              statusTooltip = 'Unknown pool status';
-          }
-          
-          statusBadge.className = 'status-badge ' + statusClass;
-          
-          // MICRO VIEW MODE: Add alarm state if any member has unacknowledged changes
-          if (Dashboard.state.currentViewMode === 'micro') {
-            const poolHasChanges = Dashboard.ui.checkPoolForMemberChanges(pool);
-            if (poolHasChanges) {
-              statusBadge.classList.add('pool-has-changes');
-              statusTooltip += ' | Members need attention - switch to MACRO Mode';
-              if (shouldDebug) {
-                console.log('UI: MICRO mode - Pool', pool.name, 'has unacknowledged member changes, adding alarm state');
-              }
-            } else {
-              statusBadge.classList.remove('pool-has-changes');
-            }
-          } else {
-            statusBadge.classList.remove('pool-has-changes');
-          }
-          
-          statusBadge.title = statusTooltip;
-          statusBadge.innerHTML = '<span class="status-indicator"></span>' + statusText;
-        }
-        
-        // Apply filtering
-        const shouldShow = Dashboard.ui.shouldShowPool(pool.name, pool);
-        if (shouldShow) {
-          existingContainer.style.display = '';
-          visibleCount++;
-        } else {
-          existingContainer.style.display = 'none';
-          hiddenCount++;
-        }
-      }
-    });
-    
-    // Update search status
-    const instanceState = Dashboard.ui.getInstanceState();
-    if (instanceState.searchFilterActive) {
-      Dashboard.ui.updateSearchStatus(visibleCount, hiddenCount, instanceState.searchFilter);
-      instanceState.hiddenPoolCount = hiddenCount;
-    } else {
-      instanceState.hiddenPoolCount = 0;
-    }
+    instanceState.hiddenPoolCount = 0;
   }
   
   // Re-enable drag and drop if reorder mode is active
-  const instanceData = Dashboard.data.getInstanceData();
-  if (instanceData.reorderMode) {
+  if (instanceState.reorderMode) {
     if (window.dashboardConfig && window.dashboardConfig.debugEnabled) {
       console.log('UI: Re-enabling drag and drop after render');
     }
     
     setTimeout(() => {
-      if (Dashboard.data.toggleReorderMode) {
-        // Always use toggle method to ensure drag functionality works
-        Dashboard.data.toggleReorderMode(); // Turn off
-        Dashboard.data.toggleReorderMode(); // Turn back on
-        if (window.dashboardConfig && window.dashboardConfig.debugEnabled) {
-          console.log('UI: Drag and drop re-initialized via toggle');
-        }
-      }
+      // Toggle off and on so the rebuilt containers get their listeners and handles
+      Dashboard.ui.toggleReorderMode();
+      Dashboard.ui.toggleReorderMode();
     }, 100);
   }
   
@@ -1047,7 +822,7 @@ Dashboard.ui.createMemberRowHTML = function(poolData, member) {
   }
   
   // DNS hostname display logic - use hostname if available, otherwise use IP
-  const displayAddress = member.hostname !== null ? member.hostname : member.ip;
+  const displayAddress = member.hostname !== null ? member.hostname : Dashboard.ui.formatMemberIP(member.ip);
   const memberDisplay = displayAddress + ':' + member.port;
   
   // Create IP address tooltip for member address cell
@@ -1078,21 +853,6 @@ Dashboard.ui.createMemberRowHTML = function(poolData, member) {
 // =============================================================================
 // DOM MANAGEMENT AND UI STATE CONTROL
 // =============================================================================
-
-/**
- * Show loading state during initial data load
- */
-Dashboard.ui.showLoadingState = function() {
-  document.getElementById('loading-message').style.display = 'block';
-  document.getElementById('pools-grid').style.display = 'none';
-  document.getElementById('no-site-message').style.display = 'none';
-  document.getElementById('error-message').style.display = 'none';
-  
-  const topControlsContainer = document.querySelector('.top-controls-container');
-  if (topControlsContainer) {
-    topControlsContainer.style.display = 'none';
-  }
-};
 
 /**
  * Hide error states during refresh while keeping content visible
@@ -1555,6 +1315,175 @@ Dashboard.ui.updateGridLayout = function() {
 };
 
 // =============================================================================
+// POOL REORDERING - DRAG AND DROP
+// =============================================================================
+
+/**
+ * Toggle reorder mode on/off
+ */
+Dashboard.ui.toggleReorderMode = function() {
+  const instanceState = Dashboard.ui.getInstanceState();
+  instanceState.reorderMode = !instanceState.reorderMode;
+  const toggle = document.getElementById('reorder-toggle');
+  const containers = document.querySelectorAll('.pool-container');
+  
+  if (instanceState.reorderMode) {
+    if (toggle) {
+      toggle.textContent = 'Disable';
+      toggle.classList.add('active');
+    }
+    
+    containers.forEach(container => {
+      container.draggable = true;
+      container.addEventListener('dragstart', Dashboard.ui.handleDragStart);
+      container.addEventListener('dragend', Dashboard.ui.handleDragEnd);
+      container.addEventListener('dragover', Dashboard.ui.handleDragOver);
+      container.addEventListener('drop', Dashboard.data.handleDrop);
+      
+      const dragHandle = document.createElement('div');
+      dragHandle.className = 'drag-handle';
+      dragHandle.title = 'Drag to reorder';
+      container.style.position = 'relative';
+      container.appendChild(dragHandle);
+    });
+  } else {
+    if (toggle) {
+      toggle.textContent = 'Reorder';
+      toggle.classList.remove('active');
+    }
+    
+    containers.forEach(function(container) {
+      container.draggable = false;
+      container.removeEventListener('dragstart', Dashboard.ui.handleDragStart);
+      container.removeEventListener('dragend', Dashboard.ui.handleDragEnd);
+      container.removeEventListener('dragover', Dashboard.ui.handleDragOver);
+      container.removeEventListener('drop', Dashboard.data.handleDrop);
+      
+      const dragHandle = container.querySelector('.drag-handle');
+      if (dragHandle) {
+        dragHandle.remove();
+      }
+    });
+  }
+};
+
+/**
+ * Handle drag start event
+ * @param {Event} e - Drag start event
+ */
+Dashboard.ui.handleDragStart = function(e) {
+  const instanceState = Dashboard.ui.getInstanceState();
+  instanceState.draggedElement = e.target;
+  e.target.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/html', e.target.outerHTML);
+};
+
+/**
+ * Handle drag end event
+ * @param {Event} e - Drag end event
+ */
+Dashboard.ui.handleDragEnd = function(e) {
+  const instanceState = Dashboard.ui.getInstanceState();
+  e.target.classList.remove('dragging');
+  instanceState.draggedElement = null;
+  
+  document.querySelectorAll('.pool-container').forEach(function(container) {
+    container.classList.remove('drag-over');
+  });
+};
+
+/**
+ * Handle drag over event
+ * @param {Event} e - Drag over event
+ */
+Dashboard.ui.handleDragOver = function(e) {
+  if (e.preventDefault) {
+    e.preventDefault();
+  }
+  
+  // Only highlight valid targets: drops are constrained to the source
+  // pool's partition group, and withholding the drag-over highlight is
+  // the operator's cue that a cross-partition target won't accept
+  const instanceState = Dashboard.ui.getInstanceState();
+  const targetContainer = e.target.closest('.pool-container');
+  if (instanceState.draggedElement && targetContainer) {
+    const draggedPartition = instanceState.draggedElement.getAttribute('data-partition-name');
+    if (draggedPartition !== targetContainer.getAttribute('data-partition-name')) {
+      e.dataTransfer.dropEffect = 'none';
+      return false;
+    }
+  }
+  
+  e.dataTransfer.dropEffect = 'move';
+  targetContainer.classList.add('drag-over');
+  
+  return false;
+};
+
+/**
+ * Handle drop event
+ * @param {Event} e - Drop event
+ */
+Dashboard.data.handleDrop = function(e) {
+  const instanceState = Dashboard.ui.getInstanceState();
+  if (e.stopPropagation) {
+    e.stopPropagation();
+  }
+  
+  const dropTarget = e.target.closest('.pool-container');
+  dropTarget.classList.remove('drag-over');
+  
+  if (instanceState.draggedElement !== dropTarget) {
+    // Drops are only valid within the source pool's partition group. The
+    // grid sorts partition-first, so a cross-partition swap would write
+    // order values that the partition grouping immediately overrides -
+    // silently accepted, visually ignored. Rejecting keeps cause and
+    // effect visible to the operator
+    const draggedPartition = instanceState.draggedElement.getAttribute('data-partition-name');
+    const targetPartition = dropTarget.getAttribute('data-partition-name');
+    if (draggedPartition !== targetPartition) {
+      if (window.dashboardConfig && window.dashboardConfig.debugEnabled) {
+        console.log('UI: Ignoring cross-partition drop:', draggedPartition, '->', targetPartition);
+      }
+      return;
+    }
+    
+    const draggedPoolName = instanceState.draggedElement.getAttribute('data-canonical-name');
+    const targetPoolName = dropTarget.getAttribute('data-canonical-name');
+    
+    Dashboard.data.updateCustomOrder(draggedPoolName, targetPoolName);
+    
+    try {
+      const cacheKey = Dashboard.core.getStorageKey('currentPoolData_' + Dashboard.state.currentSite);
+      const currentData = JSON.parse(sessionStorage.getItem(cacheKey) || '{}');
+      if (currentData.pools && Dashboard.ui && Dashboard.ui.renderPoolData) {
+        Dashboard.ui.renderPoolData(currentData);
+      }
+    } catch (e) {
+      console.error('UI: Error parsing currentPoolData for re-render after drop:', e);
+    }
+  }
+  
+  instanceState.draggedElement = null;
+  
+  return false;
+};
+
+/**
+ * Reset dragged element reference to prevent memory leaks
+ */
+Dashboard.ui.clearDraggedElement = function() {
+  const instanceState = Dashboard.ui.getInstanceState();
+  if (instanceState.draggedElement) {
+    instanceState.draggedElement = null;
+    if (window.dashboardConfig && window.dashboardConfig.debugEnabled) {
+      console.log('UI: Cleared dragged element reference');
+    }
+  }
+};
+
+// =============================================================================
 // SEARCH AND FILTERING FUNCTIONALITY
 // =============================================================================
 
@@ -1681,7 +1610,6 @@ Dashboard.ui.applyPoolFilter = function(filterTerm) {
     }
   });
 
-  Dashboard.ui.updateSearchStatus(visibleCount, instanceState.hiddenPoolCount, filterTerm);
   Dashboard.ui.updateGridLayout();
   Dashboard.ui.saveSearchFilter();
   
@@ -1841,21 +1769,6 @@ Dashboard.ui.shouldShowPool = function(poolName, poolData = null) {
   
   // Pool matches include terms and doesn't match any exclude terms
   return true;
-};
-
-/**
- * Update search filter status display (legacy function for compatibility)
- * @param {number} visibleCount - Number of visible pools
- * @param {number} hiddenCount - Number of hidden pools
- * @param {string} filterTerm - Current filter term
- */
-Dashboard.ui.updateSearchStatus = function(visibleCount, hiddenCount, filterTerm) {
-  // Search status functionality removed - no longer displays status messages
-  if (window.dashboardConfig && window.dashboardConfig.debugEnabled) {
-    if (filterTerm && filterTerm.length > 0) {
-      console.log(`UI: Filter applied - showing ${visibleCount} of ${visibleCount + hiddenCount} pools (${hiddenCount} hidden)`);
-    }
-  }
 };
 
 /**
@@ -2227,11 +2140,7 @@ Dashboard.ui.addSearchKeyboardShortcuts = function() {
     // Alt+L to toggle logger
     if (e.altKey && e.key === 'l') {
       e.preventDefault();
-      if (Dashboard.logger && Dashboard.logger.toggleLogger) {
-        Dashboard.logger.toggleLogger();
-      } else if (Dashboard.ui && Dashboard.ui.toggleLogger) {
-        Dashboard.ui.toggleLogger();
-      }
+      Dashboard.logger.toggleLogger();
     }
     
     // Alt+H to toggle bottom bar visibility
@@ -2439,6 +2348,19 @@ Dashboard.ui.compareIPAddresses = function(ip1, ip2) {
 };
 
 /**
+ * Format a member IP for display, without the route domain suffix
+ * Keys, acknowledgments, DNS headers, and the address tooltip keep the full
+ * address; the %ID is an LTM routing detail that reads as noise to
+ * application engineers
+ * @param {string} ip - Member IP, possibly in ip%rd form
+ * @returns {string} IP without the route domain
+ */
+Dashboard.ui.formatMemberIP = function(ip) {
+  const rd = ip.indexOf('%');
+  return rd === -1 ? ip : ip.slice(0, rd);
+};
+
+/**
  * Get display name for pool based on alias mode and availability
  * @param {Object} pool - Pool data object with name and alias fields
  * @returns {string} Display name (alias or pool name based on current mode)
@@ -2474,48 +2396,4 @@ Dashboard.ui.getPoolDisplayTooltip = function(pool) {
   // No alias available
   return 'Pool Name: ' + Dashboard.core.getCanonicalPoolName(pool);
 };
-/**
- * Ensure backward compatibility with logger functions for legacy code support
- */
-Dashboard.ui.ensureLoggerCompatibility = function() {
-  if (!Dashboard.ui.toggleLogger) {
-    Dashboard.ui.toggleLogger = function() {
-      console.warn('UI: Logger module not loaded - toggleLogger called');
-      if (Dashboard.logger && Dashboard.logger.toggleLogger) {
-        Dashboard.logger.toggleLogger();
-      }
-    };
-  }
-  
-  if (!Dashboard.ui.addLogEntry) {
-    Dashboard.ui.addLogEntry = function() {
-      console.warn('UI: Logger module not loaded - addLogEntry called');
-      if (Dashboard.logger && Dashboard.logger.addLogEntry) {
-        Dashboard.logger.addLogEntry.apply(Dashboard.logger, arguments);
-      }
-    };
-  }
-  
-  if (!Dashboard.ui.destroyLogger) {
-    Dashboard.ui.destroyLogger = function() {
-      console.warn('UI: Logger module not loaded - destroyLogger called');
-      if (Dashboard.logger && Dashboard.logger.destroyLogger) {
-        Dashboard.logger.destroyLogger();
-      }
-    };
-  }
-  
-  if (!Dashboard.ui.logger) {
-    Dashboard.ui.logger = {
-      initialized: false,
-      visible: false,
-      expanded: false
-    };
-  }
-  
-  if (window.dashboardConfig && window.dashboardConfig.debugEnabled) {
-    console.log('UI: Logger compatibility stubs initialized');
-  }
-};
-
 console.log('Dashboard UI module loaded successfully');

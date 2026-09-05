@@ -1,6 +1,6 @@
 // Multi-Site Dashboard JavaScript - LOGGER MODULE
-// Dashboard Version: 2.0
-// Dashboard JSON:    2.0
+// Dashboard Version: 2.1
+// Dashboard JSON:    2.1
 // Author: Eric Haupt
 // License: MIT
 //
@@ -50,21 +50,17 @@ Dashboard.logger.init = function() {
   };
   
   // Initialize session storage configuration
+  // entries is the in-memory copy of the stored log; flushPending marks a
+  // sessionStorage write already scheduled for this tick
   Dashboard.logger.storage = {
     key: 'dashboardLogEntries',
-    maxEntries: 5000
+    maxEntries: 5000,
+    entries: null,
+    flushPending: false
   };
   
   Dashboard.logger.loadLoggerState();
   Dashboard.logger.safeInitLogger();
-  Dashboard.logger.registerWithUI();
-  
-  // Logging stays enabled regardless of logger visibility; entries persist
-  // to session storage so the logger shows history when opened later
-  if (Dashboard.data && Dashboard.data.enableLogger) {
-    Dashboard.data.enableLogger();
-  }
-  
   // Notify core module about initial logger state for wake lock management
   if (Dashboard.logger.state.visible && Dashboard.core && Dashboard.core.onLoggerVisible) {
     if (window.dashboardConfig && window.dashboardConfig.debugEnabled) {
@@ -159,28 +155,6 @@ Dashboard.logger.initLogger = function() {
 };
 
 /**
- * Register logger functions with UI module for backward compatibility
- */
-Dashboard.logger.registerWithUI = function() {
-  if (!Dashboard.ui) {
-    Dashboard.ui = {};
-  }
-  
-  // Register core logger functions with UI module
-  Dashboard.ui.toggleLogger = Dashboard.logger.toggleLogger;
-  Dashboard.ui.addLogEntry = Dashboard.logger.addLogEntry;
-  Dashboard.ui.saveLoggerState = Dashboard.logger.saveLoggerState;
-  Dashboard.ui.loadLoggerState = Dashboard.logger.loadLoggerState;
-  Dashboard.ui.destroyLogger = Dashboard.logger.destroyLogger;
-  
-  Dashboard.ui.logger = Dashboard.logger.state;
-  
-  if (window.dashboardConfig && window.dashboardConfig.debugEnabled) {
-    console.log('Logger: Registered with UI module for backward compatibility');
-  }
-};
-
-/**
  * Auto-initialize logger when DOM is ready
  */
 Dashboard.logger.autoInit = function() {
@@ -253,11 +227,6 @@ Dashboard.logger.toggleLogger = function() {
       Dashboard.logger.notifyLoggerHidden();
       Dashboard.logger.performLoggerCleanup();
     }
-  }
-  
-  // Keep logging enabled always (session storage persists events)
-  if (Dashboard.data && Dashboard.data.enableLogger) {
-    Dashboard.data.enableLogger();
   }
   
   Dashboard.logger.saveLoggerState();
@@ -509,50 +478,70 @@ Dashboard.logger.fallbackCopy = function(text) {
 // =============================================================================
 
 /**
- * Save log entry to session storage with FIFO management
+ * Append a log entry to the in-memory log with FIFO management and schedule
+ * one sessionStorage write for the current tick
+ * A mass outage produces one entry per member in a single poll, so the store
+ * is written once per tick rather than once per entry
  * @param {Object} logEntryData - Log entry object with timestamp and html
  */
 Dashboard.logger.saveLogEntryToStorage = function(logEntryData) {
-  try {
-    // Get existing entries from session storage
-    let storedEntries = Dashboard.logger.getStoredLogEntries();
-    
-    // Add new entry
-    storedEntries.push(logEntryData);
-    
-    // Apply FIFO limit - remove oldest entries if over limit
-    while (storedEntries.length > Dashboard.logger.storage.maxEntries) {
-      storedEntries.shift(); // Remove first (oldest) entry
-    }
-    
-    // Save back to session storage
-    sessionStorage.setItem(Dashboard.logger.storage.key, JSON.stringify(storedEntries));
-    
-    if (window.dashboardConfig && window.dashboardConfig.debugEnabled) {
-      console.log('Logger: Saved log entry to session storage, total entries:', storedEntries.length);
-    }
-  } catch (e) {
-    console.error('Logger: Error saving log entry to session storage:', e);
+  const storage = Dashboard.logger.storage;
+  const storedEntries = Dashboard.logger.getStoredLogEntries();
+  
+  storedEntries.push(logEntryData);
+  
+  while (storedEntries.length > storage.maxEntries) {
+    storedEntries.shift();
+  }
+  
+  if (!storage.flushPending) {
+    storage.flushPending = true;
+    setTimeout(Dashboard.logger.flushLogStorage, 0);
   }
 };
 
 /**
- * Get stored log entries from session storage
+ * Write the in-memory log to session storage
+ */
+Dashboard.logger.flushLogStorage = function() {
+  const storage = Dashboard.logger.storage;
+  storage.flushPending = false;
+  if (!storage.entries) {
+    return;
+  }
+  try {
+    sessionStorage.setItem(storage.key, JSON.stringify(storage.entries));
+    if (window.dashboardConfig && window.dashboardConfig.debugEnabled) {
+      console.log('Logger: Saved log to session storage, total entries:', storage.entries.length);
+    }
+  } catch (e) {
+    console.error('Logger: Error saving log entries to session storage:', e);
+  }
+};
+
+/**
+ * Get the in-memory log entries, loading from session storage on first use
+ * The returned array is the live store; callers append to it
  * @returns {Array} Array of log entry objects
  */
 Dashboard.logger.getStoredLogEntries = function() {
+  const storage = Dashboard.logger.storage;
+  if (storage.entries) {
+    return storage.entries;
+  }
+  storage.entries = [];
   try {
-    const stored = sessionStorage.getItem(Dashboard.logger.storage.key);
+    const stored = sessionStorage.getItem(storage.key);
     if (stored) {
       const entries = JSON.parse(stored);
       if (Array.isArray(entries)) {
-        return entries;
+        storage.entries = entries;
       }
     }
   } catch (e) {
     console.error('Logger: Error reading log entries from session storage:', e);
   }
-  return [];
+  return storage.entries;
 };
 
 /**
@@ -605,6 +594,7 @@ Dashboard.logger.restoreLogEntries = function() {
  */
 Dashboard.logger.clearSessionStorage = function() {
   try {
+    Dashboard.logger.storage.entries = [];
     sessionStorage.removeItem(Dashboard.logger.storage.key);
     if (window.dashboardConfig && window.dashboardConfig.debugEnabled) {
       console.log('Logger: Cleared session storage log entries');
@@ -1030,11 +1020,6 @@ Dashboard.logger.applyLoggerState = function() {
     content.style.fontSize = Dashboard.logger.state.fontSize + 'px';
   }
   
-  // Logging remains enabled regardless of visibility state
-  if (Dashboard.logger.state.visible && Dashboard.data && Dashboard.data.enableLogger) {
-    Dashboard.data.enableLogger();
-  }
-  
   // Restore log entries from session storage if logger is visible
   if (Dashboard.logger.state.visible) {
     Dashboard.logger.restoreLogEntries();
@@ -1084,37 +1069,9 @@ Dashboard.logger.performLoggerCleanup = function() {
   }
   
   Dashboard.logger.removeLoggerResizeListeners();
-  Dashboard.logger.clearLoggerTimers();
   
   if (window.dashboardConfig && window.dashboardConfig.debugEnabled) {
     console.log('Logger: Comprehensive logger cleanup complete');
-  }
-};
-
-/**
- * Cleanup logger DOM references to prevent memory leaks
- */
-Dashboard.logger.cleanupLogger = function() {
-  if (window.dashboardConfig && window.dashboardConfig.debugEnabled) {
-    console.log('Logger: Cleaning up logger references');
-  }
-  
-  // Notify core module that logger is being cleaned up
-  if (Dashboard.logger.state.visible) {
-    Dashboard.logger.notifyLoggerHidden();
-  }
-  
-  if (Dashboard.logger.state.container) {
-    Dashboard.logger.state.container = null;
-  }
-  
-  Dashboard.logger.state.initialized = false;
-  Dashboard.logger.state.visible = false;
-  Dashboard.logger.state.expanded = false;
-  Dashboard.logger.state.previousDimensions = {};
-  
-  if (window.dashboardConfig && window.dashboardConfig.debugEnabled) {
-    console.log('Logger: Logger cleanup complete');
   }
 };
 
@@ -1148,43 +1105,6 @@ Dashboard.logger.removeLoggerEventListeners = function(logger) {
 Dashboard.logger.removeLoggerResizeListeners = function() {
   if (window.dashboardConfig && window.dashboardConfig.debugEnabled) {
     console.log('Logger: Resize listeners will be cleared via clone replacement');
-  }
-};
-
-/**
- * Clear any timers related to logger functionality
- */
-Dashboard.logger.clearLoggerTimers = function() {
-  if (window.dashboardConfig && window.dashboardConfig.debugEnabled) {
-    console.log('Logger: Logger timers cleared (none currently active)');
-  }
-};
-
-/**
- * Destroy logger completely and remove from DOM
- */
-Dashboard.logger.destroyLogger = function() {
-  if (window.dashboardConfig && window.dashboardConfig.debugEnabled) {
-    console.log('Logger: Destroying logger completely');
-  }
-  
-  if (Dashboard.logger.state.visible) {
-    Dashboard.logger.notifyLoggerHidden();
-  }
-  
-  const logger = Dashboard.logger.state.container;
-  if (logger && logger.parentNode) {
-    Dashboard.logger.performLoggerCleanup();
-    logger.parentNode.removeChild(logger);
-    if (window.dashboardConfig && window.dashboardConfig.debugEnabled) {
-      console.log('Logger: Logger removed from DOM');
-    }
-  }
-  
-  Dashboard.logger.cleanupLogger();
-  
-  if (window.dashboardConfig && window.dashboardConfig.debugEnabled) {
-    console.log('Logger: Logger destruction complete');
   }
 };
 

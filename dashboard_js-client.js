@@ -1,6 +1,6 @@
 // Multi-Site Dashboard JavaScript - CLIENT MODULE
-// Dashboard Version: 2.0
-// Dashboard JSON:    2.0
+// Dashboard Version: 2.1
+// Dashboard JSON:    2.1
 // Author: Eric Haupt
 // License: MIT
 //
@@ -272,7 +272,7 @@ Dashboard.client.loadPoolData = function(forceDNSResolution = false) {
     // =============================================================================
     let processedData = data;
     try {
-      processedData = Dashboard.client.mergeWithHostnameCache(data);
+      processedData = Dashboard.data.mergeWithHostnameCache(data);
       if (shouldDebug) {
         console.log('Client: Hostname cache merge completed');
         
@@ -315,7 +315,7 @@ Dashboard.client.loadPoolData = function(forceDNSResolution = false) {
         }
         
         // Log pool filtering optimization effectiveness
-        if (Dashboard.ui && Dashboard.ui.searchFilterActive) {
+        if (Dashboard.ui.getInstanceState().searchFilterActive) {
           console.log('Client: Pool filtering optimization active - backend processed', processedData.pools.length, 'pools (filtered)');
         } else {
           console.log('Client: No pool filtering - backend processed', processedData.pools.length, 'pools (all)');
@@ -393,13 +393,22 @@ Dashboard.client.loadPoolData = function(forceDNSResolution = false) {
         console.error('Client: Error merging filtered response:', mergeError);
         // Fallback to storing the filtered response
         const cacheKey = Dashboard.core.getStorageKey('currentPoolData_' + Dashboard.state.currentSite);
-        sessionStorage.setItem(cacheKey, JSON.stringify(processedData));
+        try {
+          sessionStorage.setItem(cacheKey, JSON.stringify(processedData));
+        } catch (storeError) {
+          console.error('Client: Error storing pool data:', storeError);
+        }
       }
       
     } else {
-      // Full response - replace sessionStorage completely
+      // Full response - replace sessionStorage completely. A failed write is
+      // logged; the response still renders and the next poll rewrites the snapshot
       const cacheKey = Dashboard.core.getStorageKey('currentPoolData_' + Dashboard.state.currentSite);
-      sessionStorage.setItem(cacheKey, JSON.stringify(processedData));
+      try {
+        sessionStorage.setItem(cacheKey, JSON.stringify(processedData));
+      } catch (storeError) {
+        console.error('Client: Error storing pool data:', storeError);
+      }
       if (shouldDebug) {
         console.log('Client: Stored complete dataset -', processedData.pools.length, 'pools');
       }
@@ -496,8 +505,8 @@ Dashboard.client.changeSite = function(site) {
   const previousSite = Dashboard.state.currentSite;
   
   // Save current site's view mode before switching
-  if (previousSite && Dashboard.core && Dashboard.core.saveViewModeForSite) {
-    Dashboard.core.saveViewModeForSite(previousSite, Dashboard.state.currentViewMode);
+  if (previousSite && Dashboard.data && Dashboard.data.saveViewModeForSite) {
+    Dashboard.data.saveViewModeForSite(previousSite, Dashboard.state.currentViewMode);
     if (window.dashboardConfig && window.dashboardConfig.debugEnabled) {
       console.log('Client: Saved view mode', Dashboard.state.currentViewMode, 'for previous site:', previousSite);
     }
@@ -522,21 +531,42 @@ Dashboard.client.changeSite = function(site) {
     Dashboard.data.saveCustomOrder();
   }
   
+  // Save and clear member states before switching. Member keys carry no site
+  // component, so states carried across sites would diff one site's members
+  // against another's under colliding keys
+  if (previousSite && Dashboard.data && Dashboard.data.saveMemberStates) {
+    Dashboard.data.saveMemberStates();
+  }
+  if (Dashboard.data && Dashboard.data.clearMemberStates) {
+    Dashboard.data.clearMemberStates();
+  }
+  
+  // Drop the previous site's pool snapshot; it is refetched on return, and
+  // one snapshot per visited site would exhaust the sessionStorage quota
+  if (previousSite) {
+    try {
+      sessionStorage.removeItem(Dashboard.core.getStorageKey('currentPoolData_' + previousSite));
+    } catch (e) {
+      console.error('Client: Error removing previous site snapshot:', e);
+    }
+  }
+  
   // Update local state immediately 
   Dashboard.state.currentSite = newSite;
   
   // Store pending view mode for new site instead of applying immediately
-  if (newSite && Dashboard.core && Dashboard.core.loadViewModeForSite) {
-    const siteViewMode = Dashboard.core.loadViewModeForSite(newSite);
+  if (newSite && Dashboard.data && Dashboard.data.loadViewModeForSite) {
+    const siteViewMode = Dashboard.data.loadViewModeForSite(newSite);
     Dashboard.state.pendingViewMode = siteViewMode;
     if (window.dashboardConfig && window.dashboardConfig.debugEnabled) {
       console.log('Client: Set pending view mode', siteViewMode, 'for new site:', newSite, '- will apply after data render');
     }
   } else if (!newSite) {
-    // No site selected - apply default view mode immediately
-    Dashboard.state.currentViewMode = 'macro';
+    // No site selected - apply the cookie preference immediately
+    const defaultMode = (window.dashboardConfig && window.dashboardConfig.currentViewMode) || 'micro';
+    Dashboard.state.currentViewMode = defaultMode;
     if (Dashboard.core && Dashboard.core.applyViewMode) {
-      Dashboard.core.applyViewMode('macro');
+      Dashboard.core.applyViewMode(defaultMode);
     }
     Dashboard.state.pendingViewMode = null;
   }
@@ -560,12 +590,15 @@ Dashboard.client.changeSite = function(site) {
     Dashboard.core.initializeAliasButton();
   }
   
-  // Load custom order for new site
+  // Load custom order and member states for new site
   if (newSite && Dashboard.data && Dashboard.data.loadCustomOrder) {
     if (window.dashboardConfig && window.dashboardConfig.debugEnabled) {
       console.log('Client: Loading custom order for new site:', newSite);
     }
     Dashboard.data.loadCustomOrder();
+  }
+  if (newSite && Dashboard.data && Dashboard.data.loadMemberStates) {
+    Dashboard.data.loadMemberStates();
   }
   
   // Clear current search filter state and load for new site
@@ -591,17 +624,6 @@ Dashboard.client.changeSite = function(site) {
       searchInput.value = updatedUIState.searchFilter || '';
       if (window.dashboardConfig && window.dashboardConfig.debugEnabled) {
         console.log('Client: Updated search filter for new site:', updatedUIState.searchFilter || '(empty)');
-      }
-    }
-  }
-  
-  // Clear hostname cache for new site
-  if (Dashboard.data && Dashboard.data.hostnameCache) {
-    Dashboard.data.hostnameCache.cache.clear();
-    if (Dashboard.data.loadHostnameCache) {
-      Dashboard.data.loadHostnameCache();
-      if (window.dashboardConfig && window.dashboardConfig.debugEnabled) {
-        console.log('Client: Cleared and reloaded hostname cache for site:', newSite);
       }
     }
   }
@@ -894,61 +916,6 @@ Dashboard.client.flushDNSCache = function() {
 // =============================================================================
 
 /**
- * Merge API response with cached hostnames 
- * @param {Object} apiResponse - API response from backend
- * @returns {Object} Enhanced API response with cached hostnames filled in
- */
-Dashboard.client.mergeWithHostnameCache = function(apiResponse) {
-  if (!apiResponse || !apiResponse.pools) {
-    return apiResponse;
-  }
-  
-  // Check if Data module is available
-  if (!Dashboard.data || !Dashboard.data.getHostnameFromCache || !Dashboard.data.setHostnameInCache) {
-    if (window.dashboardConfig && window.dashboardConfig.debugEnabled) {
-      console.log('Client: Data module hostname cache functions not available - using original data without cache merge');
-    }
-    return apiResponse;
-  }
-  
-  let cacheHits = 0;
-  let cacheMisses = 0;
-  let newEntries = 0;
-  
-  apiResponse.pools.forEach(pool => {
-    if (pool.members && Array.isArray(pool.members)) {
-      pool.members.forEach(member => {
-        const ip = member.ip;
-        
-        if (member.hostname === null) {
-          // Backend sent no hostname - fill from the sessionStorage cache
-          const cachedHostname = Dashboard.data.getHostnameFromCache(ip);
-          if (cachedHostname) {
-            member.hostname = cachedHostname;
-            cacheHits++;
-          } else {
-            cacheMisses++;
-          }
-        } else {
-          // Backend resolved a hostname - record it for future cycles
-          Dashboard.data.setHostnameInCache(ip, member.hostname);
-          newEntries++;
-        }
-      });
-    }
-  });
-  
-  if (window.dashboardConfig && window.dashboardConfig.debugEnabled) {
-    const cacheSize = Dashboard.data.getHostnameCacheSize ? Dashboard.data.getHostnameCacheSize() : 0;
-    console.log('Client: Hostname merge complete - Cache hits:', cacheHits, 
-               'Cache misses:', cacheMisses, 'New entries:', newEntries,
-               'Total cached:', cacheSize);
-  }
-  
-  return apiResponse;
-};
-
-/**
  * Parse a fetch response as JSON, converting HTTP failures to typed errors
  * @param {Response} response - Fetch API response object
  * @returns {Promise} Promise resolving to parsed JSON data
@@ -1164,42 +1131,6 @@ Dashboard.client.measureRequestPerformance = function(operationName, requestFunc
     console.error('Client:', operationName, 'failed after', totalTime + 'ms:', error.message);
     throw error;
   });
-};
-
-/**
- * Request retry logic with exponential backoff
- * @param {Function} requestFunction - Function that returns a Promise for the request
- * @param {number} maxRetries - Maximum number of retry attempts (default: 2)
- * @param {number} baseDelay - Base delay in milliseconds (default: 1000)
- * @returns {Promise} Promise resolving to successful request result
- */
-Dashboard.client.retryRequest = function(requestFunction, maxRetries = 2, baseDelay = 1000) {
-  let attempt = 0;
-  
-  const attemptRequest = function() {
-    attempt++;
-    
-    return requestFunction().catch(error => {
-      if (attempt >= maxRetries || error.name === 'AbortError') {
-        // Max retries reached or request was cancelled - don't retry
-        throw error;
-      }
-      
-      const delay = baseDelay * Math.pow(2, attempt - 1); // Exponential backoff
-      
-      if (window.dashboardConfig && window.dashboardConfig.debugEnabled) {
-        console.log('Client: Request failed, retrying in', delay + 'ms', '(attempt', attempt, 'of', maxRetries + ')');
-      }
-      
-      return new Promise(resolve => {
-        setTimeout(() => {
-          resolve(attemptRequest());
-        }, delay);
-      });
-    });
-  };
-  
-  return attemptRequest();
 };
 
 /**

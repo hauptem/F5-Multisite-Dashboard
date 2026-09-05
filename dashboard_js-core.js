@@ -1,14 +1,14 @@
 // Multi-Site Dashboard JavaScript - CORE MODULE
-// Dashboard Version: 2.0
-// Dashboard JSON:    2.0
+// Dashboard Version: 2.1
+// Dashboard JSON:    2.1
 // Author: Eric Haupt
 // License: MIT
 //
 // Copyright (c) 2026 Eric Haupt
 // Released under the MIT License. See LICENSE file for details.
 //
-// Description: Core coordination functionality including initialization, themes, 
-// timers, view modes, wake lock management, and alias functionality
+// Description: Initialization, instance state, event delegation, timers, wake
+// lock management, and the theme, view mode, and alias toggles
 
 // =============================================================================
 // GLOBAL NAMESPACE AND CONFIGURATION
@@ -229,15 +229,14 @@ Dashboard.core.initializeInstanceIsolation = function() {
 };
 
 /**
- * Get instance-specific storage key for sessionStorage operations
- * @param {string} baseKey - Base storage key without instance prefix
- * @returns {string} Instance-specific storage key
+ * Get the sessionStorage key for a base key
+ * sessionStorage is already scoped per tab, so keys use a fixed prefix; a
+ * per-load prefix would orphan every entry on reload
+ * @param {string} baseKey - Base storage key without prefix
+ * @returns {string} Prefixed storage key
  */
 Dashboard.core.getStorageKey = function(baseKey) {
-  if (!Dashboard.core.instanceID) {
-    Dashboard.core.initializeInstanceIsolation();
-  }
-  return `${Dashboard.core.instanceID}_${baseKey}`;
+  return 'dashboard_' + baseKey;
 };
 
 /**
@@ -271,7 +270,6 @@ Dashboard.core.init = function() {
   Dashboard.core.applyViewMode(instanceState.currentViewMode);
   Dashboard.core.initializeAliasButton();
   Dashboard.core.setupEventDelegation();
-  Dashboard.core.setupEventListeners();
   
   if (window.dashboardConfig && window.dashboardConfig.debugEnabled) {
     console.log('Core: Core coordination initialization complete - no data operations during init');
@@ -416,7 +414,6 @@ Dashboard.core.performSafetyCheck = function() {
 // Set up automatic initialization
 document.addEventListener('DOMContentLoaded', Dashboard.core.initializeApplication);
 window.addEventListener('load', Dashboard.core.performSafetyCheck);
-window.addEventListener('beforeunload', Dashboard.core.cleanup);
 
 // Load server config immediately
 Dashboard.core.loadServerConfig();
@@ -440,25 +437,11 @@ Dashboard.core.safeBindGlobalFunctions = function() {
             Dashboard.client.bindGlobalFunctions();
         }
         
-        // Bind Data module functions
-        if (Dashboard.data) {
-            if (Dashboard.data.toggleReorderMode) {
-                window.toggleReorderMode = Dashboard.data.toggleReorderMode;
-            }
-            if (Dashboard.data.resetAllMemberStates) {
-                window.resetAllMemberStates = Dashboard.data.resetAllMemberStates;
-            }
-            if (Dashboard.data.acknowledgeMemberChange) {
-                window.acknowledgeMemberChange = Dashboard.data.acknowledgeMemberChange;
-            }
-        }
-        
-        // Bind Logger module functions
-        if (Dashboard.logger && Dashboard.logger.toggleLogger) {
-            window.toggleLogger = Dashboard.logger.toggleLogger;
-        } else if (Dashboard.ui && Dashboard.ui.toggleLogger) {
-            window.toggleLogger = Dashboard.ui.toggleLogger;
-        }
+        // Bind Data, UI, and Logger module functions
+        window.toggleReorderMode = Dashboard.ui.toggleReorderMode;
+        window.resetAllMemberStates = Dashboard.data.resetAllMemberStates;
+        window.acknowledgeMemberChange = Dashboard.data.acknowledgeMemberChange;
+        window.toggleLogger = Dashboard.logger.toggleLogger;
         
         Dashboard.state.initializationComplete = true;
         if (window.dashboardConfig && window.dashboardConfig.debugEnabled) {
@@ -545,7 +528,7 @@ Dashboard.core.setupEventDelegation = function() {
     const target = e.target;
     
     // Mode toggle button
-    if (target.classList.contains('mode-toggle') || target.textContent.trim() === 'Mode') {
+    if (target.classList.contains('mode-toggle')) {
       e.preventDefault();
       e.stopPropagation();
       if (Dashboard.core && Dashboard.core.toggleViewMode) {
@@ -555,7 +538,7 @@ Dashboard.core.setupEventDelegation = function() {
     }
     
     // Alias toggle button
-    if (target.classList.contains('alias-toggle') || target.textContent.trim() === 'Alias') {
+    if (target.classList.contains('alias-toggle')) {
       e.preventDefault();
       e.stopPropagation();
       if (Dashboard.core && Dashboard.core.toggleAlias) {
@@ -565,17 +548,13 @@ Dashboard.core.setupEventDelegation = function() {
     }
     
     // Logger toggle button
-    if (target.classList.contains('logger-toggle') || target.classList.contains('dashboard-logger-toggle') || target.textContent.trim() === 'Logs') {
+    if (target.classList.contains('logger-toggle') || target.classList.contains('dashboard-logger-toggle')) {
       e.preventDefault();
       e.stopPropagation();
       
       const wasLoggerVisible = Dashboard.core.isLoggerCurrentlyVisible();
       
-      if (Dashboard.logger && Dashboard.logger.toggleLogger) {
-        Dashboard.logger.toggleLogger();
-      } else if (Dashboard.ui && Dashboard.ui.toggleLogger) {
-        Dashboard.ui.toggleLogger();
-      }
+      Dashboard.logger.toggleLogger();
       
       setTimeout(() => {
         const isLoggerVisible = Dashboard.core.isLoggerCurrentlyVisible();
@@ -591,7 +570,7 @@ Dashboard.core.setupEventDelegation = function() {
     }
     
     // Resolve DNS button
-    if (target.classList.contains('resolve-toggle') || target.textContent.trim() === 'Resolve') {
+    if (target.classList.contains('resolve-toggle')) {
       e.preventDefault();
       e.stopPropagation();
       if (Dashboard.client && Dashboard.client.resolveDNS) {
@@ -601,7 +580,7 @@ Dashboard.core.setupEventDelegation = function() {
     }
     
     // Flush DNS Cache button
-    if (target.classList.contains('flush-toggle') || target.textContent.trim() === 'Flush') {
+    if (target.classList.contains('flush-toggle')) {
       e.preventDefault();
       e.stopPropagation();
       if (Dashboard.client && Dashboard.client.flushDNSCache) {
@@ -624,9 +603,7 @@ Dashboard.core.setupEventDelegation = function() {
     if (target.id === 'reorder-toggle' || target.classList.contains('reorder-toggle')) {
       e.preventDefault();
       e.stopPropagation();
-      if (Dashboard.data && Dashboard.data.toggleReorderMode) {
-        Dashboard.data.toggleReorderMode();
-      }
+      Dashboard.ui.toggleReorderMode();
       return false;
     }
   }, true);
@@ -653,18 +630,15 @@ Dashboard.core.cleanup = function() {
             Dashboard.client.cleanup();
         }
         
-        if (Dashboard.data && Dashboard.data.clearPendingLogs) {
-            Dashboard.data.clearPendingLogs();
-        }
-        
-        if (Dashboard.data && Dashboard.data.clearDraggedElement) {
-            Dashboard.data.clearDraggedElement();
-        }
+        Dashboard.ui.clearDraggedElement();
         
     } catch (error) {
         console.warn('Core: Error during cleanup:', error.message);
     }
 };
+
+// Registered after cleanup is defined; an earlier registration binds undefined
+window.addEventListener('beforeunload', Dashboard.core.cleanup);
 
 // =============================================================================
 // FEATURE FUNCTIONALITY - WAKE LOCK, THEMES, VIEW MODES
@@ -744,9 +718,9 @@ Dashboard.core.handleWakeLockError = function(err) {
 
 /**
  * Fallback method for browsers without Wake Lock API
- * A 30-second no-op title write plus an occasional lightweight health
- * request keeps the tab registered as active, which discourages aggressive
- * background-tab throttling where the real Wake Lock API is unavailable
+ * A 30-second no-op title write keeps the tab registered as active, which
+ * discourages aggressive background-tab throttling where the real Wake
+ * Lock API is unavailable
  */
 Dashboard.core.enableFallbackWakeLock = function() {
     const instanceState = Dashboard.core.getInstanceState();
@@ -759,9 +733,6 @@ Dashboard.core.enableFallbackWakeLock = function() {
         instanceState.wakeLockFallbackInterval = setInterval(() => {
             try {
                 document.title = document.title;
-                if (Math.random() < 0.1) {
-                    fetch('/api/health', { method: 'HEAD', cache: 'no-cache' }).catch(() => {});
-                }
             } catch (domErr) {
                 // Ignore DOM restrictions
             }
@@ -797,10 +768,6 @@ Dashboard.core.disableFallbackWakeLock = function() {
  */
 Dashboard.core.isLoggerCurrentlyVisible = function() {
     if (Dashboard.logger && Dashboard.logger.state && Dashboard.logger.state.visible) {
-        return true;
-    }
-    
-    if (Dashboard.ui && Dashboard.ui.logger && Dashboard.ui.logger.visible) {
         return true;
     }
     
@@ -1089,7 +1056,7 @@ Dashboard.core.toggleAlias = function() {
 };
 
 // =============================================================================
-// UTILITY FUNCTIONS - TIMERS AND PREFERENCES
+// UTILITY FUNCTIONS - TIMERS
 // =============================================================================
 
 /**
@@ -1197,52 +1164,6 @@ Dashboard.core.updateCountdownDisplay = function() {
     if (countdownElement) {
         countdownElement.textContent = Dashboard.core.timerState.remainingTime;
     }
-};
-
-/**
- * Save view mode preference for a specific site
- */
-Dashboard.core.saveViewModeForSite = function(siteName, viewMode) {
-  if (!siteName) return;
-  
-  const storageKey = Dashboard.core.getStorageKey('viewMode_' + siteName);
-  try {
-    sessionStorage.setItem(storageKey, viewMode);
-  } catch (e) {
-    console.error('Core: Error saving view mode for site:', e);
-  }
-};
-
-/**
- * Load view mode preference for a specific site
- */
-Dashboard.core.loadViewModeForSite = function(siteName) {
-  if (!siteName) return 'micro';
-  
-  const storageKey = Dashboard.core.getStorageKey('viewMode_' + siteName);
-  try {
-    const savedMode = sessionStorage.getItem(storageKey);
-    const validModes = ['macro', 'micro'];
-    
-    if (savedMode && validModes.includes(savedMode)) {
-      return savedMode;
-    }
-  } catch (e) {
-    console.error('Core: Error loading view mode for site:', e);
-  }
-  
-  return 'micro';
-};
-
-// =============================================================================
-// EVENT HANDLING AND USER INTERACTIONS
-// =============================================================================
-
-/**
- * Setup core event listeners
- */
-Dashboard.core.setupEventListeners = function() {
-    // Event listeners managed by wake lock system
 };
 
 console.log('Dashboard Core module loaded successfully');
