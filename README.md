@@ -1,4 +1,4 @@
-# F5 Multisite Dashboard 2.0 (July 23 2026)
+# F5 Multisite Dashboard 2.1 (September 5 2026)
 
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![TMOS Version](https://img.shields.io/badge/TMOS-17.x%20%7C%2021.x-red)
@@ -7,37 +7,13 @@
 
 ## What's New in 2.0 
 
-Dashboard 2.0 now brings multi-partition support. If your BIG-IPs organize applications into administrative partitions, every one of those pools can now be displayed. If you already have Dashboard 1.8 up and running, 2.0 brings no functional changes other than a re-worked iCall method that no longer causes cluster Sync notifications when the script makes a change. If you don't have partitions then staying on 1.8 is the right move.
-
-- [Release Notes](RELEASE_NOTES.md) 
-
-### Monitor pools from any partition
-
-Pools from `/dmz`, `/secure`, or any other partition appear right alongside your Common pools in the same grid. The grid groups everything by partition automatically: Common pools first, then each partition alphabetically, with your custom pool ordering preserved inside each group.
-
-### Find what you need with search
-
-There is no partition dropdown to manage. The search box is partition aware:
-
-- Type `dmz` and the grid shows only pools that reside in the dmz partition
-- Type `dmz AND web` to narrow it to specific web pools within the dmz
-- Add `NOT` to exclude anything you don't want in the view i.e. a pool named 'test-dmz' in a non-dmz partition
-
-### Same-named pools stay separate
-
-If `web-pool` exists in both /Common and `/dmz`, the dashboard treats them as the two different pools they are. Status changes, acknowledgments, and history are tracked independently, log entries show the full path so there is no guessing which one flapped, and drag reordering keeps each partition's pools grouped together.
-
-### Automatic pool discovery, now partition-aware
-
-The included discovery tooling finds pools across all partitions and keeps the dashboard's pool list current on its own. New pools show up on the dashboard within a minute of being created; deleted pools disappear just as fast. Want to keep a partition off the dashboard entirely? Add it to the exclusion list and it's gone on the next sync.
-
-### Friendlier to clusters
-
-Dashboard's iCall Sync script no longer trips the 'Changes Pending' flag on manually synced device groups via a reworked method. The automatically maintained pool lists have been moved to a device-local location that config sync ignores, so the sync status on your clusters only reflects changes a human actually made.
+Dashboard 2.0 brought multi-partition support. Dashboard 2.1 is a bugfix and maintenance release. No new features have been added, but the client javascript modules have been made more performant with regard to memory and error handling.
 
 ### Upgrading
 
-All dashboard components must be upgraded to 2.0; **1.8 and 2.0 components are not compatible.**
+When upgrading dashboard versions, ensure to install the same version for all files: CSS, Javascript, and iRules. **Mixing dashboard files with different versions is not recommended.** See release notes for details.
+
+- [Release Notes](RELEASE_NOTES.md) 
 
 ---
 
@@ -101,9 +77,6 @@ The dashboard consists of two components:
 **Theme3 - Amber in MACRO mode with alarmed pool members**
 <img width="2560" height="1400" alt="Image" src="https://github.com/user-attachments/assets/72a7a8dd-bc03-48ca-b12d-e81258b69e11" />
 
-**3 instances of Dashboard showing 3 sites in 3 tabs of Microsoft Edge with instance site table data isolation**
-<img width="2497" height="1186" alt="Image" src="https://github.com/user-attachments/assets/980ad18f-fa62-431b-b6ac-38dbb86cc6ea" />
-
 ---
 
 ## Getting Started
@@ -122,64 +95,10 @@ Dashboard virtual servers and iRules must reside in the `/Common` partition.
 
 ### TMOS Version Compatibility
 - TMOS 17.x+ series (all versions)
-- TMOS 21.x+ series (all versions)
-
----
-
-## Performance
-
-**Scalability:**
-- Tested with 500+ pools per site on lab grade VEs
-- Tested with 1000+ pool members on lab grade VEs
-- Currently deployed and in operation with various organizations on pre-iSeries appliances, iSeries appliances, and rSeries appliance tenants
 
 ---
 
 ## Internals
-
-### Call Stack Visualization
-
-The F5 Multisite Dashboard uses a 3-level procedural architecture with automatic memory management and efficient variable scoping. Procedures offer code modularity for easy sharing between Frontend and API Hosts to maintain operational parity for Dashboard components. It became very apparent early in development that standard iRule "monolithic blocks of code" would be unsustainable long term if we wanted the Frontend and API Host to operate identically throughout development and feature tuning. Procedures were the logical solution.
-
-```plaintext
-HTTP Request (/api/proxy/pools)
-│
-▼ LEVEL 0: Global Scope (HTTP_REQUEST Event)
-┌─────────────────────────────────────────────────────────
-│ • Parse headers (X-Selected-Site, X-Need-Pools-*, X-Need-DNS-*)
-│ • Initialize variables: dns_request_cache = {}
-│ • Determine pool filtering and DNS optimization needs
-│ • Call main coordinator procedure
-└─────────────────────────────────────────────────────────
-│
-▼ LEVEL 1: collect_all_pool_data (Pool Coordinator)
-┌─────────────────────────────────────────────────────────
-│ • Receives: pool lists, DNS settings, cache reference
-│ • Decides which pools to process (filtered vs all)
-│ • Loops through each selected pool
-│ • upvar dns_request_cache → Global Scope
-│ • Returns: comma-separated JSON string
-└─────────────────────────────────────────────────────────
-│
-▼ LEVEL 2: process_single_pool (Individual Pool Handler)
-┌─────────────────────────────────────────────────────────
-│ • Receives: single pool name + configuration
-│ • Queries F5: members -list, LB::status for each member
-│ • Builds JSON for each pool member
-│ • Counts up/down/disabled members
-│ • upvar dns_request_cache → Level 1 Scope
-│ • Returns: complete pool JSON object
-└─────────────────────────────────────────────────────────
-│
-▼ LEVEL 3: resolve_hostname_for_json (DNS Resolution - Optional)
-┌─────────────────────────────────────────────────────────
-│ • Called only when DNS resolution needed
-│ • Checks cache first, performs PTR lookup if needed
-│ • Handles IPv4 → d.c.b.a.in-addr.arpa conversion
-│ • upvar dns_request_cache → Level 2 Scope
-│ • Returns: "null" or "\"hostname.domain.com\""
-└─────────────────────────────────────────────────────────
-```
 
 ### Dataplane Efficiency via Poll Optimizations
 
@@ -213,7 +132,7 @@ Resolved hostnames are cached per site in sessionStorage, so duplicate IPs are r
 
 ---
 
-## JSON Schema v2.0
+## JSON Schema v2.1
 
 ```bash
 /api/proxy/pools
