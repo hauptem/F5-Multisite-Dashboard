@@ -1,4 +1,4 @@
-# F5 Multisite Dashboard 2.0 - User Guide
+# F5 Multisite Dashboard 2.x - User Guide
 
 ## Table of Contents
 
@@ -116,7 +116,7 @@ The bottom bar contains all primary dashboard controls:
 
 - **Button Location**: "Mode" button in bottom bar
 - **Keyboard Shortcut**: Alt+M
-- **Per-Site Memory**: Each site remembers its preferred view mode
+- **Per-Site Memory**: Each site remembers its preferred view mode; a site you have not set opens in the mode last saved with the Mode button
 
 ## Alias Display System
 
@@ -415,7 +415,7 @@ Settings automatically stored include:
 - **Logger State**: Visibility, expanded state, and font size (session storage, per browser tab)
 - **Custom Pool Order**: Drag-and-drop arrangements per site (session storage, per browser tab)
 
-**Note**: Session storage items persist for the life of the browser tab and are isolated per dashboard instance, which is what enables independent multi-tab monitoring of different sites.
+**Note**: Session storage items persist for the life of the browser tab, including page reloads, and are isolated per tab, which is what enables independent multi-tab monitoring of different sites.
 
 ## NOC Mode Setup
 
@@ -510,7 +510,7 @@ The default refresh interval is 30 seconds, but you can change it to 10, 60, or 
 
 #### Does the dashboard poll all sites all the time?
 
-No, the Dashboard Javascript Client Module only polls the currently selected site. If you have visited other sites, you retain their polled status in browser session storage and will detect any changes if those sites are visited again, which causes a new poll event.
+No, the Dashboard Javascript Client Module only polls the currently selected site. If you have visited other sites, you retain their member baselines and acknowledgments in browser session storage and will detect any changes if those sites are visited again, which causes a new poll event.
 
 #### Can I monitor multiple sites simultaneously?
 
