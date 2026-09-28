@@ -1,18 +1,18 @@
 # Multi-Site Dashboard v2.1 Release Notes
 
 **iRules**
-- send_error_response now logs its debug_message argument when the client is debug-listed. Eight call sites passed diagnostic text that was never written anywhere
-- Non-integer sort_order values in datagroup-dashboard-pools broke the JSON for the whole site response. Guarded with string is integer -strict, fallback 999
-- Non-integer order values in datagroup-dashboard-sites aborted page generation in lsort -integer. Same guard
+- send_error_response now logs its debug_message argument when the client is debug-listed. 
+- Non-integer sort_order values in datagroup-dashboard-pools broke the JSON for the whole site response. 
+- Non-integer order values in datagroup-dashboard-sites aborted page generation in lsort -integer. 
 - JSON schema version 2.1
 
 **JavaScript**
-- Member state was keyed without a site component and never cleared on site change, so switching sites logged false status changes for any member IP:port that existed at both. changeSite saves the outgoing site's states and custom order, clears them, and loads the incoming site's
+- Member state was keyed without a site component and never cleared on site change, so switching sites logged false status changes for any member IP:port that existed at both. changeSite saves the outgoing site's states and custom order, clears them, and loads the incoming site
 - sessionStorage keys were prefixed with a per-load instance ID, so nothing survived a reload and every reload left the previous load's entries behind. Keys now use a fixed dashboard_ prefix
-- Hostname cache reads and writes are one per poll instead of one per member. Logger entries are held in memory and flushed once per tick instead of rewriting the full log per entry; a mass outage on a large site previously ran the tab out of memory
+- Hostname cache reads and writes are one per poll instead of one per member. Logger entries are held in memory and flushed once per tick instead of rewriting the full log per entry
 - Sites without a saved view mode open in the cookie preference; site selection previously forced micro
 - Reset State also clears the current site's stored member states
-- Resolve with more than 3200 unique member IPs sends the first 3200 and warns in the console. The iRule rejects more than 50 headers, so such a request previously resolved nothing
+- Resolve with more than 3200 unique member IPs sends the first 3200 and warns in the console.
 - Storage quota: saving member states at quota recursed into its own emergency cleanup until the tab died. Cleanup now runs once, evicts other sites' stored states, and retries. The outgoing site's pool snapshot is dropped on site change, and a failed snapshot write is logged instead of surfacing as a poll error
 - Member addresses display without the route domain suffix (60.1.1.1:443, not 60.1.1.1%1:443) in the grid and the logger. The address tooltip, state keys, acknowledgments, and DNS requests keep the full address
 - beforeunload cleanup was registered before the handler was defined. The fallback wake lock no longer sends HEAD /api/health to the Frontend, which has no such route. Bottom-bar buttons are matched by class, not by button text
