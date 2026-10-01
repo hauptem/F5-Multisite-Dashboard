@@ -174,7 +174,7 @@ Resolved hostnames are cached per site in sessionStorage, so duplicate IPs are r
      "hostname": "bigip-hostname",
      "timestamp": "YYYY-MM-DD HH:MM:SS",
      "uptime_seconds": number,
-     "version": "2.0",
+     "version": "2.1",
      "pools_configured": number,
      "message": "status description"
    }
