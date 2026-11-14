@@ -25,7 +25,7 @@ When an application is degraded, you need to know which pool members are down ac
 
 It's a browser-based monitoring application that provides near real-time visibility into F5 BIG-IP pool member status across unlimited sites. It runs entirely from the F5 devices themselves in the dataplane: no external servers, no databases, no agents. Upload seven files, configure eight data groups, apply two iRules, and you're operational in about thirty minutes.
 
-The architecture is distributed rather than centralized. Each F5 site can operate as a Dashboard Frontend (serving the interface and aggregating data), an API Host (providing pool data via JSON endpoints), or both. Sites communicate directly with each other, so there is no central monitoring server to bottleneck and the design scales horizontally without redesign.
+The architecture is distributed rather than centralized. Each F5 site can operate as a Dashboard Frontend (serving the interface and aggregating data), an API Host (providing pool data via JSON endpoints), or both. Sites communicate directly with each other, so there is no central monitoring server to bottleneck and the design scales horizontally.
 
 Traditional monitoring polls everything, stores everything, and filters when queried. This dashboard inverts that model: the client tells the backend exactly what it needs each cycle. If a search for "sharepoint" shows three matching pools out of two hundred configured, the next poll queries only those three pools, and the backend skips the other 197 entirely.
 
