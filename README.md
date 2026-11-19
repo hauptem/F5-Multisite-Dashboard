@@ -23,7 +23,7 @@ When upgrading dashboard versions, ensure to install the same version for all fi
 
 When an application is degraded, you need to know which pool members are down across all your data centers without logging into each F5 to check. This dashboard answers that question in about ten seconds.
 
-It's a browser-based monitoring application that provides near real-time visibility into F5 BIG-IP pool member status across unlimited sites. It runs entirely from the F5 devices themselves in the dataplane: no external servers, no databases, no agents. Upload seven files, configure eight data groups, apply two iRules, and you're operational in about thirty minutes.
+It's a browser-based monitoring application that provides near real-time visibility into F5 BIG-IP pool member status across unlimited sites. It runs entirely from the F5 devices themselves in the dataplane: no external servers, no databases, no agents. Upload seven files, configure seven data groups on a Frontend (four on an API Host), apply two iRules, and you're operational in about thirty minutes.
 
 The architecture is distributed rather than centralized. Each F5 site can operate as a Dashboard Frontend (serving the interface and aggregating data), an API Host (providing pool data via JSON endpoints), or both. Sites communicate directly with each other, so there is no central monitoring server to bottleneck and the design scales horizontally.
 
